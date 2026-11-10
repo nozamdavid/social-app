@@ -554,7 +554,7 @@ msgstr "{count, plural, one {# request} other {# requests}}"
 msgid "{count, plural, one {# unread item} other {# unread items}}"
 msgstr ""
 
-#: src/features/profileLinks/components/ProfileLinks.tsx:339
+#: src/features/profileLinks/components/ProfileLinks.tsx:342
 msgid "{count, plural, one {Show # more link} other {Show # more links}}"
 msgstr "{count, plural, one {Show # more link} other {Show # more links}}"
 
@@ -848,11 +848,11 @@ msgstr "{length} out of {MAX_PRONOUNS} characters"
 msgid "{MAX_ALT_TEXT, plural, other {Alt text must be less than # characters.}}"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:547
+#: src/screens/Profile/Header/EditProfileDialog.tsx:556
 msgid "{MAX_DESCRIPTION, plural, other {Description is too long. The maximum number of characters is #.}}"
 msgstr "{MAX_DESCRIPTION, plural, other {Description is too long. The maximum number of characters is #.}}"
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:428
+#: src/screens/Profile/Header/EditProfileDialog.tsx:437
 msgid "{MAX_DISPLAY_NAME, plural, other {Display name is too long. The maximum number of characters is #.}}"
 msgstr "{MAX_DISPLAY_NAME, plural, other {Display name is too long. The maximum number of characters is #.}}"
 
@@ -1782,8 +1782,8 @@ msgstr ""
 msgid "Add people with a link"
 msgstr "Add people with a link"
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:471
-#: src/screens/Profile/Header/EditProfileDialog.tsx:512
+#: src/screens/Profile/Header/EditProfileDialog.tsx:480
+#: src/screens/Profile/Header/EditProfileDialog.tsx:521
 #: src/screens/Profile/Header/PronounsDialog.tsx:102
 #: src/screens/Profile/Header/PronounsDialog.tsx:125
 msgid "Add pronouns"
@@ -3180,8 +3180,8 @@ msgstr "Camera access needed"
 #: src/screens/Messages/ConversationSettings/prompts.tsx:148
 #: src/screens/Messages/ConversationSettings/prompts.tsx:172
 #: src/screens/ModerationInbox/Notice.tsx:437
-#: src/screens/Profile/Header/EditProfileDialog.tsx:313
-#: src/screens/Profile/Header/EditProfileDialog.tsx:321
+#: src/screens/Profile/Header/EditProfileDialog.tsx:325
+#: src/screens/Profile/Header/EditProfileDialog.tsx:333
 #: src/screens/Search/components/AdvancedSearchDialog/index.tsx:202
 #: src/screens/Search/components/AdvancedSearchDialog/index.tsx:209
 #: src/screens/Search/components/SearchHistory.tsx:151
@@ -4742,8 +4742,8 @@ msgstr "Deleted post"
 
 #: src/components/dialogs/lists/CreateOrEditListDialog.tsx:463
 #: src/components/SendErrorReportDialog.tsx:78
-#: src/screens/Profile/Header/EditProfileDialog.tsx:527
-#: src/screens/Profile/Header/EditProfileDialog.tsx:534
+#: src/screens/Profile/Header/EditProfileDialog.tsx:536
+#: src/screens/Profile/Header/EditProfileDialog.tsx:543
 msgid "Description"
 msgstr ""
 
@@ -4971,8 +4971,8 @@ msgstr "Dismisses the QR scanner"
 msgid "Display larger alt text badges"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:409
-#: src/screens/Profile/Header/EditProfileDialog.tsx:415
+#: src/screens/Profile/Header/EditProfileDialog.tsx:418
+#: src/screens/Profile/Header/EditProfileDialog.tsx:424
 msgid "Display name"
 msgstr ""
 
@@ -5131,7 +5131,7 @@ msgstr "Dusk"
 msgid "e.g. alice"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:416
+#: src/screens/Profile/Header/EditProfileDialog.tsx:425
 msgid "e.g. Alice Lastname"
 msgstr ""
 
@@ -5282,8 +5282,8 @@ msgstr ""
 msgid "Edit post interaction settings"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:363
-#: src/screens/Profile/Header/EditProfileDialog.tsx:370
+#: src/screens/Profile/Header/EditProfileDialog.tsx:372
+#: src/screens/Profile/Header/EditProfileDialog.tsx:379
 #: src/screens/Profile/Header/ProfileHeaderLabeler.tsx:300
 #: src/screens/Profile/Header/ProfileHeaderStandard.tsx:351
 msgid "Edit profile"
@@ -5299,7 +5299,7 @@ msgstr ""
 msgid "Edit pronouns"
 msgstr "Edit pronouns"
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:470
+#: src/screens/Profile/Header/EditProfileDialog.tsx:479
 msgid "Edit pronouns: {pronouns}"
 msgstr "Edit pronouns: {pronouns}"
 
@@ -8030,7 +8030,7 @@ msgstr ""
 #: src/components/verification/VerificationsDialog.tsx:169
 #: src/components/verification/VerifierDialog.tsx:137
 #: src/screens/Moderation/VerificationSettings.tsx:50
-#: src/screens/Profile/Header/EditProfileDialog.tsx:445
+#: src/screens/Profile/Header/EditProfileDialog.tsx:454
 #: src/screens/Settings/components/ChangeHandleDialog.tsx:215
 #: src/screens/Settings/components/ChangeHandleDialog.tsx:279
 msgctxt "english-only-resource"
@@ -10233,7 +10233,7 @@ msgstr "Open this group chat"
 #. placeholder {0}: getLinkHost(link.url)
 #. placeholder {0}: link.url
 #: src/features/profileLinks/components/LinkPreviewSheet.tsx:85
-#: src/features/profileLinks/components/ProfileLinks.tsx:161
+#: src/features/profileLinks/components/ProfileLinks.tsx:164
 msgid "Opens {0} outside Bluesky"
 msgstr "Opens {0} outside Bluesky"
 
@@ -11220,7 +11220,7 @@ msgstr "Profile link copied"
 msgid "Profile not found"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:275
+#: src/screens/Profile/Header/EditProfileDialog.tsx:284
 msgctxt "toast"
 msgid "Profile updated"
 msgstr ""
@@ -11229,7 +11229,7 @@ msgstr ""
 msgid "Promoting or selling prohibited items or services"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:459
+#: src/screens/Profile/Header/EditProfileDialog.tsx:468
 #: src/screens/Profile/Header/PronounsDialog.tsx:140
 #: src/screens/Profile/Header/PronounsDialog.tsx:170
 msgid "Pronouns"
@@ -12384,8 +12384,8 @@ msgstr "Sad GIFs"
 #: src/features/liveNow/components/EditLiveDialog.tsx:199
 #: src/features/liveNow/components/EditLiveDialog.tsx:206
 #: src/screens/Messages/ConversationSettings/prompts.tsx:74
-#: src/screens/Profile/Header/EditProfileDialog.tsx:331
-#: src/screens/Profile/Header/EditProfileDialog.tsx:345
+#: src/screens/Profile/Header/EditProfileDialog.tsx:343
+#: src/screens/Profile/Header/EditProfileDialog.tsx:354
 #: src/screens/SavedFeeds.tsx:124
 #: src/screens/SavedFeeds.tsx:315
 #: src/screens/Settings/components/ChangeHandleDialog.tsx:269
@@ -13289,7 +13289,7 @@ msgstr "Show group chat updates"
 msgid "Show less like this"
 msgstr ""
 
-#: src/features/profileLinks/components/ProfileLinks.tsx:176
+#: src/features/profileLinks/components/ProfileLinks.tsx:179
 msgid "Show link details"
 msgstr "Show link details"
 
@@ -14201,7 +14201,7 @@ msgstr ""
 msgid "Tech"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:535
+#: src/screens/Profile/Header/EditProfileDialog.tsx:544
 msgid "Tell us a bit about yourself"
 msgstr ""
 
@@ -16978,7 +16978,7 @@ msgstr ""
 msgid "You are verified"
 msgstr ""
 
-#: src/screens/Profile/Header/EditProfileDialog.tsx:440
+#: src/screens/Profile/Header/EditProfileDialog.tsx:449
 msgid "You are verified. You will lose your verification status if you change your display name. <0>Learn more.</0>"
 msgstr ""
 
