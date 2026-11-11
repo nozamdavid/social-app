@@ -86,6 +86,7 @@ import {
   prefetchLiveEvents,
   Provider as LiveEventsProvider,
 } from '#/features/liveEvents/context'
+import {LocalBookmarksSync} from '#/features/searchableBookmarks/hooks'
 import {TrendingTopicsWidgetSync} from '#/features/trendingWidget/Sync'
 import {useWitchskyThemeSelection} from '#/features/witchskyThemes/preferences'
 import {createWitchskyThemeOverrides} from '#/features/witchskyThemes/theme'
@@ -159,6 +160,7 @@ function InnerApp() {
                   key={currentAccount?.did}>
                   <AnalyticsFeaturesContext>
                     <QueryProvider currentDid={currentAccount?.did}>
+                      <LocalBookmarksSync />
                       <BetaUserStorageSync />
                       <PolicyUpdateOverlayProvider>
                         <LiveEventsProvider>

@@ -31,7 +31,8 @@ export function OpenBlueskyLinks() {
       testID="openBlueskyLinksBtn"
       label={l`Open Bluesky links in ${APP_NAME}`}
       accessibilityHint={l`Opens Android settings so you can choose which app opens bsky.app links`}
-      onPress={onPress}>
+      onPress={onPress}
+      contentContainerStyle={[a.align_start]}>
       <SettingsList.ItemIcon icon={ChainLinkIcon} />
       <View style={[a.flex_1, a.gap_2xs]}>
         <SettingsList.ItemText>
