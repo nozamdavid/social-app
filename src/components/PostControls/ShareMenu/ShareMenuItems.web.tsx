@@ -17,7 +17,9 @@ import {ChainLink_Stroke2_Corner0_Rounded as ChainLinkIcon} from '#/components/i
 import {Clipboard_Stroke2_Corner2_Rounded as ClipboardIcon} from '#/components/icons/Clipboard'
 import {CodeBrackets_Stroke2_Corner0_Rounded as CodeBracketsIcon} from '#/components/icons/CodeBrackets'
 import {PaperPlane_Stroke2_Corner0_Rounded as Send} from '#/components/icons/PaperPlane'
+import {SquareArrowTopRight_Stroke2_Corner0_Rounded as ExternalLinkIcon} from '#/components/icons/Square'
 import * as Menu from '#/components/Menu'
+import {OpenInMenu} from '#/components/OpenInMenu'
 import {useAgeAssurance} from '#/ageAssurance'
 import {useAnalytics} from '#/analytics'
 import {IS_WEB} from '#/env'
@@ -37,6 +39,8 @@ let ShareMenuItems = ({
   const navigation = useNavigation<NavigationProp>()
   const embedPostControl = useDialogControl()
   const sendViaChatControl = useDialogControl()
+  const openInControl = useDialogControl()
+  const {control: menuControl} = Menu.useMenuContext()
   const [devModeEnabled] = useDevMode()
   const aa = useAgeAssurance()
 
@@ -96,6 +100,15 @@ let ShareMenuItems = ({
     <>
       <Menu.Outer>
         {!hideInPWI && copyLinkItem}
+        <Menu.Item
+          testID="postDropdownOpenInBtn"
+          label={l`Open in…`}
+          onPress={() => menuControl.close(() => openInControl.open())}>
+          <Menu.ItemText>
+            <Trans>Open in…</Trans>
+          </Menu.ItemText>
+          <Menu.ItemIcon icon={ExternalLinkIcon} position="right" />
+        </Menu.Item>
 
         {hasSession && aa.state.access === aa.Access.Full && (
           <Menu.Item
@@ -169,6 +182,10 @@ let ShareMenuItems = ({
           timestamp={timestamp}
         />
       )}
+      <OpenInMenu
+        control={openInControl}
+        target={{type: 'post', uri: postUri}}
+      />
       <SendViaChatDialog
         control={sendViaChatControl}
         onSelectChat={onSelectChatToShareTo}

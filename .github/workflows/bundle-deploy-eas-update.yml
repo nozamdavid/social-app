@@ -266,93 +266,17 @@ jobs:
           BSKY_IOS_BUILD_NUMBER: ${{ inputs.iosBuildNumber }}
           BSKY_ANDROID_VERSION_CODE: ${{ inputs.androidVersionCode }}
 
-  buildIfNecessaryIOS:
-    name: Build and Submit iOS
-    needs: [bundleDeploy]
-    # Gotta check if its NOT '[]' because any md5 hash in the outputs is detected as a possible secret and won't be
-    # available here
-    if: ${{ inputs.channel != 'production' &&
-      needs.bundleDeploy.outputs.changes-detected && github.repository ==
-      'bluesky-social/social-app' }}
-    uses: $/.github/workflows/build-submit-ios.yml
-    with:
-      profile: testflight
-      testFlightGroup: "QA Team"
-      # OTA rebuilds don't need the xlarge builder used for releases
-      runner: xcode-27
-    # Pass only the secrets the reusable workflow declares, rather than `secrets: inherit`,
-    # so this workflow never hands the reusable workflow the entire repo secret store.
-    secrets:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      ENV_TOKEN: ${{ secrets.ENV_TOKEN }}
-      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      BITDRIFT_API_KEY: ${{ secrets.BITDRIFT_API_KEY }}
-      EXPO_PUBLIC_GCP_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_GCP_PROJECT_ID }}
-      GOOGLE_SERVICES_TOKEN: ${{ secrets.GOOGLE_SERVICES_TOKEN }}
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
-      SLACK_CLIENT_ALERT_WEBHOOK: ${{ secrets.SLACK_CLIENT_ALERT_WEBHOOK }}
+  # Record only successful OTA deployments. Native rebuilds are handled outside
+  # this workflow, so native changes must not advance the fingerprint baseline.
 
-  buildIfNecessaryAndroid:
-    name: Build and Submit Android
-    needs: [bundleDeploy]
-    # Gotta check if its NOT '[]' because any md5 hash in the outputs is detected as a possible secret and won't be
-    # available here
-    if: ${{ inputs.channel != 'production' &&
-      needs.bundleDeploy.outputs.changes-detected && github.repository ==
-      'bluesky-social/social-app' }}
-    # build-submit-android.yml contains an attachToRelease job that requests contents: write.
-    # That job is skipped here (it needs a production tag build), but GitHub statically
-    # validates the reusable-workflow permission ceiling, so the caller must grant it.
-    permissions:
-      contents: write
-    uses: $/.github/workflows/build-submit-android.yml
-    with:
-      profile: testflight-android
-      # No runner override: the build keeps the reusable workflow's 32-core default.
-      # Building React Native from source gets killed mid-Gradle on ubuntu-latest
-      # (Ubuntu 26.04), and the post-build jobs already run on ubuntu-latest.
-    # Pass only the secrets the reusable workflow declares, rather than `secrets: inherit`,
-    # so this workflow never hands the reusable workflow the entire repo secret store.
-    secrets:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      ENV_TOKEN: ${{ secrets.ENV_TOKEN }}
-      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      BITDRIFT_API_KEY: ${{ secrets.BITDRIFT_API_KEY }}
-      EXPO_PUBLIC_GCP_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_GCP_PROJECT_ID }}
-      GOOGLE_SERVICES_TOKEN: ${{ secrets.GOOGLE_SERVICES_TOKEN }}
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      SLACK_CLIENT_ALERT_WEBHOOK: ${{ secrets.SLACK_CLIENT_ALERT_WEBHOOK }}
-      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-
-  # Advance the fingerprint baseline only after BOTH native builds have shipped
-  # the new native surface. This replaces the old actions/cache baseline, which
-  # only advanced on cache eviction and so silently froze - freezing meant every
-  # fingerprint looked changed and OTA updates stopped deploying entirely.
-  #
-  # On the native-build path, this runs only after both builds succeed. A
-  # successful OTA deploy also records its fingerprint, refreshing the
-  # persistent marker's retention without changing the native baseline.
-  #
-  # The persistent artifact replaces the old actions/cache marker without
-  # requiring a PAT or mutable repository variable. Each successful deploy adds
-  # an immutable marker; the next run reads the newest non-expired one using the
-  # built-in GITHUB_TOKEN.
   recordBaseline:
     name: Record fingerprint baseline
     runs-on: ubuntu-latest
-    needs: [bundleDeploy, buildIfNecessaryIOS, buildIfNecessaryAndroid]
+    needs: [bundleDeploy]
     if: ${{ always() &&
       (inputs.channel || 'testflight') == 'testflight' &&
       needs.bundleDeploy.result == 'success' &&
-      (needs.bundleDeploy.outputs.changes-detected != 'true' ||
-      (needs.buildIfNecessaryIOS.result == 'success' &&
-      needs.buildIfNecessaryAndroid.result == 'success')) &&
+      needs.bundleDeploy.outputs.changes-detected != 'true' &&
       github.repository == 'bluesky-social/social-app' }}
     permissions:
       actions: read

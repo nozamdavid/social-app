@@ -1,0 +1,4 @@
+services:
+  gateway:
+    ports:
+      - '${PUSH_GATEWAY_LAN_IP:?Set PUSH_GATEWAY_LAN_IP to the host LAN address}:18787:8080'

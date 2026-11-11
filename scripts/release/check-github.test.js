@@ -60,7 +60,7 @@ function check(scenario) {
       if (!(path in data)) throw new Error('Unexpected request ' + path)
       return data[path]
     }
-    const checked = scenario.startsWith('plan-') ? await dryRunRelease(report, 'owner/repo', read, hashes) : await checkGitHub(report, read)
+    const checked = scenario.startsWith('plan-') ? await dryRunRelease(report, 'owner/repo', read, scenario === 'plan-retired' ? undefined : hashes) : await checkGitHub(report, read)
     if (scenario === 'get-only') {
       globalThis.fetch = async (url, options) => {
         if (url !== 'https://api.github.com/repos/owner/repo') throw new Error('Wrong repository endpoint')
@@ -241,52 +241,20 @@ test('a missing or changed build workflow blocks all proposed operations', () =>
   })
 })
 
-test('planned build inputs match the actual dispatch definitions and no live option exists', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '--input-type=module',
-      '-e',
-      `
-    import {readFileSync} from 'node:fs'
-    import {createRequire} from 'node:module'
-    import assert from 'node:assert/strict'
-    import {buildWorkflows,workflowHashes} from ${JSON.stringify(plannerUrl)}
-    const yaml = createRequire(import.meta.url)('js-yaml')
-    for (const build of buildWorkflows) {
-      const workflow = yaml.load(readFileSync('.github/workflows/' + build.file,'utf8'))
-      assert('workflow_dispatch' in workflow.on)
-      const definitions = workflow.on.workflow_dispatch?.inputs ?? {}
-      const inputs = {...build.inputs,sourceRef:'candidate'}
-      for (const [key,value] of Object.entries(inputs)) {
-        assert(definitions[key], key)
-        if (definitions[key].type === 'boolean') assert.equal(typeof value,'boolean')
-        if (definitions[key].options) assert(definitions[key].options.includes(value))
-      }
-      for (const [key,definition] of Object.entries(definitions)) if (definition.required && definition.default === undefined) assert(key in inputs)
-      assert.match(workflowHashes()[build.file], /^[a-f0-9]{40}$/)
-      const job = workflow.jobs.build ?? workflow.jobs['bskyweb-container-aws']
-      const checkout = job.steps.find(step => step.uses?.startsWith('actions/checkout@'))
-      assert.equal(checkout.with.ref, '${'$'}{{ inputs.sourceRef || github.sha }}')
-      assert.equal(job.outputs['source-sha'], '${'$'}{{ steps.source.outputs.sha }}')
-      if (build.platform !== 'web') {
-        assert.equal(workflow.on.workflow_call.inputs.sourceRef.default, '')
-        assert.equal(workflow.on.workflow_call.inputs.submit.default, true)
-        assert.equal(workflow.jobs.submit.if, '${'$'}{{ inputs.submit != false }}')
-        assert.equal(workflow.jobs.submit.steps.find(step => step.uses?.startsWith('actions/checkout@')).with.ref, '${'$'}{{ needs.build.outputs.source-sha }}')
-      } else {
-        const metadata = job.steps.find(step => step.uses?.startsWith('docker/metadata-action@'))
-        assert(metadata.with.tags.includes('${'$'}{{ steps.source.outputs.sha }}'))
-        assert(metadata.with.labels.includes('${'$'}{{ steps.source.outputs.sha }}'))
-      }
-
-    }
-  `,
-    ],
-    {encoding: 'utf8'},
-  )
-  expect(result.stderr).toBe('')
-  expect(result.status).toBe(0)
+test('retired build workflows block release plans and no live option exists', () => {
+  expect(check('plan-retired')).toMatchObject({
+    execution: {
+      status: 'blocked',
+      reason: expect.stringContaining('missing or different'),
+    },
+  })
+  expect(check('plan-retired')).not.toMatchObject({
+    execution: {
+      steps: expect.arrayContaining([
+        expect.objectContaining({result: 'skipped-dry-run'}),
+      ]),
+    },
+  })
   const live = spawnSync(
     process.execPath,
     [resolve('scripts/release/plan.mjs'), 'report', 'owner/repo', '--apply'],

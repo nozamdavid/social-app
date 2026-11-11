@@ -1,0 +1,96 @@
+diff --git a/internal/jetstream/consumer.go b/internal/jetstream/consumer.go
+index 2d28a4b..aa835f4 100644
+--- a/internal/jetstream/consumer.go
++++ b/internal/jetstream/consumer.go
+@@ -761,6 +761,7 @@ func (c *Consumer) sendNotification(actorDID, targetDID, reason, recordURI, subj
+ 
+ 	for _, token := range tokens {
+ 		n := push.Notification{
++			AppID:    token.AppID,
+ 			Token:    token.PushToken,
+ 			Platform: token.Platform,
+ 			Title:    title,
+diff --git a/internal/push/fcm.go b/internal/push/fcm.go
+index 0b87836..a9a07a2 100644
+--- a/internal/push/fcm.go
++++ b/internal/push/fcm.go
+@@ -135,6 +135,15 @@ func (f *FCMSender) Send(n Notification) error {
+ 		}
+ 		data["title"] = n.Title
+ 		data["body"] = n.Body
++		if n.AppID == "am.noz.blueskyplus" || n.AppID == "am.noz.caelum" {
++			// Expo uses message for display text and JSON body for tap data.
++			payload, err := json.Marshal(n.Data)
++			if err != nil {
++				return fmt.Errorf("encode Caelum notification: %w", err)
++			}
++			data["message"] = n.Body
++			data["body"] = string(payload)
++		}
+ 		data["channelId"] = channelID
+ 		msg.Message.Data = data
+ 	} else {
+diff --git a/internal/push/push.go b/internal/push/push.go
+index c2c09b2..2ee4a5a 100644
+--- a/internal/push/push.go
++++ b/internal/push/push.go
+@@ -17,6 +17,7 @@ import (
+ var ErrTokenInvalid = errors.New("push token permanently invalid")
+ 
+ type Notification struct {
++	AppID    string
+ 	Token    string
+ 	Platform string
+ 	Title    string
+diff --git a/internal/push/senders_test.go b/internal/push/senders_test.go
+index e20f417..75aeca2 100644
+--- a/internal/push/senders_test.go
++++ b/internal/push/senders_test.go
+@@ -488,3 +488,47 @@ func TestMultiSenderRouting(t *testing.T) {
+ 		t.Error("expected error for unsupported platform")
+ 	}
+ }
++
++func TestFCMSend_CaelumExpoPayload(t *testing.T) {
++	for _, reason := range []string{"like", "repost", "reply", "mention", "quote", "follow"} {
++		t.Run(reason, func(t *testing.T) {
++			var got fcmRequest
++			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				json.NewDecoder(r.Body).Decode(&got)
++				w.WriteHeader(200)
++			}))
++			defer srv.Close()
++			n := testNotification("test-device-token", "android")
++			n.AppID = "am.noz.caelum"
++			n.Data["reason"] = reason
++			n.Data["recipientDid"] = "did:plc:recipient"
++			n.Data["subject"] = "at://did:plc:recipient/app.bsky.feed.post/123"
++			f := newTestFCMSender(srv.URL)
++			f.SetDataOnly(true)
++			if err := f.Send(n); err != nil {
++				t.Fatal(err)
++			}
++			if got.Message.Notification != nil || got.Message.Android.Notification != nil {
++				t.Fatal("Caelum must receive data-only FCM messages")
++			}
++			if got.Message.Data["message"] != n.Body || got.Message.Data["title"] != n.Title {
++				t.Fatal("Expo display text missing")
++			}
++			var payload map[string]string
++			if err := json.Unmarshal([]byte(got.Message.Data["body"]), &payload); err != nil {
++				t.Fatal(err)
++			}
++			for k, v := range n.Data {
++				if payload[k] != v {
++					t.Fatalf("Expo tap payload lost %s", k)
++				}
++			}
++			if got.Message.Data["channelId"] != reason || got.Message.Data["reason"] != reason {
++				t.Fatal("native background handler requires flat reason and channelId")
++			}
++			if _, mutated := n.Data["body"]; mutated {
++				t.Fatal("sender mutated event data")
++			}
++		})
++	}
++}

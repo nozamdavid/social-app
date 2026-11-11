@@ -1,0 +1,16 @@
+services:
+  gateway:
+    build: .
+    ports:
+      - '127.0.0.1:18787:8080'
+    environment:
+      PUSH_GATEWAY_DID: did:web:push.noz.am
+      SQLITE_PATH: /data/push-gateway.db
+      FCM_DATA_ONLY: 'true'
+      FCM_SERVICE_ACCOUNT_PATH: /run/secrets/firebase.json
+    volumes:
+      - push-data:/data
+      - ${FCM_SERVICE_ACCOUNT_PATH:?Set FCM_SERVICE_ACCOUNT_PATH to the sender JSON file}:/run/secrets/firebase.json:ro
+    restart: unless-stopped
+volumes:
+  push-data:
