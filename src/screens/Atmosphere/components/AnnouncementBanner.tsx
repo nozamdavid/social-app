@@ -2,21 +2,24 @@ import {View} from 'react-native'
 import {LinearGradient} from 'expo-linear-gradient'
 import {useLingui} from '@lingui/react/macro'
 
-import {type AtmosphereAnnouncementBannerData} from '#/screens/Atmosphere/data/exploreData'
+import {EXPLORE_SECTION_PADDING} from '#/screens/Atmosphere/const'
 import {atoms as a, utils} from '#/alf'
 import {Image} from '#/components/Image'
 import {Link} from '#/components/Link'
 import {Text} from '#/components/Typography'
+import {type app} from '#/lexicons'
 
 export function AnnouncementBanner({
   banner,
 }: {
-  banner: AtmosphereAnnouncementBannerData
+  banner: app.bsky.unspecced.getAtmosphereExploreTab.AnnouncementBanner
 }) {
   const {t: l} = useLingui()
 
+  if (!banner.title || !banner.url) return null
+
   return (
-    <View style={a.pb_md}>
+    <View style={[a.pb_md, {paddingHorizontal: EXPLORE_SECTION_PADDING}]}>
       <View
         style={[
           a.w_full,
@@ -48,7 +51,7 @@ export function AnnouncementBanner({
           />
         ) : undefined}
         <Link
-          to={banner.href}
+          to={banner.url}
           label={l`Open announcement: ${banner.title}`}
           accessibilityHint=""
           style={[

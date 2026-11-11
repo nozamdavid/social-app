@@ -3,10 +3,12 @@ import {Trans, useLingui} from '@lingui/react/macro'
 
 import {HITSLOP_10} from '#/lib/constants'
 import {Nux, useNux, useSaveNux} from '#/state/queries/nuxs'
+import {EXPLORE_SECTION_PADDING} from '#/screens/Atmosphere/const'
 import {atoms as a, tokens} from '#/alf'
 import {Button, ButtonIcon} from '#/components/Button'
 import {GradientFill} from '#/components/GradientFill'
 import {TimesLarge_Stroke2_Corner0_Rounded as XIcon} from '#/components/icons/TimesLarge'
+import {Image} from '#/components/Image'
 import * as Toast from '#/components/Toast'
 import {Text} from '#/components/Typography'
 import {useAnalytics} from '#/analytics'
@@ -31,7 +33,7 @@ export function AtmosphereNux() {
   }
 
   return (
-    <View style={a.pb_md}>
+    <View style={[a.pb_md, {paddingHorizontal: EXPLORE_SECTION_PADDING}]}>
       <View
         style={[
           a.w_full,
@@ -40,15 +42,13 @@ export function AtmosphereNux() {
           a.overflow_hidden,
           {height: 180},
         ]}>
-        {/*
+        <GradientFill gradient={tokens.gradients.sky} />
         <Image
-          source={discoverAtmosphereNux}
+          source={require('../../../../assets/images/atmosphere-tab-banner.webp')}
           contentFit="cover"
           style={[a.absolute, a.inset_0]}
           accessible={false}
         />
-        */}
-        <GradientFill gradient={tokens.gradients.sky} />
         <View style={[a.absolute, a.inset_0, a.justify_end, a.p_lg, a.gap_xs]}>
           <Text
             emoji
