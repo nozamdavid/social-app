@@ -20,7 +20,9 @@ import {ArrowOutOfBoxModified_Stroke2_Corner2_Rounded as ArrowOutOfBoxIcon} from
 import {ChainLink_Stroke2_Corner0_Rounded as ChainLinkIcon} from '#/components/icons/ChainLink'
 import {Clipboard_Stroke2_Corner2_Rounded as ClipboardIcon} from '#/components/icons/Clipboard'
 import {PaperPlane_Stroke2_Corner0_Rounded as PaperPlaneIcon} from '#/components/icons/PaperPlane'
+import {SquareArrowTopRight_Stroke2_Corner0_Rounded as ExternalLinkIcon} from '#/components/icons/Square'
 import * as Menu from '#/components/Menu'
+import {OpenInMenu} from '#/components/OpenInMenu'
 import * as Toast from '#/components/Toast'
 import {useAgeAssurance} from '#/ageAssurance'
 import {useAnalytics} from '#/analytics'
@@ -38,6 +40,8 @@ let ShareMenuItems = ({
   const {t: l} = useLingui()
   const navigation = useNavigation<NavigationProp>()
   const sendViaChatControl = useDialogControl()
+  const openInControl = useDialogControl()
+  const {control: menuControl} = Menu.useMenuContext()
   const [devModeEnabled] = useDevMode()
   const aa = useAgeAssurance()
   const queryClient = useQueryClient()
@@ -144,6 +148,22 @@ let ShareMenuItems = ({
           </Menu.Item>
 
           <Menu.Item
+            testID="postDropdownOpenInBtn"
+            label={l`Open in…`}
+            onPress={() => {
+              if (IS_IOS) {
+                openInControl.open()
+              } else {
+                menuControl.close(() => openInControl.open())
+              }
+            }}>
+            <Menu.ItemText>
+              <Trans>Open in…</Trans>
+            </Menu.ItemText>
+            <Menu.ItemIcon icon={ExternalLinkIcon} position="right" />
+          </Menu.Item>
+
+          <Menu.Item
             testID="postDropdownShareBtn"
             label={l`Copy link to post`}
             onPress={() => void onCopyLink()}>
@@ -189,6 +209,10 @@ let ShareMenuItems = ({
           </Menu.Group>
         )}
       </Menu.Outer>
+      <OpenInMenu
+        control={openInControl}
+        target={{type: 'post', uri: postUri}}
+      />
       <SendViaChatDialog
         control={sendViaChatControl}
         onSelectChat={onSelectChatToShareTo}

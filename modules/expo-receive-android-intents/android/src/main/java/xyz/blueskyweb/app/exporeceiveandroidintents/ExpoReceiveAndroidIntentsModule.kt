@@ -25,7 +25,7 @@ enum class AttachmentType {
 class ExpoReceiveAndroidIntentsModule : Module() {
   private val appScheme: String
     get() =
-      if (appContext.reactContext?.packageName == "am.noz.blueskyplus") {
+      if (appContext.reactContext?.packageName == "am.noz.caelum") {
         "blueskyplus"
       } else {
         "bluesky"

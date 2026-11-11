@@ -225,9 +225,9 @@ module.exports = function (_config) {
           backgroundColor: IS_BLUESKY_PLUS ? caelum.colors.primary : '#006AFF',
         },
         googleServicesFile: IS_BLUESKY_PLUS
-          ? undefined
+          ? process.env.CAELUM_GOOGLE_SERVICES_FILE || undefined
           : './google-services.json',
-        package: IS_BLUESKY_PLUS ? 'am.noz.blueskyplus' : 'xyz.blueskyweb.app',
+        package: IS_BLUESKY_PLUS ? 'am.noz.caelum' : 'xyz.blueskyweb.app',
         blockedPermissions: ['android.permission.ACCESS_FINE_LOCATION'],
         intentFilters: [
           {

@@ -2,7 +2,13 @@ import {type Insets, Platform} from 'react-native'
 import {type Service} from '@atproto/lex'
 import {api} from '@bsky/sdk'
 
-import {BLUESKY_PROXY_DID, CHAT_PROXY_DID, IS_DEV, MOD_PROXY_DID} from '#/env'
+import {
+  BLUESKY_PROXY_DID,
+  CHAT_PROXY_DID,
+  IS_DEV,
+  MOD_PROXY_DID,
+  PUSH_GATEWAY_DID,
+} from '#/env'
 import {type app} from '#/lexicons'
 
 export const LOCAL_DEV_SERVICE =
@@ -293,7 +299,7 @@ export const MOD_PROXY_SERVICE: Service = `${MOD_PROXY_DID || api.moderation.did
  * the notification service (replaces the old
  * `BLUESKY_NOTIF_SERVICE_HEADERS`).
  */
-export const NOTIF_SERVICE: Service = `${BLUESKY_PROXY_DID}#bsky_notif`
+export const NOTIF_SERVICE: Service = `${PUSH_GATEWAY_DID || BLUESKY_PROXY_DID}#bsky_notif`
 
 export const webLinks = {
   tos: `https://bsky.social/about/support/tos`,

@@ -3,7 +3,7 @@ import {ActivityAction, startActivityAsync} from 'expo-intent-launcher'
 
 import {openLinkSettings} from './openSettings'
 
-jest.mock('expo-application', () => ({applicationId: 'am.noz.blueskyplus'}))
+jest.mock('expo-application', () => ({applicationId: 'am.noz.caelum'}))
 jest.mock('expo-intent-launcher', () => ({
   ActivityAction: {
     APP_OPEN_BY_DEFAULT_SETTINGS:
@@ -25,7 +25,7 @@ it('opens link preferences for our installed package', async () => {
   await openLinkSettings()
   expect(startActivityAsync).toHaveBeenCalledWith(
     ActivityAction.APP_OPEN_BY_DEFAULT_SETTINGS,
-    {data: 'package:am.noz.blueskyplus'},
+    {data: 'package:am.noz.caelum'},
   )
   expect(Linking.openSettings).not.toHaveBeenCalled()
 })

@@ -27,6 +27,10 @@ exporting. The generator validates this contract. No tracing tool is required
 to regenerate the app assets; the checked-in SVG files are the masters. A name
 change also needs a matching replacement wordmark SVG.
 
+The default launcher PNGs are 1024x1024. Larger exports are generated beside
+these files as `icon-<variant>-2048.png` and `icon-<variant>-4096.png` for purple,
+dark, light and black. They are rendered directly from SVG at the target size.
+
 PNG launcher icons have opaque backgrounds and no baked-in corner mask. Android
 applies its launcher mask; the separate adaptive foreground stays within its
 safe area. Purple, dark, light monochrome and dark monochrome are selectable in
@@ -44,10 +48,11 @@ EXPO_PUBLIC_ENV=production pnpm branding:prebuild:android
 The explicit `--no-clean` matters: Expo 58 otherwise clears the native directory
 before regeneration. Keep signing material backed up separately.
 
-The install identity (`am.noz.blueskyplus`) and URL scheme (`blueskyplus`) are
-independent of the display name. Keeping them stable preserves updates and
-existing links. Bluesky service names, network addresses and upstream notices
-are separate from this brand. Custom Witchsky theme colors still override the
+The Android install identity is `am.noz.caelum`; the URL scheme remains
+`blueskyplus`. This is a separate install from the legacy `am.noz.blueskyplus`
+package, so its app data does not migrate automatically. Keep package and URL
+scheme changes separate from display-name or artwork changes. Bluesky service
+names, network addresses and upstream notices are separate from this brand. Custom Witchsky theme colors still override the
 default palette. The default upstream build retains its original branding.
 
 Source artwork was provided by the project owner; the “02 / Gust” heading and

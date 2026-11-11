@@ -231,6 +231,13 @@ for (const [name, background, foreground] of [
   )
   await emit(`icon-${name}.svg`, content)
   await png(`icon-${name}.png`, content, 1024, background)
+  for (const size of [2048, 4096]) {
+    const scaled = content.replace(
+      '<svg ',
+      `<svg width="${size}" height="${size}" `,
+    )
+    await png(`icon-${name}-${size}.png`, scaled, size, background)
+  }
 }
 await png(
   'adaptive-foreground.png',

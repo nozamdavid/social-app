@@ -120,7 +120,7 @@ export const SENTRY_DSN: string | undefined = IS_BLUESKY_PLUS
  * name. Source map uploads must use the same name, see `SENTRY_RELEASE` in
  * the CI workflows, `Dockerfile` and `scripts/post-web-build.js`.
  */
-export const SENTRY_RELEASE = `${IS_BLUESKY_PLUS ? 'am.noz.blueskyplus' : 'xyz.blueskyweb.app'}@${RELEASE_VERSION}`
+export const SENTRY_RELEASE = `${IS_BLUESKY_PLUS ? 'am.noz.caelum' : 'xyz.blueskyweb.app'}@${RELEASE_VERSION}`
 
 /**
  * Bitdrift API key. If undefined, Bitdrift should be disabled.
@@ -167,3 +167,7 @@ export const APP_CONFIG_PROD_URL = `https://app-config.workers.bsky.app`
 export const APP_CONFIG_URL = IS_DEV
   ? (APP_CONFIG_DEV_URL ?? APP_CONFIG_PROD_URL)
   : APP_CONFIG_PROD_URL
+
+/** Public HTTPS did:web identity of Caelum's optional social push gateway. */
+export const PUSH_GATEWAY_DID = process.env.EXPO_PUBLIC_PUSH_GATEWAY_DID as
+  `did:web:${string}` | undefined
