@@ -1,6 +1,7 @@
 import {type StyleProp, StyleSheet, type TextStyle} from 'react-native'
 
-import {IS_WEB} from '#/env'
+import brandPalette from '#/../assets/branding/caelum/generated/palette.json'
+import {IS_BLUESKY_PLUS, IS_WEB} from '#/env'
 import {type Theme, type TypographyVariant} from './ThemeContext'
 
 // 1 is lightest, 2 is light, 3 is mid, 4 is dark, 5 is darkest
@@ -20,14 +21,14 @@ export const colors = {
   gray7: '#26272D',
   gray8: '#141417',
 
-  blue0: '#bfe1ff',
-  blue1: '#8bc7fd',
-  blue2: '#52acfe',
-  blue3: '#0085ff',
-  blue4: '#0062bd',
-  blue5: '#034581',
-  blue6: '#012561',
-  blue7: '#001040',
+  blue0: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_100 : '#bfe1ff',
+  blue1: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_200 : '#8bc7fd',
+  blue2: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_300 : '#52acfe',
+  blue3: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_500 : '#0085ff',
+  blue4: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_600 : '#0062bd',
+  blue5: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_800 : '#034581',
+  blue6: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_900 : '#012561',
+  blue7: IS_BLUESKY_PLUS ? brandPalette.defaultPalette.primary_975 : '#001040',
 
   red1: '#ffe6eb',
   red2: '#fba2b2',

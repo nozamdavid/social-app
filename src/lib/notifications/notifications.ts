@@ -16,7 +16,7 @@ import {isNetworkError} from '#/lib/strings/errors'
 import {type SessionAccount, usePdsClient, useSession} from '#/state/session'
 import {useAgeAssurance} from '#/ageAssurance'
 import {useAnalytics} from '#/analytics'
-import {IS_DEV, IS_NATIVE} from '#/env'
+import {IS_BLUESKY_PLUS, IS_DEV, IS_NATIVE} from '#/env'
 import {app} from '#/lexicons'
 
 /**
@@ -49,6 +49,7 @@ async function _registerPushToken({
     ageRestricted?: boolean
   }
 }) {
+  if (IS_BLUESKY_PLUS) return
   try {
     const payload: app.bsky.notification.registerPush.$InputBody = {
       serviceDid: currentAccount.service?.includes('staging')
@@ -157,7 +158,7 @@ export function useGetAndRegisterPushToken() {
     }: {
       isAgeRestricted?: boolean
     } = {}) => {
-      if (!IS_NATIVE || IS_DEV) return
+      if (!IS_NATIVE || IS_DEV || IS_BLUESKY_PLUS) return
 
       /**
        * This will also fire the listener added via `addPushTokenListener`. That
@@ -205,7 +206,7 @@ export function useNotificationsRegistration() {
      * We want this to init right away _after_ we have a logged in user, and
      * _after_ we've loaded their age assurance state.
      */
-    if (!currentAccount) return
+    if (!currentAccount || IS_BLUESKY_PLUS) return
 
     notyLogger.debug(`useNotificationsRegistration`)
 
@@ -259,6 +260,7 @@ export function useRequestNotificationsPermission() {
   return async (
     context: 'StartOnboarding' | 'AfterOnboarding' | 'Login' | 'Home',
   ) => {
+    if (IS_BLUESKY_PLUS) return
     const permissions = await Notifications.getPermissionsAsync()
 
     if (
@@ -345,7 +347,7 @@ export async function resetBadgeCount() {
 }
 
 export async function unregisterPushToken(clients: TemporaryPushClient[]) {
-  if (!IS_NATIVE) return
+  if (!IS_NATIVE || IS_BLUESKY_PLUS) return
 
   try {
     const token = await getPushToken()

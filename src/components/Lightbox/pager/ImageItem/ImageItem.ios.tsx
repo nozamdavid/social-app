@@ -28,7 +28,6 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
 import {scheduleOnRN} from 'react-native-worklets'
-import {Image} from 'expo-image'
 import {
   ScrollEdgeEffect,
   ScrollEdgeEffectProvider,
@@ -37,6 +36,7 @@ import {
 
 import {mergeRefs} from '#/lib/merge-refs'
 import {atoms as a} from '#/alf'
+import {Image} from '#/components/Image'
 import {IS_LIQUID_GLASS} from '#/env'
 import {
   type Dimensions as ImageDimensions,

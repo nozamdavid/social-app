@@ -1,16 +1,17 @@
 import {useEffect, useEffectEvent, useState} from 'react'
 import {Pressable, View} from 'react-native'
-import {ImageBackground} from 'expo-image'
 import {Trans, useLingui} from '@lingui/react/macro'
 import * as FocusGuards from '@radix-ui/react-focus-guards'
 import * as FocusScope from '@radix-ui/react-focus-scope'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {useLoggedOutViewControls} from '#/state/shell/logged-out'
 import {Logo} from '#/view/icons/Logo'
 import {atoms as a, flatten, useBreakpoints, web} from '#/alf'
 import {Button, ButtonText} from '#/components/Button'
 import {type WelcomeModalControl} from '#/components/hooks/useWelcomeModal.shared'
 import {TimesLarge_Stroke2_Corner0_Rounded as XIcon} from '#/components/icons/Times'
+import {ImageBackground} from '#/components/Image'
 import {Text} from '#/components/Typography'
 import {useAnalytics} from '#/analytics'
 
@@ -114,7 +115,7 @@ export function WelcomeModal({control}: WelcomeModalProps) {
                       a.user_select_none,
                       {color: '#354358', letterSpacing: -0.5},
                     ]}>
-                    Bluesky
+                    {APP_NAME}
                   </Text>
                 </View>
               </View>

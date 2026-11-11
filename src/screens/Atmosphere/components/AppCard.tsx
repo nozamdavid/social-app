@@ -1,11 +1,11 @@
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {useLingui} from '@lingui/react/macro'
 
 import {toNiceDomain} from '#/lib/strings/url-helpers'
 import {useModerationOpts} from '#/state/preferences/moderation-opts'
 import {type AtmosphereAppCardData} from '#/screens/Atmosphere/data/exploreData'
 import {atoms as a, tokens, useTheme} from '#/alf'
+import {Image} from '#/components/Image'
 import {
   KnownFollowers,
   shouldShowKnownFollowers,

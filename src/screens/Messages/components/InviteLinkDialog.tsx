@@ -1,6 +1,5 @@
 import {useState} from 'react'
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {moderateProfile, type ModerationOpts} from '@bsky/sdk/moderation'
 import {Plural, Trans, useLingui} from '@lingui/react/macro'
 
@@ -29,6 +28,7 @@ import {ArrowRight_Stroke2_Corner0_Rounded as ArrowRightIcon} from '#/components
 import {ArrowShareRight_Stroke2_Corner2_Rounded as ArrowShareRightIcon} from '#/components/icons/ArrowShareRight'
 import {ChainLinkBroken_Stroke2_Corner0_Rounded as ChainLinkBrokenIcon} from '#/components/icons/ChainLink'
 import {EditBig_Stroke2_Corner2_Rounded as EditIcon} from '#/components/icons/EditBig'
+import {Image} from '#/components/Image'
 import {Loader} from '#/components/Loader'
 import * as Toast from '#/components/Toast'
 import {Text} from '#/components/Typography'

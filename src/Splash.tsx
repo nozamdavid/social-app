@@ -15,11 +15,13 @@ import Animated, {
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import Svg, {Path, type SvgProps} from 'react-native-svg'
 import {scheduleOnRN} from 'react-native-worklets'
-import {Image} from 'expo-image'
 import * as SplashScreen from 'expo-splash-screen'
 
 import {Logotype} from '#/view/icons/Logotype'
 import {atoms as a, useBreakpoints} from '#/alf'
+import {BrandSplash} from '#/components/branding/BrandSplash'
+import {Image} from '#/components/Image'
+import {IS_BLUESKY_PLUS} from '#/env'
 // @ts-expect-error
 import splashImagePointer from '../assets/splash/splash.png'
 // @ts-expect-error
@@ -53,6 +55,14 @@ type Props = {
 }
 
 export function Splash(props: React.PropsWithChildren<Props>) {
+  return IS_BLUESKY_PLUS ? (
+    <BrandSplash {...props} />
+  ) : (
+    <LegacySplash {...props} />
+  )
+}
+
+function LegacySplash(props: React.PropsWithChildren<Props>) {
   'use no memo'
   const insets = useSafeAreaInsets()
   const {gtMobile} = useBreakpoints()

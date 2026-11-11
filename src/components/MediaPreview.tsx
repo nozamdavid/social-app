@@ -1,5 +1,4 @@
 import {type StyleProp, StyleSheet, View, type ViewStyle} from 'react-native'
-import {Image} from 'expo-image'
 import {Trans, useLingui} from '@lingui/react/macro'
 
 import {shareImageModal} from '#/lib/media/manip'
@@ -8,6 +7,7 @@ import {isGifEmbed} from '#/lib/strings/embed-player'
 import {atoms as a, tokens, useTheme} from '#/alf'
 import {ArrowShareRight_Stroke2_Corner2_Rounded as ShareIcon} from '#/components/icons/ArrowShareRight'
 import {Download_Stroke2_Corner0_Rounded as DownloadIcon} from '#/components/icons/Download'
+import {Image} from '#/components/Image'
 import {MediaInsetBorder} from '#/components/MediaInsetBorder'
 import * as PeekMenu from '#/components/PeekMenu'
 import {Text} from '#/components/Typography'

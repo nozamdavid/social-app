@@ -47,7 +47,6 @@ import {
 } from 'react-native-safe-area-context'
 import {captureRef} from 'react-native-view-shot'
 import {scheduleOnRN} from 'react-native-worklets'
-import {Image, type ImageErrorEventData} from 'expo-image'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
 import {useIsFocused} from '@react-navigation/native'
@@ -76,6 +75,7 @@ import {
   type TriggerProps,
 } from '#/components/ContextMenu/types'
 import {useInteractionState} from '#/components/hooks/useInteractionState'
+import {Image, type ImageErrorEventData} from '#/components/Image'
 import {createPortalGroup} from '#/components/Portal'
 import {Text} from '#/components/Typography'
 import {IS_ANDROID, IS_IOS, IS_IPAD} from '#/env'

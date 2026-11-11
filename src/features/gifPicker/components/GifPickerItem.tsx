@@ -1,8 +1,8 @@
-import {Image} from 'expo-image'
 import {useLingui} from '@lingui/react/macro'
 
 import {atoms as a, useTheme} from '#/alf'
 import {Button} from '#/components/Button'
+import {Image} from '#/components/Image'
 import {useAnalytics} from '#/analytics'
 import {type Gif} from '#/features/gifPicker/types'
 import {gifPreviewUrl} from '#/features/gifPicker/utils'

@@ -2,11 +2,11 @@ import {useEffect, useRef, useState} from 'react'
 import {View} from 'react-native'
 import PagerView from 'react-native-pager-view'
 import {type PagerViewOnPageSelectedEvent} from 'react-native-pager-view'
-import {Image} from 'expo-image'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
 
 import {atoms as a, tokens, useTheme} from '#/alf'
+import {Image} from '#/components/Image'
 import {Text} from '#/components/Typography'
 import {PROP_1, PROP_2, PROP_3} from './images'
 import {

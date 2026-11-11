@@ -1,6 +1,5 @@
 import {useState} from 'react'
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {Trans} from '@lingui/react/macro'
 
 import {type LinkMeta} from '#/lib/link-meta/link-meta'
@@ -9,6 +8,7 @@ import {LoadingPlaceholder} from '#/view/com/util/LoadingPlaceholder'
 import {atoms as a, useTheme} from '#/alf'
 import {Globe_Stroke2_Corner0_Rounded as GlobeIcon} from '#/components/icons/Globe'
 import {Image_Stroke2_Corner2_Rounded as ImageIcon} from '#/components/icons/Image'
+import {Image} from '#/components/Image'
 import {Text} from '#/components/Typography'
 
 export function LinkPreview({

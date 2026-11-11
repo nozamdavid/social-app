@@ -1,5 +1,4 @@
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {moderateProfile} from '@bsky/sdk/moderation'
 import {plural} from '@lingui/core/macro'
 import {Trans, useLingui} from '@lingui/react/macro'
@@ -12,6 +11,7 @@ import {type AtmosphereLivestreamCardData} from '#/screens/Atmosphere/data/explo
 import {atoms as a, useTheme} from '#/alf'
 import {Eye_Stroke2_Corner0_Rounded as EyeIcon} from '#/components/icons/Eye'
 import {Play_Filled_Corner2_Rounded as PlayIcon} from '#/components/icons/Play'
+import {Image} from '#/components/Image'
 import {Link} from '#/components/Link'
 import {Text} from '#/components/Typography'
 import {type ExploreGalleryFocusProps} from './ExploreGallery'

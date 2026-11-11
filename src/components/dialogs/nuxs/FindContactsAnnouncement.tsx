@@ -1,6 +1,5 @@
 import {useCallback} from 'react'
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {LinearGradient} from 'expo-linear-gradient'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
@@ -15,6 +14,7 @@ import {
   createIsEnabledCheck,
   isExistingUserAsOf,
 } from '#/components/dialogs/nuxs/utils'
+import {Image} from '#/components/Image'
 import {Text} from '#/components/Typography'
 import {useAnalytics} from '#/analytics'
 import {IS_E2E, IS_NATIVE, IS_WEB} from '#/env'

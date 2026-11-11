@@ -12,6 +12,7 @@ import {Trans} from '@lingui/react/macro'
 import {useMutation, useQueryClient} from '@tanstack/react-query'
 
 import {uploadBlob} from '#/lib/api'
+import {APP_NAME} from '#/lib/app-brand'
 import {cleanError, isNetworkError} from '#/lib/strings/errors'
 import {matchXrpcError} from '#/lib/xrpc-error'
 import {logger} from '#/logger'
@@ -313,7 +314,7 @@ class PermissionDeniedError extends Error {
 function showPermissionDeniedAlert() {
   Alert.alert(
     t`You've denied access to your contacts`,
-    t`You'll need to go to the System Settings for Bluesky and give permission if you want to use this feature.`,
+    t`You'll need to go to the System Settings for ${APP_NAME} and give permission if you want to use this feature.`,
     [
       {
         text: t`OK`,

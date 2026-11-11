@@ -5,13 +5,16 @@ import {type ThemeName} from '@bsky.app/alf'
 import {useThemePrefs} from '#/state/shell'
 import {dark, dim, light} from '#/alf/themes'
 import {IS_WEB} from '#/env'
+import {useWitchskyThemeSelection} from '#/features/witchskyThemes/preferences'
 
 export function useColorModeTheme(): ThemeName {
   const theme = useThemeName()
+  const [selection] = useWitchskyThemeSelection()
+  const canvas = selection?.colors.canvas
 
   useLayoutEffect(() => {
-    updateDocument(theme)
-  }, [theme])
+    updateDocument(theme, canvas)
+  }, [theme, canvas])
 
   return theme
 }
@@ -19,8 +22,9 @@ export function useColorModeTheme(): ThemeName {
 export function useThemeName(): ThemeName {
   const colorScheme = useColorScheme()
   const {colorMode, darkTheme} = useThemePrefs()
+  const [selection] = useWitchskyThemeSelection()
 
-  return getThemeName(colorScheme, colorMode, darkTheme)
+  return selection?.mode ?? getThemeName(colorScheme, colorMode, darkTheme)
 }
 
 function getThemeName(
@@ -38,7 +42,7 @@ function getThemeName(
   }
 }
 
-function updateDocument(theme: ThemeName) {
+function updateDocument(theme: ThemeName, canvas?: string) {
   if (IS_WEB && typeof window !== 'undefined') {
     const html = window.document.documentElement
     const meta = window.document.querySelector('meta[name="theme-color"]')
@@ -47,7 +51,7 @@ function updateDocument(theme: ThemeName) {
     html.className = html.className.replace(/(theme)--\w+/g, '')
     html.classList.add(`theme--${theme}`)
     // set color to 'theme-color' meta tag
-    meta?.setAttribute('content', getBackgroundColor(theme))
+    meta?.setAttribute('content', canvas ?? getBackgroundColor(theme))
     window.localStorage.setItem('ALF_THEME', theme)
   }
 }

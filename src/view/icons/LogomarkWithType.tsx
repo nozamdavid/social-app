@@ -1,6 +1,9 @@
-import Svg, {Path, type PathProps, type SvgProps} from 'react-native-svg'
+import Svg, {G, Path, type PathProps, type SvgProps} from 'react-native-svg'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {useTheme} from '#/alf'
+import artwork from '#/../assets/branding/caelum/generated/artwork.json'
+import {IS_BLUESKY_PLUS} from '#/env'
 
 const ratio = 17 / 64
 
@@ -10,6 +13,35 @@ export function LogomarkWithType({
 }: {fill?: PathProps['fill']} & SvgProps) {
   const t = useTheme()
   const size = parseInt(`${rest.width || 32}`)
+
+  if (IS_BLUESKY_PLUS) {
+    const markWidth = 37
+    const textWidth = 87
+    const markScale = markWidth / artwork.mark.width
+    const textScale = textWidth / artwork.wordmark.width
+    return (
+      <Svg
+        accessibilityLabel={APP_NAME}
+        accessibilityHint=""
+        {...rest}
+        viewBox="0 0 136 31"
+        width={size}
+        height={size * ratio}>
+        <G
+          transform={`translate(0 ${(31 - artwork.mark.height * markScale) / 2}) scale(${markScale})`}>
+          {artwork.mark.paths.map((d, i) => (
+            <Path key={i} d={d} fill={fill || t.atoms.text.color} />
+          ))}
+        </G>
+        <G
+          transform={`translate(49 ${(31 - artwork.wordmark.height * textScale) / 2}) scale(${textScale})`}>
+          {artwork.wordmark.paths.map((d, i) => (
+            <Path key={i} d={d} fill={fill || t.atoms.text.color} />
+          ))}
+        </G>
+      </Svg>
+    )
+  }
 
   return (
     <Svg

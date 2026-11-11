@@ -401,7 +401,9 @@ export function Checkbox() {
         baseStyles,
         hovered ? baseHoverStyles : {},
       ]}>
-      {selected && <Checkmark width={14} fill={t.palette.white} />}
+      {selected && (
+        <Checkmark width={14} fill={t.onAccent ?? t.palette.white} />
+      )}
     </View>
   )
 }
@@ -567,7 +569,7 @@ export function BaseRadio({
             a.absolute,
             a.rounded_full,
             {height: 12, width: 12},
-            {backgroundColor: t.palette.white},
+            {backgroundColor: t.onAccent ?? t.palette.white},
             indicatorStyles,
           ]}
         />

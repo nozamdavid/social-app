@@ -1,5 +1,4 @@
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {moderateProfile} from '@bsky/sdk/moderation'
 import {useLingui} from '@lingui/react/macro'
 
@@ -12,6 +11,7 @@ import {type AtmospherePhotoCardData} from '#/screens/Atmosphere/data/exploreDat
 import {atoms as a, useTheme, web} from '#/alf'
 import {useInteractionState} from '#/components/hooks/useInteractionState'
 import {Heart2_Stroke2_Corner0_Rounded as Heart} from '#/components/icons/Heart2'
+import {Image} from '#/components/Image'
 import {Link} from '#/components/Link'
 import {Text} from '#/components/Typography'
 import {type ExploreGalleryFocusProps} from './ExploreGallery'

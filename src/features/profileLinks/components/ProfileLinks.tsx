@@ -10,6 +10,7 @@ import {plural} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react/macro'
 import {useFocusEffect} from '@react-navigation/native'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {useHaptics} from '#/lib/haptics'
 import {useSession} from '#/state/session'
 import {atoms as a, useTheme} from '#/alf'
@@ -158,7 +159,7 @@ function ProfileLinksRow({
             did={profile.did}
             arrow
             opensLink
-            hint={l`Opens ${getLinkHost(link.url)} outside Bluesky`}
+            hint={l`Opens ${getLinkHost(link.url)} outside ${APP_NAME}`}
             onPress={() => {
               playTapHaptic()
               logClick(link)

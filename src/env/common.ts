@@ -31,6 +31,10 @@ export const IS_DEV = __DEV__
  */
 export const IS_E2E = ENV === 'e2e'
 
+/** Independent Android client; its release services are configured separately. */
+export const IS_BLUESKY_PLUS =
+  process.env.EXPO_PUBLIC_APP_VARIANT === 'bluesky-plus'
+
 /**
  * Indicates whether the app is `__DEV__` or TestFlight
  */
@@ -104,7 +108,9 @@ export const GROWTHBOOK_CLIENT_KEY: string =
 /**
  * Sentry DSN for telemetry
  */
-export const SENTRY_DSN: string | undefined = process.env.EXPO_PUBLIC_SENTRY_DSN
+export const SENTRY_DSN: string | undefined = IS_BLUESKY_PLUS
+  ? process.env.EXPO_PUBLIC_BLUESKY_PLUS_SENTRY_DSN
+  : process.env.EXPO_PUBLIC_SENTRY_DSN
 
 /**
  * Sentry release name. Sentry only compares releases by version when they're
@@ -114,20 +120,21 @@ export const SENTRY_DSN: string | undefined = process.env.EXPO_PUBLIC_SENTRY_DSN
  * name. Source map uploads must use the same name, see `SENTRY_RELEASE` in
  * the CI workflows, `Dockerfile` and `scripts/post-web-build.js`.
  */
-export const SENTRY_RELEASE = `xyz.blueskyweb.app@${RELEASE_VERSION}`
+export const SENTRY_RELEASE = `${IS_BLUESKY_PLUS ? 'am.noz.blueskyplus' : 'xyz.blueskyweb.app'}@${RELEASE_VERSION}`
 
 /**
  * Bitdrift API key. If undefined, Bitdrift should be disabled.
  */
-export const BITDRIFT_API_KEY: string | undefined =
-  process.env.EXPO_PUBLIC_BITDRIFT_API_KEY
+export const BITDRIFT_API_KEY: string | undefined = IS_BLUESKY_PLUS
+  ? undefined
+  : process.env.EXPO_PUBLIC_BITDRIFT_API_KEY
 
 /**
  * GCP project ID which is required for native device attestation. On web, this
  * should be unset and evaluate to 0.
  */
 export const GCP_PROJECT_ID: number =
-  process.env.EXPO_PUBLIC_GCP_PROJECT_ID === undefined
+  IS_BLUESKY_PLUS || process.env.EXPO_PUBLIC_GCP_PROJECT_ID === undefined
     ? 0
     : Number(process.env.EXPO_PUBLIC_GCP_PROJECT_ID)
 

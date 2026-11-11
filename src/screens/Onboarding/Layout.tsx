@@ -11,6 +11,7 @@ import {ScrollView, useWindowDimensions, View} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {Trans, useLingui} from '@lingui/react/macro'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {useOnboardingDispatch} from '#/state/shell'
 import {useOnboardingInternalState} from '#/screens/Onboarding/state'
 import {
@@ -123,7 +124,7 @@ export function Layout({children}: React.PropsWithChildren<{}>) {
       aria-role="dialog"
       aria-label={dialogLabel}
       accessibilityLabel={dialogLabel}
-      accessibilityHint={l`Customizes your Bluesky experience`}
+      accessibilityHint={l`Customizes your ${APP_NAME} experience`}
       style={[IS_WEB ? a.fixed : a.absolute, a.inset_0, a.flex_1, t.atoms.bg]}>
       {!gtMobile ? (
         <View

@@ -10,6 +10,7 @@ import '@formatjs/intl-displaynames/locale-data/en.js'
 
 import {useEffect, useState} from 'react'
 import {i18n} from '@lingui/core'
+import {compileMessage} from '@lingui/message-utils/compileMessage'
 import {enUS as defaultLocale} from 'date-fns/locale/en-US'
 
 import {sanitizeAppLanguageSetting} from '#/locale/helpers'
@@ -57,6 +58,16 @@ import {messages as messagesZh_CN} from '#/locale/locales/zh-CN/messages'
 import {messages as messagesZh_HK} from '#/locale/locales/zh-HK/messages'
 import {messages as messagesZh_TW} from '#/locale/locales/zh-TW/messages'
 import {useLanguagePrefs} from '#/state/preferences'
+import {IS_BLUESKY_PLUS} from '#/env'
+
+/*
+ * Keep new fork strings readable until translation CI updates the catalogs.
+ * The Babel macro retains source messages for this variant; the compiler also
+ * handles their ICU placeholders and plurals in production builds.
+ */
+if (IS_BLUESKY_PLUS) {
+  i18n.setMessagesCompiler(compileMessage)
+}
 
 /**
  * We do a dynamic import of just the catalog that we need

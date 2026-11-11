@@ -1,7 +1,6 @@
 import {Platform} from 'react-native'
 import {setStringAsync} from 'expo-clipboard'
 import * as FileSystem from 'expo-file-system/legacy'
-import {Image} from 'expo-image'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
 import {Trans} from '@lingui/react/macro'
@@ -19,6 +18,7 @@ import {CodeLines_Stroke2_Corner2_Rounded as CodeLinesIcon} from '#/components/i
 import {Globe_Stroke2_Corner0_Rounded as GlobeIcon} from '#/components/icons/Globe'
 import {Newspaper_Stroke2_Corner2_Rounded as NewspaperIcon} from '#/components/icons/Newspaper'
 import {Wrench_Stroke2_Corner2_Rounded as WrenchIcon} from '#/components/icons/Wrench'
+import {Image} from '#/components/Image'
 import * as Layout from '#/components/Layout'
 import {Loader} from '#/components/Loader'
 import * as Prompt from '#/components/Prompt'
@@ -114,6 +114,17 @@ export function AboutSettingsScreen({}: Props) {
             </SettingsList.ItemText>
           </SettingsList.LinkItem>
           <SettingsList.Divider />
+          {env.IS_BLUESKY_PLUS && (
+            <SettingsList.LinkItem
+              to="/settings/about/emoji-credits"
+              label={_(msg`Emoji suggestion credits`)}
+              testID="emojiCreditsLink">
+              <SettingsList.ItemIcon icon={CodeLinesIcon} />
+              <SettingsList.ItemText>
+                <Trans>Emoji suggestion credits</Trans>
+              </SettingsList.ItemText>
+            </SettingsList.LinkItem>
+          )}
           <SettingsList.LinkItem to="/sys/log" label={_(msg`System log`)}>
             <SettingsList.ItemIcon icon={CodeLinesIcon} />
             <SettingsList.ItemText>

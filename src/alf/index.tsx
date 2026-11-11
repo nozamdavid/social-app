@@ -1,5 +1,9 @@
 import {createContext, useCallback, useContext, useMemo, useState} from 'react'
-import {type Theme, type ThemeName, utils as baseUtils} from '@bsky.app/alf'
+import {
+  type Theme as BaseTheme,
+  type ThemeName,
+  utils as baseUtils,
+} from '@bsky.app/alf'
 
 import {
   computeFontScaleMultiplier,
@@ -17,7 +21,13 @@ import {
 } from '#/alf/util/colorGeneration'
 import {type Device} from '#/storage'
 
-export {type TextStyleProp, type Theme, type ViewStyleProp} from '@bsky.app/alf'
+export {type TextStyleProp, type ViewStyleProp} from '@bsky.app/alf'
+export type Theme = BaseTheme & {
+  /** Content on a custom primary-action background. */
+  onAccent?: string
+  /** Custom elevated sheet and menu background. */
+  surfaceRaised?: string
+}
 export {atoms} from '#/alf/atoms'
 export * from '#/alf/breakpoints'
 export * from '#/alf/fonts'
@@ -137,7 +147,7 @@ export function useAlf() {
   return useContext(Context)
 }
 
-export function useTheme(theme?: ThemeName) {
+export function useTheme(theme?: ThemeName): Theme {
   const alf = useAlf()
   return useMemo(() => {
     return theme ? alf.themes[theme] : alf.theme

@@ -1,11 +1,11 @@
 import {useState} from 'react'
 import {type StyleProp, View, type ViewStyle} from 'react-native'
-import {Image} from 'expo-image'
 import {getBlobCidString} from '@atproto/lex'
 
 import {atoms as a} from '#/alf'
 import {ButtonIcon} from '#/components/Button'
 import {Globe_Stroke2_Corner0_Rounded as GlobeIcon} from '#/components/icons/Globe'
+import {Image} from '#/components/Image'
 import {type ProfileLink} from '../types'
 
 /**

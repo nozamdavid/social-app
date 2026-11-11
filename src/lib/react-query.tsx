@@ -22,6 +22,8 @@ import {
   loadFollowingSnapshot,
   saveFollowingSnapshot,
 } from '#/features/followingV2/home/queries/followingSnapshot'
+import {appviewCacheBuster} from '#/features/infrastructure/config'
+import {useInfrastructureSettings} from '#/features/infrastructure/preferences'
 
 declare global {
   interface Window {
@@ -158,12 +160,13 @@ export function QueryProvider({
   children: React.ReactNode
   currentDid: string | undefined
 }) {
+  const {appviewHostname} = useInfrastructureSettings()
   return (
     <QueryProviderInner
-      // Enforce we never reuse cache between users.
-      // These two props MUST stay in sync.
-      key={currentDid}
-      currentDid={currentDid}>
+      // A fresh client prevents reusing results across accounts or AppViews.
+      key={`${currentDid}:${appviewHostname}`}
+      currentDid={currentDid}
+      appviewHostname={appviewHostname}>
       {children}
     </QueryProviderInner>
   )
@@ -172,9 +175,11 @@ export function QueryProvider({
 function QueryProviderInner({
   children,
   currentDid,
+  appviewHostname,
 }: {
   children: React.ReactNode
   currentDid: string | undefined
+  appviewHostname: string
 }) {
   const [initialDid] = useState(currentDid)
   if (currentDid !== initialDid) {
@@ -197,7 +202,7 @@ function QueryProviderInner({
     return {
       persister: asyncPersister,
       dehydrateOptions,
-      buster: env.APP_VERSION,
+      buster: appviewCacheBuster(env.APP_VERSION, appviewHostname),
     } satisfies Omit<PersistQueryClientOptions, 'queryClient'>
   })
   useEffect(() => {

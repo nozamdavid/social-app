@@ -73,10 +73,13 @@ import {
 } from '#/analytics'
 import {getDeviceId} from '#/analytics/identifiers'
 import {useSessionActivity} from '#/analytics/useSessionActivity'
+import {InfrastructureProvider} from '#/features/infrastructure/preferences'
 import {
   prefetchLiveEvents,
   Provider as LiveEventsProvider,
 } from '#/features/liveEvents/context'
+import {useWitchskyThemeSelection} from '#/features/witchskyThemes/preferences'
+import {createWitchskyThemeOverrides} from '#/features/witchskyThemes/theme'
 import * as Geo from '#/geolocation'
 import {Splash} from '#/Splash'
 import {Provider as HideBottomBarBorderProvider} from './lib/hooks/useHideBottomBarBorder'
@@ -96,6 +99,8 @@ function InnerApp() {
   const {currentAccount} = useSession()
   const {resumeSession} = useSessionApi()
   const theme = useColorModeTheme()
+  const [witchskyTheme] = useWitchskyThemeSelection()
+  const themesOverride = createWitchskyThemeOverrides(witchskyTheme)
   const {t: l} = useLingui()
   const hasCheckedLanding = useLandingEntry()
 
@@ -126,8 +131,8 @@ function InnerApp() {
   }, [l])
 
   return (
-    <Alf theme={theme}>
-      <ThemeProvider theme={theme}>
+    <Alf theme={theme} themesOverride={themesOverride}>
+      <ThemeProvider theme={theme} colors={witchskyTheme?.colors}>
         <ContextMenuProvider>
           <Splash isReady={isReady && hasCheckedLanding}>
             <VideoVolumeProvider>
@@ -230,7 +235,9 @@ function App() {
                           <LightboxStateProvider>
                             <PortalProvider>
                               <LandingProvider>
-                                <InnerApp />
+                                <InfrastructureProvider>
+                                  <InnerApp />
+                                </InfrastructureProvider>
                               </LandingProvider>
                             </PortalProvider>
                           </LightboxStateProvider>

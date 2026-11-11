@@ -1,10 +1,10 @@
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {useLingui} from '@lingui/react/macro'
 
 import {type AtmosphereArticleCardData} from '#/screens/Atmosphere/data/exploreData'
 import {atoms as a, useTheme, web} from '#/alf'
 import {useInteractionState} from '#/components/hooks/useInteractionState'
+import {Image} from '#/components/Image'
 import {Link} from '#/components/Link'
 import {Text} from '#/components/Typography'
 import {IS_NATIVE} from '#/env'

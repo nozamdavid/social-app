@@ -43,6 +43,10 @@ jest.mock('#/view/com/util/UserAvatar', () => ({
     return <Text testID="logo">{avatar}</Text>
   },
 }))
+jest.mock('#/components/Image', () => ({
+  Image:
+    jest.requireActual<typeof import('react-native')>('react-native').Image,
+}))
 jest.mock('#/components/MediaInsetBorder', () => ({
   MediaInsetBorder: () => null,
 }))

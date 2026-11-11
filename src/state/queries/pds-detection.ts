@@ -8,11 +8,24 @@ import {useDebouncedValue} from '#/lib/hooks/useDebouncedValue'
 import {isNetworkError} from '#/lib/strings/errors'
 import {logger} from '#/logger'
 import {STALE} from '#/state/queries'
+import {createQueryKey} from '#/state/queries/util'
 import {getPublicAppviewClient} from '#/state/session/clients'
+import {plcDirectoryOrigin} from '#/features/infrastructure/config'
+import {
+  getInfrastructureSettings,
+  useInfrastructureSettings,
+} from '#/features/infrastructure/preferences'
 import {com} from '#/lexicons'
 
-const RQKEY_ROOT = 'pds-detection'
-export const RQKEY = (identifier: string) => [RQKEY_ROOT, identifier]
+const hostingProviderQueryKeyRoot = 'pds-detection'
+export const RQKEY = (
+  identifier: string,
+  plcDirectoryHostname = getInfrastructureSettings().plcDirectoryHostname,
+) =>
+  createQueryKey(hostingProviderQueryKeyRoot, {
+    identifier,
+    plcDirectoryHostname,
+  })
 
 /**
  * Normalize a login identifier for detection: lowercase, trim, and strip a
@@ -82,18 +95,22 @@ function isTransientHttpStatus(status: number): boolean {
  */
 async function resolveDidDoc(
   did: string,
+  plcDirectoryHostname: string,
   signal?: AbortSignal,
 ): Promise<DidDocument | null> {
   if (did.startsWith('did:plc:')) {
-    const res = await fetch(`https://plc.directory/${did}`, {signal})
+    const res = await fetch(
+      `${plcDirectoryOrigin(plcDirectoryHostname)}/${encodeURIComponent(did)}`,
+      {signal},
+    )
     if (!res.ok) {
-      logger.debug('pds-detection: plc.directory returned non-ok status', {
+      logger.debug('pds-detection: PLC directory returned non-ok status', {
         did,
         status: res.status,
       })
       if (isTransientHttpStatus(res.status)) {
         throw new Error(
-          `Network request failed: plc.directory returned ${res.status}`,
+          `Network request failed: PLC directory returned ${res.status}`,
         )
       }
       return null
@@ -147,6 +164,7 @@ async function resolveDidDoc(
  */
 export async function resolvePdsForIdentifier(
   identifier: string,
+  plcDirectoryHostname = getInfrastructureSettings().plcDirectoryHostname,
 ): Promise<{did: string; pdsUrl: string | null} | null> {
   const norm = normalizeIdentifier(identifier)
   /*
@@ -173,7 +191,9 @@ export async function resolvePdsForIdentifier(
       identifier: norm,
       did,
     })
-    const doc = await withResolveTimeout(signal => resolveDidDoc(did, signal))
+    const doc = await withResolveTimeout(signal =>
+      resolveDidDoc(did, plcDirectoryHostname, signal),
+    )
     logger.debug('pds-detection: resolved DID doc', {
       did,
       foundDoc: !!doc,
@@ -255,6 +275,7 @@ export function useHostingProvider({
   ) => Promise<{service: string; did: string | null}>
 } {
   const queryClient = useQueryClient()
+  const {plcDirectoryHostname} = useInfrastructureSettings()
   const [override, setOverride] = useState<string | null>(null)
 
   const normalized = normalizeIdentifier(identifier)
@@ -269,8 +290,8 @@ export function useHostingProvider({
 
   const query = useQuery({
     enabled,
-    queryKey: RQKEY(debounced),
-    queryFn: () => resolvePdsForIdentifier(debounced),
+    queryKey: RQKEY(debounced, plcDirectoryHostname),
+    queryFn: () => resolvePdsForIdentifier(debounced, plcDirectoryHostname),
     staleTime: STALE.MINUTES.FIVE,
   })
 
@@ -326,9 +347,10 @@ export function useHostingProvider({
        * to propagate so the caller can fail the login rather than silently
        * submit the password to the wrong server.
        */
+      const directory = getInfrastructureSettings().plcDirectoryHostname
       const resolved = await queryClient.ensureQueryData({
-        queryKey: RQKEY(norm),
-        queryFn: () => resolvePdsForIdentifier(norm),
+        queryKey: RQKEY(norm, directory),
+        queryFn: () => resolvePdsForIdentifier(norm, directory),
         staleTime: STALE.MINUTES.FIVE,
       })
       // The DID is known even when its doc declares no PDS endpoint.

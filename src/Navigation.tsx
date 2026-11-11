@@ -1,4 +1,4 @@
-import {type JSX, useCallback, useEffect, useRef} from 'react'
+import {type JSX, useCallback, useEffect, useRef, useState} from 'react'
 import * as Linking from 'expo-linking'
 import * as Notifications from 'expo-notifications'
 import {Referrer} from '@bsky.app/expo-bluesky-swiss-army'
@@ -130,9 +130,12 @@ import {AppPasswordsScreen} from '#/screens/Settings/AppPasswords'
 import {AutomationLabelSettingsScreen} from '#/screens/Settings/AutomationLabelSettings'
 import {BetaFeaturesSettingsScreen} from '#/screens/Settings/BetaFeaturesSettings'
 import {ContentAndMediaSettingsScreen} from '#/screens/Settings/ContentAndMediaSettings'
+import {CustomizationSettingsScreen} from '#/screens/Settings/CustomizationSettings'
+import {EmojiCreditsScreen} from '#/screens/Settings/EmojiCredits'
 import {ExternalMediaPreferencesScreen} from '#/screens/Settings/ExternalMediaPreferences'
 import {FindContactsSettingsScreen} from '#/screens/Settings/FindContactsSettings'
 import {FollowingFeedPreferencesScreen} from '#/screens/Settings/FollowingFeedPreferences'
+import {InfrastructureSettingsScreen} from '#/screens/Settings/InfrastructureSettings'
 import {InterestsSettingsScreen} from '#/screens/Settings/InterestsSettings'
 import {LanguageSettingsScreen} from '#/screens/Settings/LanguageSettings'
 import {LegacyNotificationSettingsScreen} from '#/screens/Settings/LegacyNotificationSettings'
@@ -157,10 +160,22 @@ import {useAnalytics} from '#/analytics'
 import {setNavigationMetadata} from '#/analytics/metadata'
 import {IS_LIQUID_GLASS, IS_NATIVE, IS_WEB} from '#/env'
 import {HomeScreen} from '#/features/followingV2/home'
+import {
+  clearPreservedAppviewNavigationState,
+  getPreservedAppviewNavigationState,
+  preserveAppviewNavigationState,
+} from '#/features/infrastructure/navigationState'
 import {InviteScannerScreen} from '#/features/inviteFriends'
 import {router} from '#/routes'
 
 const navigationRef = createNavigationContainerRef<RootNavigatorParams>()
+
+/** Keep the current settings stack when changing AppView replaces the query cache. */
+export function preserveNavigationForAppviewChange(did: string | undefined) {
+  if (navigationRef.isReady()) {
+    preserveAppviewNavigationState(did, navigationRef.getRootState())
+  }
+}
 
 const HomeTab = createNativeStackNavigatorWithAuth<HomeTabNavigatorParams>()
 const SearchTab = createNativeStackNavigatorWithAuth<SearchTabNavigatorParams>()
@@ -526,6 +541,24 @@ function commonScreens(Stack: typeof Flat, unreadCountLabel?: string) {
         getComponent={() => AboutSettingsScreen}
         options={{
           title: title(msg`About`),
+          requireAuth: true,
+        }}
+      />
+      <Stack.Screen
+        name="InfrastructureSettings"
+        getComponent={() => InfrastructureSettingsScreen}
+        options={{title: title(msg`Infrastructure`), requireAuth: true}}
+      />
+      <Stack.Screen
+        name="CustomizationSettings"
+        getComponent={() => CustomizationSettingsScreen}
+        options={{title: title(msg`Customization`), requireAuth: true}}
+      />
+      <Stack.Screen
+        name="EmojiCredits"
+        getComponent={() => EmojiCreditsScreen}
+        options={{
+          title: title(msg`Emoji suggestion credits`),
           requireAuth: true,
         }}
       />
@@ -957,6 +990,9 @@ function RoutesContainer({children}: React.PropsWithChildren<{}>) {
   const notyLogger = ax.logger.useChild(ax.logger.Context.Notifications)
   const theme = useColorSchemeStyle(DefaultTheme, DarkTheme)
   const {currentAccount, accounts} = useSession()
+  const [preservedNavigationState] = useState(() =>
+    getPreservedAppviewNavigationState(currentAccount?.did),
+  )
   const {onPressSwitchAccount} = useAccountSwitcher()
   const {setShowLoggedOut} = useLoggedOutViewControls()
   const previousScreen = useRef<string | undefined>(undefined)
@@ -1064,6 +1100,7 @@ function RoutesContainer({children}: React.PropsWithChildren<{}>) {
   }
 
   const onNavigationReady = useCallOnce(() => {
+    clearPreservedAppviewNavigationState()
     const currentScreen = getCurrentRouteName()
     setNavigationMetadata({
       previousScreen: currentScreen,
@@ -1108,6 +1145,7 @@ function RoutesContainer({children}: React.PropsWithChildren<{}>) {
   return (
     <NavigationContainer
       ref={navigationRef}
+      initialState={preservedNavigationState}
       linking={LINKING}
       theme={theme}
       onStateChange={() => {

@@ -1,6 +1,5 @@
 import {Fragment, useMemo} from 'react'
 import {Text as RNText} from 'react-native'
-import {Image} from 'expo-image'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
 
@@ -11,6 +10,7 @@ import {
 } from '#/lib/international-telephone-codes'
 import {regionName} from '#/locale/helpers'
 import {atoms as a, web} from '#/alf'
+import {Image} from '#/components/Image'
 import * as Select from '#/components/Select'
 import {IS_WEB} from '#/env'
 import {useGeolocation} from '#/geolocation'
