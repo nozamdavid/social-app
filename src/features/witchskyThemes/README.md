@@ -7,8 +7,31 @@ record with multiple variants reveals a Variant segmented control using the
 record's own variant names (such as Dim, Dark, or Light). Variant changes use the
 same immediate feedback and progress flow as theme changes. Existing saved
 variant IDs remain valid. Records are grouped by URI, so equal names do not
-merge unrelated themes. Controls with more than three variants scroll
-horizontally; single-variant themes do not show a variant selector. Refresh retries loading; Load more follows repository pagination.
+merge unrelated themes. Variant selectors fill their available width and share
+extra space between options. Every option preserves its label's intrinsic width;
+controls scroll horizontally when those widths exceed the viewport. The preview
+and Appearance settings use the same selector. Single-variant themes do not show
+a variant selector. Refresh retries
+loading; Load more appears only after looking ahead confirms another valid theme.
+Invalid-only pages and terminal cursors do not leave a redundant Load more button.
+
+**Add themes** opens a dialog with a handle input. Submitting resolves the account's
+PDS and reads its public theme collection without sending session credentials.
+Results reuse the picker's grouped names, variant counts, and color swatches. Each
+plus button copies the entire record, including variants, into the signed-in
+account with a fresh creation timestamp. A successful copy refreshes the saved
+themes query without selecting the imported theme. Pending and added rows prevent
+repeat taps; the account's own records show as already added. Lookup and copy
+failures remain in the dialog for retry.
+
+Each result also has an eye button. It opens a centered, inset **Theme preview**
+overlay above the import dialog. The scrollable sample uses the home feed's
+`PostFeedItem`, demo posts and images, logo/header components, real feed tabs, and
+bottom navigation styles. Header and post controls are read-only. Variant controls
+change only the preview's local ALF and legacy theme providers; they never write
+a theme selection or change the app outside the sample frame. The surrounding chrome
+stays in the active theme and the caption identifies the feed as sample content.
+Close, backdrop tap, and Android Back dismiss the preview and preserve the lookup.
 Default restores the existing system/light/dark and dim/dark preferences. Font
 preferences remain independent.
 

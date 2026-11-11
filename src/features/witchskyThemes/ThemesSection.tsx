@@ -1,4 +1,4 @@
-import {ScrollView, View} from 'react-native'
+import {View} from 'react-native'
 import {plural} from '@lingui/core/macro'
 import {Trans, useLingui} from '@lingui/react/macro'
 
@@ -7,11 +7,11 @@ import {useSession} from '#/state/session'
 import * as SettingsList from '#/screens/Settings/components/SettingsList'
 import {atoms as a, useTheme} from '#/alf'
 import {Button, ButtonText} from '#/components/Button'
-import * as SegmentedControl from '#/components/forms/SegmentedControl'
 import * as Toggle from '#/components/forms/Toggle'
 import {ColorPalette_Stroke2_Corner0_Rounded as PaletteIcon} from '#/components/icons/ColorPalette'
 import {Loader} from '#/components/Loader'
 import {Text} from '#/components/Typography'
+import {AddThemesDialog} from '#/features/witchskyThemes/AddThemesDialog'
 import {ApplyingThemeModal} from '#/features/witchskyThemes/ApplyingThemeModal'
 import {
   getThemeGroupOption,
@@ -19,6 +19,8 @@ import {
   type ThemeGroup,
 } from '#/features/witchskyThemes/groups'
 import {useWitchskyThemesQuery} from '#/features/witchskyThemes/queries'
+import {ThemePreview} from '#/features/witchskyThemes/ThemePreview'
+import {ThemeVariantSelector} from '#/features/witchskyThemes/ThemeVariantSelector'
 import {useThemeApplication} from '#/features/witchskyThemes/useThemeApplication'
 
 export function ThemesSection() {
@@ -110,36 +112,14 @@ export function ThemesSection() {
           <Text style={[a.text_md, a.font_semi_bold]}>
             <Trans>Variant</Trans>
           </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={[a.flex_grow]}
-            style={[a.w_full]}>
-            <SegmentedControl.Root
-              type="radio"
-              label={l`Theme variant`}
-              value={activeVariant.id}
-              onChange={onVariantChange}
-              style={
-                activeGroup.variants.length > 3
-                  ? {minWidth: activeGroup.variants.length * 112}
-                  : undefined
-              }>
-              {activeGroup.variants.map(variant => (
-                <SegmentedControl.Item
-                  key={variant.id}
-                  value={variant.id}
-                  label={variant.variantName}
-                  disabled={application.applying}
-                  testID={`witchsky-theme-variant-${variant.id}`}
-                  style={{minHeight: 48}}>
-                  <SegmentedControl.ItemText emoji>
-                    {variant.variantName}
-                  </SegmentedControl.ItemText>
-                </SegmentedControl.Item>
-              ))}
-            </SegmentedControl.Root>
-          </ScrollView>
+          <ThemeVariantSelector
+            variants={activeGroup.variants}
+            value={activeVariant.id}
+            onChange={onVariantChange}
+            label={l`Theme variant`}
+            disabled={application.applying}
+            testIDPrefix="witchsky-theme-variant-"
+          />
         </View>
       )}
       <ApplyingThemeModal
@@ -186,6 +166,7 @@ export function ThemesSection() {
       )}
       {hasSession && (
         <View style={[a.flex_row, a.flex_wrap, a.gap_sm]}>
+          <AddThemesDialog />
           <Button
             label={l`Refresh themes`}
             color="secondary"
@@ -230,8 +211,6 @@ function ThemeRow({
 }) {
   const theme = getThemeGroupOption(group, selectedId)
   const active = group.variants.some(variant => variant.id === selectedId)
-  const cached = group.cachedVariantId === theme.id
-  const t = useTheme()
   const {t: l} = useLingui()
   const mode = theme.mode === 'light' ? l`Light` : l`Dark`
   const name = group.name
@@ -248,37 +227,7 @@ function ThemeRow({
       testID={`witchsky-theme-${group.uri}`}
       style={[a.flex_row, a.align_center, a.gap_md, a.py_sm, {minHeight: 64}]}>
       <Toggle.Radio />
-      <View style={[a.flex_1, a.gap_2xs]}>
-        <Text emoji style={[a.text_md, a.font_semi_bold]}>
-          {name}
-        </Text>
-        <Text emoji style={t.atoms.text_contrast_medium}>
-          {details}
-        </Text>
-        {cached && (
-          <Text style={t.atoms.text_contrast_medium}>
-            <Trans>Saved on this device</Trans>
-          </Text>
-        )}
-      </View>
-      <View
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={[a.flex_row, a.gap_2xs]}>
-        {[theme.colors.canvas, theme.colors.text, theme.colors.accent].map(
-          (color, index) => (
-            <View
-              key={index}
-              style={[
-                a.rounded_full,
-                a.border,
-                t.atoms.border_contrast_low,
-                {width: 16, height: 16, backgroundColor: color},
-              ]}
-            />
-          ),
-        )}
-      </View>
+      <ThemePreview group={group} selectedId={selectedId} />
     </Toggle.Item>
   )
 }

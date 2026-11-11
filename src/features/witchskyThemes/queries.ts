@@ -9,7 +9,7 @@ import {
 } from '#/features/witchskyThemes/schema'
 import {com} from '#/lexicons'
 
-const witchskyThemesQueryKeyRoot = 'witchskyThemes'
+export const witchskyThemesQueryKeyRoot = 'witchskyThemes'
 
 /** Fetch from the account's PDS, where third-party records are available. */
 export function useWitchskyThemesQuery() {
@@ -31,10 +31,35 @@ export function useWitchskyThemesQuery() {
       const parsed = page.records.map(record =>
         parseThemeRecord(record.uri, record.value),
       )
+      let skipped = parsed.filter(options => options.length === 0).length
+      let nextCursor = page.cursor
+      const seen = new Set(pageParam ? [pageParam] : [])
+      /* A PDS can return a cursor on its last page. Only offer another page
+       * after confirming it contains a loadable theme. Skip invalid-only pages.
+       */
+      while (nextCursor) {
+        if (seen.has(nextCursor)) {
+          nextCursor = undefined
+          break
+        }
+        seen.add(nextCursor)
+        const next = await pdsClient.call(com.atproto.repo.listRecords, {
+          repo: did!,
+          collection: THEME_COLLECTION,
+          limit: 100,
+          cursor: nextCursor,
+        })
+        const nextThemes = next.records.map(record =>
+          parseThemeRecord(record.uri, record.value),
+        )
+        if (nextThemes.some(options => options.length > 0)) break
+        skipped += nextThemes.length
+        nextCursor = next.cursor
+      }
       return {
-        cursor: page.cursor,
+        cursor: nextCursor,
         themes: parsed.flat(),
-        skipped: parsed.filter(options => options.length === 0).length,
+        skipped,
       }
     },
     getNextPageParam: (page, _pages, lastParam, params) =>
