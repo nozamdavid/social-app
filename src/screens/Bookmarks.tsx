@@ -1,9 +1,7 @@
 import {useCallback, useMemo, useState} from 'react'
 import {View} from 'react-native'
 import {type $Typed} from '@atproto/lex'
-import {msg} from '@lingui/core/macro'
-import {useLingui} from '@lingui/react'
-import {Trans} from '@lingui/react/macro'
+import {Trans, useLingui} from '@lingui/react/macro'
 import {
   type NavigationProp,
   useFocusEffect,
@@ -25,6 +23,7 @@ import {EmptyState} from '#/view/com/util/EmptyState'
 import {List} from '#/view/com/util/List'
 import {atoms as a, useTheme} from '#/alf'
 import {Button, ButtonIcon, ButtonText} from '#/components/Button'
+import * as TextField from '#/components/forms/TextField'
 import {
   Bookmark_Filled_Corner0_Rounded as BookmarkFilled,
   BookmarkDelete_Stroke2_Corner0_Rounded_Large as BookmarkDeleteLarge,
@@ -38,6 +37,7 @@ import * as toast from '#/components/Toast'
 import {Text} from '#/components/Typography'
 import {useAnalytics} from '#/analytics'
 import {IS_IOS} from '#/env'
+import {useLocalBookmarks} from '#/features/searchableBookmarks/hooks'
 import {app} from '#/lexicons'
 import * as bsky from '#/types/bsky'
 
@@ -93,6 +93,14 @@ type ListItem =
     }
 
 function BookmarksInner() {
+  const {t: l} = useLingui()
+  const {enabled, status, sync} = useLocalBookmarks()
+  const [search, setSearch] = useState('')
+  useFocusEffect(
+    useCallback(() => {
+      if (enabled) void sync()
+    }, [enabled, sync]),
+  )
   const initialNumToRender = useInitialNumToRender()
   const [isPTRing, setIsPTRing] = useState(false)
   const trackPostView = usePostViewTracking('Bookmarks')
@@ -104,28 +112,29 @@ function BookmarksInner() {
     fetchNextPage,
     error,
     refetch,
-  } = useBookmarksQuery()
+  } = useBookmarksQuery(enabled ? search : '')
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setIsPTRing(true)
     try {
+      if (enabled) await sync()
       await refetch()
     } finally {
       setIsPTRing(false)
     }
-  }, [refetch, setIsPTRing])
+  }
 
-  const onEndReached = useCallback(async () => {
+  const onEndReached = async () => {
     if (isFetchingNextPage || !hasNextPage || error) return
     try {
       await fetchNextPage()
     } catch {}
-  }, [isFetchingNextPage, hasNextPage, error, fetchNextPage])
+  }
 
   const items = useMemo(() => {
     const i: ListItem[] = []
 
-    if (isLoading) {
+    if (isLoading || (enabled && status.syncing && !status.count)) {
       i.push({type: 'loading', key: 'loading'})
     } else if (error || !data) {
       // handled in Footer
@@ -161,14 +170,24 @@ function BookmarksInner() {
     }
 
     return i
-  }, [isLoading, error, data])
+  }, [isLoading, error, data, enabled, status.syncing, status.count])
 
   const isEmpty = items.length === 1 && items[0]?.type === 'empty'
 
   return (
     <List
       data={items}
-      renderItem={renderItem}
+      renderItem={(info: {item: ListItem; index: number}) =>
+        info.item.type === 'empty' && enabled && search.trim() ? (
+          <View style={[a.p_xl]}>
+            <Text>
+              <Trans>No saved posts match your search.</Trans>
+            </Text>
+          </View>
+        ) : (
+          renderItem(info)
+        )
+      }
       keyExtractor={keyExtractor}
       refreshing={isPTRing}
       onRefresh={() => void onRefresh()}
@@ -179,6 +198,45 @@ function BookmarksInner() {
           trackPostView(item.bookmark.item)
         }
       }}
+      keyboardShouldPersistTaps="handled"
+      ListHeaderComponent={
+        enabled ? (
+          <View style={[a.p_lg, a.gap_sm]}>
+            <TextField.Root>
+              <TextField.Input
+                label={l`Search saved posts`}
+                placeholder={l`Search text, authors, or links`}
+                value={search}
+                onChangeText={setSearch}
+                autoCorrect={false}
+                returnKeyType="search"
+                testID="savedPostsSearch"
+              />
+            </TextField.Root>
+            {status.syncing && (
+              <Text accessibilityLiveRegion="polite">
+                <Trans>Syncing saved posts… {status.count} downloaded</Trans>
+              </Text>
+            )}
+            {!!status.error && (
+              <Button
+                label={l`Retry saved posts sync`}
+                color="secondary"
+                size="small"
+                onPress={() => void sync()}>
+                <ButtonText>
+                  <Trans>Sync failed. Retry</Trans>
+                </ButtonText>
+              </Button>
+            )}
+            {!!search.trim() && !isLoading && (
+              <Text>
+                <Trans>Search results from downloaded saved posts</Trans>
+              </Text>
+            )}
+          </View>
+        ) : undefined
+      }
       ListFooterComponent={
         <ListFooter
           isFetchingNextPage={isFetchingNextPage}
@@ -204,13 +262,13 @@ function BookmarkNotFound({
   post: $Typed<app.bsky.feed.defs.NotFoundPost>
 }) {
   const t = useTheme()
-  const {_} = useLingui()
+  const {t: l} = useLingui()
   const {mutateAsync: bookmark} = useBookmarkMutation()
 
   const remove = async () => {
     try {
       await bookmark({action: 'delete', uri: post.uri})
-      toast.show(_(msg`Removed from saved posts`), {
+      toast.show(l`Removed from saved posts`, {
         type: 'info',
       })
     } catch (err) {
@@ -251,7 +309,7 @@ function BookmarkNotFound({
         </Text>
       </View>
       <Button
-        label={_(msg`Remove from saved posts`)}
+        label={l`Remove from saved posts`}
         size="tiny"
         color="secondary"
         onPress={() => void remove()}>
@@ -285,17 +343,17 @@ function BookmarkItem({
 
 function BookmarksEmpty() {
   const t = useTheme()
-  const {_} = useLingui()
+  const {t: l} = useLingui()
   const navigation = useNavigation<NavigationProp<CommonNavigatorParams>>()
 
   return (
     <EmptyState
       icon={BookmarkDeleteLarge}
-      message={_(msg`Nothing saved yet`)}
+      message={l`Nothing saved yet`}
       textStyle={[t.atoms.text_contrast_medium, a.font_medium]}
       button={{
-        label: _(msg`Button to go back to the home timeline`),
-        text: _(msg`Go home`),
+        label: l`Button to go back to the home timeline`,
+        text: l`Go home`,
         onPress: () =>
           navigation.dispatch(
             getHomeNavigationAction(navigation.getState(), 'navigate'),

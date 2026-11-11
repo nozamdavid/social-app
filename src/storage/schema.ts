@@ -10,6 +10,8 @@ import {type Geolocation} from '#/geolocation/types'
  * Data that's specific to the device and does not vary based account
  */
 export type Device = {
+  /** Enable the compressed local Saved posts index on this device. */
+  searchableBookmarks?: boolean
   /** Automatically like newly reposted posts. Off unless explicitly enabled. */
   autoLikeReposts?: boolean
   /** Network infrastructure choices shared by accounts on this device. */

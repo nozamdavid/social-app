@@ -14,6 +14,7 @@ import {
   useAutoLikeReposts,
   useSetAutoLikeReposts,
 } from '#/features/customization/preferences'
+import {SearchableBookmarksSettings} from '#/features/searchableBookmarks/Settings'
 
 export function CustomizationSettingsScreen({}: NativeStackScreenProps<
   CommonNavigatorParams,
@@ -43,12 +44,15 @@ export function CustomizationSettingsScreen({}: NativeStackScreenProps<
             label={l`Like posts when reposting`}
             value={autoLikeReposts}
             onChange={setAutoLikeReposts}>
-            <SettingsList.Item>
+            <SettingsList.Item style={[a.align_start]}>
               <SettingsList.ItemIcon icon={LikeRepostIcon} />
               <View style={[a.flex_1, a.gap_2xs]}>
-                <SettingsList.ItemText>
-                  <Trans>Like posts when reposting</Trans>
-                </SettingsList.ItemText>
+                <View style={[a.flex_row, a.align_center, a.gap_sm]}>
+                  <SettingsList.ItemText>
+                    <Trans>Like posts when reposting</Trans>
+                  </SettingsList.ItemText>
+                  <Toggle.Platform />
+                </View>
                 <Text style={t.atoms.text_contrast_medium}>
                   <Trans>
                     Automatically like posts you repost. Undoing a repost keeps
@@ -56,9 +60,9 @@ export function CustomizationSettingsScreen({}: NativeStackScreenProps<
                   </Trans>
                 </Text>
               </View>
-              <Toggle.Platform />
             </SettingsList.Item>
           </Toggle.Item>
+          <SearchableBookmarksSettings />
           <OpenBlueskyLinks />
         </SettingsList.Container>
       </Layout.Content>

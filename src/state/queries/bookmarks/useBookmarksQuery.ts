@@ -13,13 +13,16 @@ import {
   getEmbeddedPost,
 } from '#/state/queries/util'
 import {useAppviewClient} from '#/state/session'
+import {useBookmarkScope} from '#/features/searchableBookmarks/hooks'
+import {load, matches} from '#/features/searchableBookmarks/store'
 import {app} from '#/lexicons'
 import * as bsky from '#/types/bsky'
 
 export const bookmarksQueryKeyRoot = 'bookmarks'
 export const createBookmarksQueryKey = () => [bookmarksQueryKeyRoot]
 
-export function useBookmarksQuery() {
+export function useBookmarksQuery(search = '') {
+  const {enabled, key} = useBookmarkScope()
   const client = useAppviewClient()
 
   return useInfiniteQuery<
@@ -29,8 +32,22 @@ export function useBookmarksQuery() {
     QueryKey,
     string | undefined
   >({
-    queryKey: createBookmarksQueryKey(),
+    queryKey: enabled
+      ? [bookmarksQueryKeyRoot, 'local', key, search]
+      : createBookmarksQueryKey(),
     async queryFn({pageParam}) {
+      if (enabled) {
+        const snapshot = await load(key)
+        const results = snapshot.bookmarks.filter(bookmark =>
+          matches(bookmark, search),
+        )
+        const offset = Number(pageParam ?? 0)
+        const next = offset + 50
+        return {
+          bookmarks: results.slice(offset, next),
+          cursor: next < results.length ? String(next) : undefined,
+        }
+      }
       return await client.call(app.bsky.bookmark.getBookmarks, {
         cursor: pageParam,
       })

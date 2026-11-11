@@ -58,7 +58,8 @@ it('reads the current account’s PDS collection, isolates invalid records and p
       records: [record, {uri: 'invalid', value: {}}],
       cursor: 'next',
     })
-    .mockResolvedValueOnce({records: [], cursor: 'next'})
+    .mockResolvedValueOnce({records: [record]})
+    .mockResolvedValueOnce({records: [record]})
   const {result} = renderHook(() => useWitchskyThemesQuery(), {
     wrapper: createWrapper(),
   })
@@ -96,4 +97,69 @@ it('does not fetch signed out and reports a recoverable server error', async () 
   hook.rerender({})
   await waitFor(() => expect(hook.result.current.isError).toBe(true))
   expect(hook.result.current.data).toBeUndefined()
+})
+
+it('does not offer another page when the PDS returns a cursor after the last theme', async () => {
+  mockCall
+    .mockResolvedValueOnce({records: [record], cursor: 'end'})
+    .mockResolvedValueOnce({records: [], cursor: 'end'})
+  const {result} = renderHook(useWitchskyThemesQuery, {
+    wrapper: createWrapper(),
+  })
+  await waitFor(() => expect(result.current.isSuccess).toBe(true))
+  expect(result.current.data?.pages.flatMap(page => page.themes)).toHaveLength(
+    1,
+  )
+  expect(result.current.hasNextPage).toBe(false)
+})
+
+it('does not offer another page when only invalid records remain', async () => {
+  mockCall
+    .mockResolvedValueOnce({records: [record], cursor: 'invalid'})
+    .mockResolvedValueOnce({records: [{uri: 'bad', value: {}}], cursor: 'end'})
+    .mockResolvedValueOnce({records: []})
+  const {result} = renderHook(useWitchskyThemesQuery, {
+    wrapper: createWrapper(),
+  })
+  await waitFor(() => expect(result.current.isSuccess).toBe(true))
+  expect(result.current.hasNextPage).toBe(false)
+  expect(result.current.data?.pages[0]).toMatchObject({skipped: 1})
+  expect(mockCall).toHaveBeenCalledTimes(3)
+})
+
+it('finds more valid themes beyond invalid-only pages', async () => {
+  mockCall
+    .mockResolvedValueOnce({records: [record], cursor: 'invalid'})
+    .mockResolvedValueOnce({
+      records: [{uri: 'bad', value: {}}],
+      cursor: 'valid',
+    })
+    .mockResolvedValueOnce({records: [record]})
+    .mockResolvedValueOnce({records: [record]})
+  const {result} = renderHook(useWitchskyThemesQuery, {
+    wrapper: createWrapper(),
+  })
+  await waitFor(() => expect(result.current.isSuccess).toBe(true))
+  expect(result.current.hasNextPage).toBe(true)
+  await act(async () => {
+    await result.current.fetchNextPage()
+  })
+  await waitFor(() => expect(result.current.hasNextPage).toBe(false))
+  expect(mockCall).toHaveBeenNthCalledWith(
+    4,
+    expect.anything(),
+    expect.objectContaining({cursor: 'valid'}),
+  )
+})
+
+it('does not loop when a terminal empty page repeats its cursor', async () => {
+  mockCall
+    .mockResolvedValueOnce({records: [record], cursor: 'same'})
+    .mockResolvedValueOnce({records: [], cursor: 'same'})
+  const {result} = renderHook(useWitchskyThemesQuery, {
+    wrapper: createWrapper(),
+  })
+  await waitFor(() => expect(result.current.isSuccess).toBe(true))
+  expect(result.current.hasNextPage).toBe(false)
+  expect(mockCall).toHaveBeenCalledTimes(2)
 })
