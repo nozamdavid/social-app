@@ -298,7 +298,7 @@ export function Outer({
       ref={ref}
       // device-bezel radius when undefined
       cornerRadius={IS_LIQUID_GLASS ? undefined : 20}
-      backgroundColor={t.atoms.bg.backgroundColor}
+      backgroundColor={t.surfaceRaised ?? t.atoms.bg.backgroundColor}
       colorScheme={t.scheme}
       {...nativeOptions}
       preventDismiss={shouldPreventDismiss}
@@ -579,6 +579,7 @@ export function FlatListFooter({
         a.z_10,
         border && a.border_t,
         t.atoms.bg,
+        t.surfaceRaised && {backgroundColor: t.surfaceRaised},
         t.atoms.border_contrast_low,
         a.px_lg,
         a.pt_md,

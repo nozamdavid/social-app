@@ -1,0 +1,93 @@
+[
+  {
+    "uri": "at://did:plc:l37td5yhxl2irrzrgvei4qay/app.witchsky.theme.colors/3mvq4tnapuk2g",
+    "cid": "bafyreih4kbjvpupczedhsitzshxlyzqkwndebv6yyucpylcwil6lxf3rcy",
+    "value": {
+      "base": {
+        "name": "Default",
+        "colors": {
+          "text": "#FFFFFF",
+          "accent": "#C32FD0",
+          "border": "#C32FD0",
+          "canvas": "#255EB5",
+          "surface": "#17A2B8",
+          "warning": "#FEDC1D",
+          "critical": "#B5255C",
+          "favorite": "#C32FD0",
+          "onAccent": "#FFFFFF",
+          "positive": "#25B54B",
+          "textMuted": "#FFFFFF",
+          "accentSoft": "#FFFFFF",
+          "surfaceRaised": "#17A2B8"
+        }
+      },
+      "mode": "light",
+      "name": "BlueAT",
+      "$type": "app.witchsky.theme.colors",
+      "variants": [],
+      "createdAt": "2026-09-17T16:57:34.912Z",
+      "updatedAt": "2026-09-17T17:00:03.565Z",
+      "description": "A theme styled after the BlueAT Network when it was an active project."
+    }
+  },
+  {
+    "uri": "at://did:plc:l37td5yhxl2irrzrgvei4qay/app.witchsky.theme.colors/3mvpzxkrbms25",
+    "cid": "bafyreidhi2pevsz4b22vyx54dxhlxuehysojy6cbwjhglyekfpqtm6q3dq",
+    "value": {
+      "base": {
+        "name": "Default",
+        "colors": {
+          "text": "#f4deb8",
+          "accent": "#d4975c",
+          "border": "#3d2b1f",
+          "canvas": "#1c1310",
+          "surface": "#2e2018",
+          "warning": "#e2b76f",
+          "critical": "#e06c6c",
+          "favorite": "#e06c6c",
+          "onAccent": "#f4deb8",
+          "positive": "#4caf7d",
+          "textMuted": "#e8c28a",
+          "accentSoft": "#e8c28a",
+          "surfaceRaised": "#251a15"
+        }
+      },
+      "mode": "light",
+      "name": "Coffee / Espresso",
+      "$type": "app.witchsky.theme.colors",
+      "variants": [
+        {
+          "name": "Light",
+          "colors": {
+            "text": "#1c1310",
+            "accent": "#a55a1f",
+            "border": "#2e2018",
+            "canvas": "#f7f2e9",
+            "surface": "#efe3d0",
+            "onAccent": "#f7f2e9",
+            "textMuted": "#1c1310",
+            "accentSoft": "#7b3d11",
+            "surfaceRaised": "#fdf8f0"
+          }
+        },
+        {
+          "name": "Dark",
+          "colors": {
+            "text": "#f7f1e8",
+            "accent": "#d4975c",
+            "border": "#2b2b2b",
+            "canvas": "#050505",
+            "surface": "#171717",
+            "onAccent": "#f7f1e8",
+            "textMuted": "#d8d0bf",
+            "accentSoft": "#f7f1e8",
+            "surfaceRaised": "#111111"
+          }
+        }
+      ],
+      "createdAt": "2026-09-17T16:03:33.673Z",
+      "updatedAt": "2026-09-18T15:26:09.223Z",
+      "description": "Theme styled after danielmorrisey.com"
+    }
+  }
+]

@@ -40,6 +40,7 @@ export function Header({
         a.border_b,
         t.atoms.border_contrast_medium,
         t.atoms.bg,
+        t.surfaceRaised && {backgroundColor: t.surfaceRaised},
         !IS_LIQUID_GLASS && {borderTopLeftRadius: a.rounded_md.borderRadius},
         !IS_LIQUID_GLASS && {borderTopRightRadius: a.rounded_md.borderRadius},
         style,

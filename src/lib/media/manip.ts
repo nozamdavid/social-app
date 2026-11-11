@@ -16,8 +16,11 @@ import {SaveFormat} from 'expo-image-manipulator'
 import * as MediaLibrary from 'expo-media-library/legacy'
 import * as Sharing from 'expo-sharing'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {logger} from '#/logger'
 import {IS_ANDROID, IS_IOS} from '#/env'
+import {rewriteImageUrl} from '#/features/infrastructure/config'
+import {getInfrastructureSettings} from '#/features/infrastructure/preferences'
 import {renderImage} from './image-manipulator'
 import {type PickerImage} from './picker.shared'
 import {type Dimensions} from './types'
@@ -100,7 +103,7 @@ export async function shareImageModal({uri}: {uri: string}) {
   }
 }
 
-const ALBUM_NAME = 'Bluesky'
+const ALBUM_NAME = APP_NAME
 
 /**
  * Saves an image to the user's device. Uses the CDN's `download` preset
@@ -403,6 +406,7 @@ async function withTempFile<T>(
 }
 
 async function downloadImage(uri: string, destName: string, timeout: number) {
+  uri = rewriteImageUrl(uri, getInfrastructureSettings().imageCdnHostname)
   // Download to a temp path first, then rename with the correct extension
   // based on the response's mimeType.
   const tempPath = `${cacheDirectory ?? ''}/${destName}.bin`

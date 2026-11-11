@@ -1,5 +1,4 @@
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {Trans, useLingui} from '@lingui/react/macro'
 
 import {HITSLOP_10} from '#/lib/constants'
@@ -9,6 +8,7 @@ import {atoms as a, tokens} from '#/alf'
 import {Button, ButtonIcon} from '#/components/Button'
 import {GradientFill} from '#/components/GradientFill'
 import {TimesLarge_Stroke2_Corner0_Rounded as XIcon} from '#/components/icons/TimesLarge'
+import {Image} from '#/components/Image'
 import * as Toast from '#/components/Toast'
 import {Text} from '#/components/Typography'
 import {useAnalytics} from '#/analytics'

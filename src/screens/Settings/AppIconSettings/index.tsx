@@ -6,6 +6,7 @@ import {useLingui} from '@lingui/react'
 import {Trans} from '@lingui/react/macro'
 import {type NativeStackScreenProps} from '@react-navigation/native-stack'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {PressableScale} from '#/lib/custom-animations/PressableScale'
 import {type CommonNavigatorParams} from '#/lib/routes/types'
 import {AppIconImage} from '#/screens/Settings/AppIconSettings/AppIconImage'
@@ -15,12 +16,13 @@ import {atoms as a, useTheme} from '#/alf'
 import * as Toggle from '#/components/forms/Toggle'
 import * as Layout from '#/components/Layout'
 import {Text} from '#/components/Typography'
-import {IS_ANDROID, IS_INTERNAL} from '#/env'
+import {IS_ANDROID, IS_BLUESKY_PLUS, IS_INTERNAL} from '#/env'
 
 type Props = NativeStackScreenProps<CommonNavigatorParams, 'AppIconSettings'>
 export function AppIconSettingsScreen({}: Props) {
   const t = useTheme()
   const {_} = useLingui()
+  const iconCollectionName = IS_BLUESKY_PLUS ? APP_NAME : 'Bluesky+'
   const sets = useAppIconSets()
   const [currentAppIcon, setCurrentAppIcon] = useState(() =>
     getAppIconName(DynamicAppIcon.getAppIcon()),
@@ -84,7 +86,7 @@ export function AppIconSettingsScreen({}: Props) {
           ))}
         </Group>
 
-        {IS_INTERNAL && (
+        {IS_INTERNAL && sets.core.length > 0 && (
           <>
             <Text
               style={[
@@ -94,10 +96,10 @@ export function AppIconSettingsScreen({}: Props) {
                 a.font_semi_bold,
                 t.atoms.text_contrast_medium,
               ]}>
-              <Trans>Bluesky+</Trans>
+              {iconCollectionName}
             </Text>
             <Group
-              label={_(msg`Bluesky+ icons`)}
+              label={_(msg`${iconCollectionName} icons`)}
               value={currentAppIcon}
               onChange={onSetAppIcon}>
               {sets.core.map((icon, i) => (
@@ -126,6 +128,20 @@ function setAppIcon(icon: DynamicAppIcon.IconName) {
 }
 
 function getAppIconName(icon: string | false): DynamicAppIcon.IconName {
+  if (IS_BLUESKY_PLUS && icon === 'core_midnight') return 'default_dark'
+  if (
+    IS_BLUESKY_PLUS &&
+    icon &&
+    ![
+      'DEFAULT',
+      'default_light',
+      'default_dark',
+      'core_flat_white',
+      'core_flat_black',
+    ].includes(icon)
+  ) {
+    return 'default_light'
+  }
   if (!icon || icon === 'DEFAULT') {
     return 'default_light'
   } else {

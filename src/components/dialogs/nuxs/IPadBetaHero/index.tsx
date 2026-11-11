@@ -1,12 +1,12 @@
 import {View} from 'react-native'
 import {useReducedMotion} from 'react-native-reanimated'
 import {Asset} from 'expo-asset'
-import {Image} from 'expo-image'
 import {BlueskyVideoView} from '@bsky.app/video'
 import {useLingui} from '@lingui/react/macro'
 
 import {useAutoplayDisabled} from '#/state/preferences'
 import {atoms as a} from '#/alf'
+import {Image} from '#/components/Image'
 
 const VIDEO = Asset.fromModule(
   require('../../../../../assets/images/ipad_beta_nux.mp4'),

@@ -1,9 +1,9 @@
 import {useRef} from 'react'
 import {View} from 'react-native'
 import {type AnimatedRef} from 'react-native-reanimated'
-import {Image} from 'expo-image'
 
 import {atoms as a, tokens} from '#/alf'
+import {Image} from '#/components/Image'
 import {AutoSizedImage} from '#/components/images/AutoSizedImage'
 import {Gallery} from '#/components/images/Gallery'
 import {ImageLayoutGrid} from '#/components/images/ImageLayoutGrid'

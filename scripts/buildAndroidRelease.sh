@@ -11,10 +11,12 @@ ANDROID_DIR="$REPO_ROOT/android"
 APK_OUTPUT_DIR="$ANDROID_DIR/app/build/outputs/apk/release"
 SETTINGS_GRADLE="$ANDROID_DIR/settings.gradle"
 
-# Guard against building with the wrong app identity. The New Arch build must
-# use a distinct rootProject.name so it installs alongside the store app rather
-# than overwriting it.
-EXPECTED_APP_NAME="rootProject.name = 'Bluesky'"
+# Match the selected display name. The application ID controls install identity.
+if [ "${EXPO_PUBLIC_APP_VARIANT:-}" = "bluesky-plus" ]; then
+  EXPECTED_APP_NAME="rootProject.name = 'Caelum'"
+else
+  EXPECTED_APP_NAME="rootProject.name = 'Bluesky'"
+fi
 if ! grep -qF "$EXPECTED_APP_NAME" "$SETTINGS_GRADLE"; then
   echo "Error: expected \"$EXPECTED_APP_NAME\" in $SETTINGS_GRADLE" >&2
   echo "(Set the app name in settings.gradle before building the New Arch release.)" >&2

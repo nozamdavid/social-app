@@ -4,6 +4,7 @@ import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
 import {Trans} from '@lingui/react/macro'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {useOpenLink} from '#/lib/hooks/useOpenLink'
 import {shareUrl} from '#/lib/sharing'
 import {isPossiblyAUrl, splitApexDomain} from '#/lib/strings/url-helpers'
@@ -80,7 +81,7 @@ function LinkWarningDialogInner({
       label={
         potentiallyMisleading
           ? _(msg`Potentially misleading link warning`)
-          : _(msg`Leaving Bluesky`)
+          : _(msg`Leaving ${APP_NAME}`)
       }>
       <View style={[a.gap_2xl]}>
         <View style={[a.gap_sm]}>
@@ -88,7 +89,7 @@ function LinkWarningDialogInner({
             {potentiallyMisleading ? (
               <Trans>Potentially misleading link</Trans>
             ) : (
-              <Trans>Leaving Bluesky</Trans>
+              <Trans>Leaving {APP_NAME}</Trans>
             )}
           </Text>
           <Text style={[t.atoms.text_contrast_high, a.text_md, a.leading_snug]}>

@@ -1,6 +1,5 @@
 import {useCallback, useState} from 'react'
 import {Pressable, StyleSheet, View} from 'react-native'
-import {Image} from 'expo-image'
 import {type ModerationUI} from '@bsky/sdk/moderation'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
@@ -32,6 +31,7 @@ import {
 } from '#/components/icons/Camera'
 import {StreamingLive_Stroke2_Corner0_Rounded as LibraryIcon} from '#/components/icons/StreamingLive'
 import {Trash_Stroke2_Corner0_Rounded as TrashIcon} from '#/components/icons/Trash'
+import {Image} from '#/components/Image'
 import * as Menu from '#/components/Menu'
 import {IS_ANDROID, IS_NATIVE} from '#/env'
 

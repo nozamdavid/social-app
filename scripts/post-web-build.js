@@ -1,6 +1,7 @@
 const path = require('node:path')
 const fs = require('node:fs')
 const {execFileSync} = require('node:child_process')
+const brandWebHtml = require('./branding/brandWebHtml')
 
 const projectRoot = path.join(__dirname, '..')
 const distDir = path.join(projectRoot, 'dist')
@@ -17,7 +18,16 @@ const fontsTemplateFile = path.join(templatesDir, 'fonts.html')
 // We preserve the _expo/static/ structure when copying to bskyweb/static, because
 // Metro's runtime chunk loader and source maps embed these paths. Rewriting them
 // would mean rewriting the chunk loader and every .map file's references; not worth it.
-const indexHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8')
+let indexHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8')
+
+if (process.env.EXPO_PUBLIC_APP_VARIANT === 'bluesky-plus') {
+  const brand = require('../assets/branding/caelum/brand.json')
+  const mark = fs.readFileSync(
+    path.join(projectRoot, 'assets/branding/caelum/generated/mark.svg'),
+    'utf8',
+  )
+  indexHtml = brandWebHtml(indexHtml, brand, mark)
+}
 
 // Find all CSS stylesheet links pointing to _expo (skips preload links).
 const cssEntries = []
@@ -173,9 +183,12 @@ if (
   process.env.SENTRY_AUTH_TOKEN != 'unknown'
 ) {
   const releasePackage = 'xyz.blueskyweb.app'
-  const release =
-    process.env.SENTRY_RELEASE ||
-    `${releasePackage}@${require(path.join(projectRoot, 'package.json')).version}`
+  const packageVersion = /** @type {{version: string}} */ (
+    JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'))
+  ).version
+  const release = String(
+    process.env.SENTRY_RELEASE || `${releasePackage}@${packageVersion}`,
+  )
   /*
    * The runtime reports `xyz.blueskyweb.app@` + (EXPO_PUBLIC_RELEASE_VERSION
    * || package.json version) (SENTRY_RELEASE in src/env/common.ts), so maps

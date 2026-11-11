@@ -26,7 +26,15 @@ import {
 } from '#/view/com/composer/text-input/text-input-util'
 import {atoms as a, useAlf} from '#/alf'
 import {normalizeTextStyles} from '#/alf/typography'
-import {IS_ANDROID} from '#/env'
+import {type AutocompleteEmoji} from '#/components/Autocomplete/types'
+import {IS_ANDROID, IS_BLUESKY_PLUS} from '#/env'
+import {InlineSuggestions} from '#/features/emojiSuggestions/InlineSuggestions'
+import {
+  type EmojiToken,
+  getCursorAfterEdit,
+  getEmojiToken,
+  replaceEmojiToken,
+} from '#/features/emojiSuggestions/tokens'
 import {app} from '#/lexicons'
 import * as bsky from '#/types/bsky'
 import {Autocomplete} from './mobile/Autocomplete'
@@ -42,6 +50,7 @@ export function TextInput({
   richtext,
   placeholder,
   hasRightPadding,
+  isActive,
   setRichText,
   onPhotoPasted,
   onNewLink,
@@ -55,6 +64,9 @@ export function TextInput({
   const theme = useTheme()
   const [autocompletePrefix, setAutocompletePrefix] = useState('')
   const prevLength = useRef(richtext.length)
+  const latestText = useRef(richtext.text)
+  latestText.current = richtext.text
+  const [emojiToken, setEmojiToken] = useState<EmojiToken | null>(null)
 
   useImperativeHandle(ref, () => ({
     focus: () => textInput.current?.focus(),
@@ -70,6 +82,12 @@ export function TextInput({
   const onChangeText = useCallback(
     async (newText: string) => {
       const mayBePaste = newText.length > prevLength.current + 1
+      const cursor = getCursorAfterEdit(latestText.current, newText)
+      latestText.current = newText
+      if (IS_BLUESKY_PLUS) {
+        textInputSelection.current = {start: cursor, end: cursor}
+        setEmojiToken(getEmojiToken(newText, cursor))
+      }
 
       const newRt = new RichText({text: newText})
       newRt.detectFacetsWithoutResolution()
@@ -145,9 +163,27 @@ export function TextInput({
     (evt: TextInputSelectionChangeEvent) => {
       // NOTE we track the input selection using a ref to avoid excessive renders -prf
       textInputSelection.current = evt.nativeEvent.selection
+      if (IS_BLUESKY_PLUS) {
+        const {start, end} = evt.nativeEvent.selection
+        setEmojiToken(getEmojiToken(latestText.current, start, end))
+      }
     },
     [textInputSelection],
   )
+
+  function onSelectEmoji(item: AutocompleteEmoji) {
+    const {start, end} = textInputSelection.current
+    const token = getEmojiToken(latestText.current, start, end)
+    if (!token || token.query !== emojiToken?.query) return
+    const result = replaceEmojiToken(latestText.current, token, item.value)
+    void onChangeText(result.text)
+    textInputSelection.current = result.selection
+    setEmojiToken(null)
+    requestAnimationFrame(() => {
+      textInput.current?.setNativeProps({selection: result.selection})
+      textInput.current?.focus()
+    })
+  }
 
   const onSelectAutocompleteItem = useCallback(
     (item: string) => {
@@ -227,7 +263,7 @@ export function TextInput({
           style={[
             inputTextStyle,
             a.w_full,
-            !autocompletePrefix && a.h_full,
+            !autocompletePrefix && !(isActive && emojiToken) && a.h_full,
             {
               textAlignVertical: 'top',
               minHeight: 60,
@@ -246,6 +282,9 @@ export function TextInput({
         prefix={autocompletePrefix}
         onSelect={onSelectAutocompleteItem}
       />
+      {isActive && emojiToken && (
+        <InlineSuggestions token={emojiToken} onSelect={onSelectEmoji} />
+      )}
     </View>
   )
 }

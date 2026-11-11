@@ -20,8 +20,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 import {scheduleOnRN} from 'react-native-worklets'
-import {Image} from 'expo-image'
 
+import {Image} from '#/components/Image'
 import {
   type Dimensions as ImageDimensions,
   type ImageSource,

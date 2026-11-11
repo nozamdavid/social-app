@@ -18,7 +18,7 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('#/lib/hooks/useOpenLink', () => ({
   useOpenLink: () => mockOpenLink,
 }))
-jest.mock('expo-image', () => ({Image: () => null}))
+jest.mock('#/components/Image', () => ({Image: () => null}))
 jest.mock('#/components/MediaInsetBorder', () => ({
   MediaInsetBorder: () => null,
 }))

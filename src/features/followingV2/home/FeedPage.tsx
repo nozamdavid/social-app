@@ -187,7 +187,7 @@ export function FeedPage({
         <FAB
           testID="composeFAB"
           onPress={onPressCompose}
-          icon={<EditBigIcon size="lg" fill={t.palette.white} />}
+          icon={<EditBigIcon size="lg" fill={t.onAccent ?? t.palette.white} />}
           accessibilityRole="button"
           accessibilityLabel={_(msg({message: `New post`, context: 'action'}))}
           accessibilityHint=""

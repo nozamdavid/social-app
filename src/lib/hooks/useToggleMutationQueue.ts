@@ -11,6 +11,13 @@ type TaskQueue<TServerState> = {
   queuedTask: Task<TServerState> | null
 }
 
+/** Share one toggle's in-flight work between controls for the same resource. */
+export function createToggleMutationQueueState<
+  TServerState,
+>(): TaskQueue<TServerState> {
+  return {activeTask: null, queuedTask: null}
+}
+
 function AbortError() {
   const e = new Error()
   e.name = 'AbortError'
@@ -21,7 +28,9 @@ export function useToggleMutationQueue<TServerState>({
   initialState,
   runMutation,
   onSuccess,
+  sharedQueue,
 }: {
+  sharedQueue?: TaskQueue<TServerState>
   initialState: TServerState
   runMutation: (
     prevState: TServerState,
@@ -31,10 +40,9 @@ export function useToggleMutationQueue<TServerState>({
 }) {
   // We use the queue as a mutable object.
   // This is safe becuase it is not used for rendering.
-  const [queue] = useState<TaskQueue<TServerState>>({
-    activeTask: null,
-    queuedTask: null,
-  })
+  const [queue] = useState(
+    () => sharedQueue ?? createToggleMutationQueueState<TServerState>(),
+  )
 
   async function processQueue() {
     if (queue.activeTask) {
@@ -53,7 +61,7 @@ export function useToggleMutationQueue<TServerState>({
         queue.queuedTask = null
         if (prevTask?.isOn === nextTask.isOn) {
           // Skip multiple requests to update to the same value in a row.
-          prevTask.reject(new (AbortError as any)())
+          nextTask.resolve(confirmedState)
           continue
         }
         try {

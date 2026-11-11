@@ -1,0 +1,20 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'am.noz.caelum.alttext'
+version = '1.0.0'
+
+android {
+  namespace 'am.noz.caelum.alttext'
+  defaultConfig {
+    minSdkVersion 26
+  }
+}
+
+dependencies {
+  implementation 'com.google.mlkit:text-recognition:16.0.1'
+  implementation 'com.google.mlkit:genai-image-description:1.0.0-beta1'
+  implementation 'androidx.exifinterface:exifinterface:1.4.2'
+}

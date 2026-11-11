@@ -1,5 +1,4 @@
 import {StyleSheet, View} from 'react-native'
-import {Image} from 'expo-image'
 import {useLingui} from '@lingui/react/macro'
 
 import {makeProfileLink} from '#/lib/routes/links'
@@ -8,6 +7,7 @@ import {type FeaturedApp} from '#/screens/Atmosphere/data/exploreData'
 import {atoms as a, ThemeProvider, useTheme} from '#/alf'
 import {ButtonIcon, ButtonText} from '#/components/Button'
 import {SquareArrowTopRight_Stroke2_Corner0_Rounded as ExternalLinkIcon} from '#/components/icons/Square'
+import {Image} from '#/components/Image'
 import {Link} from '#/components/Link'
 import {Text} from '#/components/Typography'
 import {useAtmosphereAppCategories} from './appCategories'

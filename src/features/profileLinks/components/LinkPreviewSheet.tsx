@@ -2,6 +2,7 @@ import {type GestureResponderEvent, View} from 'react-native'
 import {setStringAsync} from 'expo-clipboard'
 import {Trans, useLingui} from '@lingui/react/macro'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {atoms as a, useTheme, web} from '#/alf'
 import {Button, ButtonIcon, ButtonText} from '#/components/Button'
 import * as Dialog from '#/components/Dialog'
@@ -82,7 +83,7 @@ function LinkPreviewSheetInner({
           <Button
             testID="profileLinkPreviewOpenBtn"
             label={l`Open link`}
-            accessibilityHint={l`Opens ${link.url} outside Bluesky`}
+            accessibilityHint={l`Opens ${link.url} outside ${APP_NAME}`}
             onPress={e => control.close(() => onOpen(link, e))}
             size="large"
             color="primary">

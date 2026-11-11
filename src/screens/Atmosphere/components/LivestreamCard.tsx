@@ -1,5 +1,4 @@
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {moderateProfile} from '@bsky/sdk/moderation'
 import {Trans, useLingui} from '@lingui/react/macro'
 
@@ -10,6 +9,7 @@ import {UserAvatar} from '#/view/com/util/UserAvatar'
 import {getAssociatedProfile} from '#/screens/Atmosphere/data/exploreData'
 import {atoms as a, useTheme} from '#/alf'
 import {Play_Filled_Corner2_Rounded as PlayIcon} from '#/components/icons/Play'
+import {Image} from '#/components/Image'
 import {Link} from '#/components/Link'
 import {Text} from '#/components/Typography'
 import {type app, place} from '#/lexicons'

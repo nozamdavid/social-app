@@ -229,7 +229,9 @@ function ProfileListScreenLoaded({
             <FAB
               testID="composeFAB"
               onPress={() => openComposer({logContext: 'Fab'})}
-              icon={<EditBigIcon size="lg" fill={t.palette.white} />}
+              icon={
+                <EditBigIcon size="lg" fill={t.onAccent ?? t.palette.white} />
+              }
               accessibilityRole="button"
               accessibilityLabel={_(msg`New post`)}
               accessibilityHint=""
@@ -272,7 +274,9 @@ function ProfileListScreenLoaded({
           <FAB
             testID="composeFAB"
             onPress={() => openComposer({logContext: 'Fab'})}
-            icon={<EditBigIcon size="lg" fill={t.palette.white} />}
+            icon={
+              <EditBigIcon size="lg" fill={t.onAccent ?? t.palette.white} />
+            }
             accessibilityRole="button"
             accessibilityLabel={_(msg`New post`)}
             accessibilityHint=""

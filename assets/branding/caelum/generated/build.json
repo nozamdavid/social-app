@@ -1,0 +1,66 @@
+{
+  "icon": "./assets/branding/caelum/generated/icon-purple.png",
+  "foreground": "./assets/branding/caelum/generated/adaptive-foreground.png",
+  "monochrome": "./assets/branding/caelum/generated/adaptive-monochrome.png",
+  "notification": "./assets/branding/caelum/generated/notification.png",
+  "splash": "./assets/branding/caelum/generated/splash.png",
+  "darkSplash": "./assets/branding/caelum/generated/splash-dark.png",
+  "favicon": "./assets/branding/caelum/generated/favicon.png",
+  "dynamicIcons": {
+    "default_light": {
+      "ios": "./assets/branding/caelum/generated/icon-purple.png",
+      "android": "./assets/branding/caelum/generated/icon-purple.png",
+      "prerendered": true
+    },
+    "default_dark": {
+      "ios": "./assets/branding/caelum/generated/icon-dark.png",
+      "android": "./assets/branding/caelum/generated/icon-dark.png",
+      "prerendered": true
+    },
+    "core_aurora": {
+      "ios": "./assets/branding/caelum/generated/icon-purple.png",
+      "android": "./assets/branding/caelum/generated/icon-purple.png",
+      "prerendered": true
+    },
+    "core_bonfire": {
+      "ios": "./assets/branding/caelum/generated/icon-purple.png",
+      "android": "./assets/branding/caelum/generated/icon-purple.png",
+      "prerendered": true
+    },
+    "core_sunrise": {
+      "ios": "./assets/branding/caelum/generated/icon-purple.png",
+      "android": "./assets/branding/caelum/generated/icon-purple.png",
+      "prerendered": true
+    },
+    "core_sunset": {
+      "ios": "./assets/branding/caelum/generated/icon-purple.png",
+      "android": "./assets/branding/caelum/generated/icon-purple.png",
+      "prerendered": true
+    },
+    "core_midnight": {
+      "ios": "./assets/branding/caelum/generated/icon-dark.png",
+      "android": "./assets/branding/caelum/generated/icon-dark.png",
+      "prerendered": true
+    },
+    "core_flat_blue": {
+      "ios": "./assets/branding/caelum/generated/icon-purple.png",
+      "android": "./assets/branding/caelum/generated/icon-purple.png",
+      "prerendered": true
+    },
+    "core_flat_white": {
+      "ios": "./assets/branding/caelum/generated/icon-light.png",
+      "android": "./assets/branding/caelum/generated/icon-light.png",
+      "prerendered": true
+    },
+    "core_flat_black": {
+      "ios": "./assets/branding/caelum/generated/icon-black.png",
+      "android": "./assets/branding/caelum/generated/icon-black.png",
+      "prerendered": true
+    },
+    "core_classic": {
+      "ios": "./assets/branding/caelum/generated/icon-purple.png",
+      "android": "./assets/branding/caelum/generated/icon-purple.png",
+      "prerendered": true
+    }
+  }
+}

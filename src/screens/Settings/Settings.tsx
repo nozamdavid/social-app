@@ -63,6 +63,7 @@ import {
   PersonX_Stroke2_Corner0_Rounded as PersonXIcon,
 } from '#/components/icons/Person'
 import {RaisingHand4Finger_Stroke2_Corner2_Rounded as HandIcon} from '#/components/icons/RaisingHand'
+import {SettingsSliderVertical_Stroke2_Corner0_Rounded as CustomizationIcon} from '#/components/icons/Settings'
 import {Window_Stroke2_Corner2_Rounded as WindowIcon} from '#/components/icons/Window'
 import * as Layout from '#/components/Layout'
 import {Loader} from '#/components/Loader'
@@ -73,7 +74,7 @@ import * as Prompt from '#/components/Prompt'
 import * as Toast from '#/components/Toast'
 import {Text} from '#/components/Typography'
 import {useAnalytics} from '#/analytics'
-import {IS_INTERNAL, IS_IOS, IS_NATIVE} from '#/env'
+import {IS_BLUESKY_PLUS, IS_INTERNAL, IS_IOS, IS_NATIVE} from '#/env'
 import {useActorStatus} from '#/features/liveNow'
 import {type app} from '#/lexicons'
 import {device, useStorage} from '#/storage'
@@ -271,6 +272,28 @@ export function SettingsScreen({}: Props) {
               <Trans>Languages</Trans>
             </SettingsList.ItemText>
           </SettingsList.LinkItem>
+          {IS_BLUESKY_PLUS && (
+            <SettingsList.LinkItem
+              to="/settings/customization"
+              label={l`Customization`}
+              testID="customizationSettingsLink">
+              <SettingsList.ItemIcon icon={CustomizationIcon} />
+              <SettingsList.ItemText>
+                <Trans>Customization</Trans>
+              </SettingsList.ItemText>
+            </SettingsList.LinkItem>
+          )}
+          {IS_BLUESKY_PLUS && (
+            <SettingsList.LinkItem
+              to="/settings/infrastructure"
+              label={l`Infrastructure`}
+              testID="infrastructureSettingsLink">
+              <SettingsList.ItemIcon icon={EarthIcon} />
+              <SettingsList.ItemText>
+                <Trans>Infrastructure</Trans>
+              </SettingsList.ItemText>
+            </SettingsList.LinkItem>
+          )}
           <SettingsList.LinkItem
             to="/settings/beta-features"
             label={l`Beta features`}>

@@ -6,6 +6,7 @@ import {BSKY_SERVICE} from '#/lib/constants'
 import {isInvalidHandle} from '#/lib/strings/handles'
 import {startUriToStarterPackUri} from '#/lib/strings/starter-pack'
 import {logger} from '#/logger'
+import {getInfrastructureSettings} from '#/features/infrastructure/preferences'
 
 export const BSKY_APP_HOST = 'https://bsky.app'
 export const BSKY_HOSTING_ENDSWITH = '.host.bsky.network'
@@ -383,7 +384,11 @@ export function createBskyAppAbsoluteUrl(path: string): string {
   return `${BSKY_APP_HOST.replace(/\/$/, '')}/${sanitizedPath}`
 }
 
-export function createProxiedUrl(url: string): string {
+export function createProxiedUrl(
+  url: string,
+  enabled = getInfrastructureSettings().useLinkRedirects,
+): string {
+  if (!enabled) return url
   let u
   try {
     u = new URL(url)

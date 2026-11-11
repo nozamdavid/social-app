@@ -7,6 +7,7 @@ import {
 } from '@atproto/lex'
 
 import {getDeviceId, getSessionId} from '#/analytics/identifiers'
+import {withInfrastructureRouting} from '#/features/infrastructure/routing'
 
 type CreateLexClientOptions = ClientOptions & {
   /**
@@ -60,8 +61,11 @@ export function createLexClient(
   options: CreateLexClientOptions = {},
 ): Client {
   const {includeDeviceSessionHeaders, ...clientOptions} = options
+  const routedAgent = withInfrastructureRouting(agent)
   return new Client(
-    includeDeviceSessionHeaders ? withDeviceSessionHeaders(agent) : agent,
+    includeDeviceSessionHeaders
+      ? withDeviceSessionHeaders(routedAgent)
+      : routedAgent,
     {
       strictResponseProcessing: false,
       ...clientOptions,

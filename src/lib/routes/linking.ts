@@ -10,7 +10,7 @@ import {
   type State,
 } from '#/lib/routes/types'
 import {CHAT_INVITE_CODE_REGEX} from '#/lib/strings/url-helpers'
-import {IS_NATIVE} from '#/env'
+import {IS_BLUESKY_PLUS, IS_NATIVE} from '#/env'
 import {stripWidgetTopicParams} from '#/features/trendingWidget/links'
 import {router} from '#/routes'
 
@@ -30,7 +30,9 @@ const NATIVE_LINK_ACTION_CONFIG = {
 export const LINKING = {
   // TODO figure out what we are going to use
   // note: `bluesky://` is what is used in app.config.js
-  prefixes: ['bsky://', 'bluesky://', 'https://bsky.app'],
+  prefixes: IS_BLUESKY_PLUS
+    ? ['blueskyplus://', 'https://bsky.app']
+    : ['bsky://', 'bluesky://', 'https://bsky.app'],
 
   getPathFromState(state: State) {
     // find the current node in the navigation tree

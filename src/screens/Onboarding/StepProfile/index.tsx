@@ -8,7 +8,6 @@ import {
   useState,
 } from 'react'
 import {View} from 'react-native'
-import {Image as ExpoImage} from 'expo-image'
 import {ImageManipulator, SaveFormat} from 'expo-image-manipulator'
 import {
   type ImagePickerOptions,
@@ -45,6 +44,7 @@ import {Button, ButtonText} from '#/components/Button'
 import * as Dialog from '#/components/Dialog'
 import {useSheetWrapper} from '#/components/Dialog/sheet-wrapper'
 import {CircleInfo_Stroke2_Corner0_Rounded} from '#/components/icons/CircleInfo'
+import {Image as ExpoImage} from '#/components/Image'
 import {Text} from '#/components/Typography'
 import {useAnalytics} from '#/analytics'
 import {IS_NATIVE, IS_WEB} from '#/env'

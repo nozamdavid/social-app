@@ -6,7 +6,7 @@ import {FeaturedAppCard} from '../FeaturedAppCard'
 jest.mock('@lingui/react', () => ({
   useLingui: () => ({_: (value: {message: string}) => value.message}),
 }))
-jest.mock('expo-image', () => ({Image: () => null}))
+jest.mock('#/components/Image', () => ({Image: () => null}))
 jest.mock('../AppKnownFollowers', () => ({AppKnownFollowers: () => null}))
 jest.mock('#/components/icons/Square', () => ({
   SquareArrowTopRight_Stroke2_Corner0_Rounded: () => null,

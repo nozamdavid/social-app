@@ -23,6 +23,7 @@ import {
 
 export type TrendingTopicsWidgetProps = {
   emptyMessage?: string
+  openAppLabel?: string
   title?: string
   topics?: {
     description?: string
@@ -43,6 +44,11 @@ function TrendingTopicsWidget(
 ) {
   'use no memo'
   'widget'
+
+  const appName =
+    process.env.EXPO_PUBLIC_APP_VARIANT === 'bluesky-plus'
+      ? 'Caelum'
+      : 'Bluesky'
 
   const isDark = environment.colorScheme === 'dark'
   const topics = props.topics ?? []
@@ -128,7 +134,7 @@ function TrendingTopicsWidget(
               color={secondaryTextColor}
               maxLines={3}
               style={{fontSize: 13}}>
-              {props.emptyMessage ?? 'Open Bluesky to load trending topics.'}
+              {props.emptyMessage}
             </Text>
             {/* the whole card opens the app, this just makes that obvious */}
             {props.topics ? null : (
@@ -144,7 +150,7 @@ function TrendingTopicsWidget(
                     color="#FFFFFF"
                     maxLines={1}
                     style={{fontSize: 13, fontWeight: 'bold'}}>
-                    Open Bluesky
+                    {props.openAppLabel ?? appName}
                   </Text>
                 </Row>
               </Column>

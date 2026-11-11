@@ -1,6 +1,7 @@
 import {View} from 'react-native'
 import {useLingui} from '@lingui/react/macro'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {atoms as a, useTheme} from '#/alf'
 import {CircleInfo_Stroke2_Corner0_Rounded as InfoIcon} from '#/components/icons/CircleInfo'
 import * as Layout from '#/components/Layout'
@@ -37,7 +38,7 @@ export function InviteScannerScreen() {
             t.atoms.text_contrast_medium,
             {maxWidth: 320},
           ]}>
-          {l`Please use the Bluesky mobile app to scan a QR code.`}
+          {l`Please use the ${APP_NAME} mobile app to scan a QR code.`}
         </Text>
       </View>
     </Layout.Screen>

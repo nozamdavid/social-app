@@ -4,6 +4,41 @@ This file collects the attribution and license notices that third-party componen
 
 If you distribute this software or a fork of it, these notices need to travel with it.
 
+## Emoji Mart
+
+**Packages:** `@emoji-mart/data`, `emoji-mart`, and `@emoji-mart/react`
+**Source:** <https://github.com/missive/emoji-mart>
+**License:** MIT — full copyright and permission notice at [`licenses/EMOJI-MART.txt`](./licenses/EMOJI-MART.txt)
+
+```
+Copyright (c) Missive.
+```
+
+The native inline suggestions use Emoji Mart's bundled names, aliases, keywords,
+and Unicode sequences. The web emoji picker also uses Emoji Mart. The suggestion
+UI and contextual ranking are implemented in this app.
+
+## Fuse.js
+
+**Package:** `fuse.js`
+**Source:** <https://github.com/krisk/Fuse>
+**License:** Apache License, Version 2.0 — full text at [`licenses/FUSE-JS.txt`](./licenses/FUSE-JS.txt)
+
+```
+Copyright (c) 2026 Kiro Risk (http://kiro.me)
+All Rights Reserved. Apache Software License 2.0
+```
+
+Fuse.js provides fuzzy matching for emoji search. The library is used without
+modifying its source. The copyright notice above is preserved from its distributed
+JavaScript header.
+
+The notices for these packages are also bundled in
+`src/features/emojiSuggestions/notices.json` and available offline in Caelum
+under Settings → About → Emoji suggestion credits. Keep the bundled notices and
+these license files in sync when updating the dependencies. This section covers
+the emoji dependencies; it is not a complete dependency license inventory.
+
 ---
 
 ## Material Icons
@@ -21,7 +56,7 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-*This font is emitted into the web build by `@expo/vector-icons`, which the Expo toolchain pulls in transitively. It is a distributed artifact rather than a source asset, which is why the notice lives here rather than beside the file.*
+_This font is emitted into the web build by `@expo/vector-icons`, which the Expo toolchain pulls in transitively. It is a distributed artifact rather than a source asset, which is why the notice lives here rather than beside the file._
 
 ## Inter
 

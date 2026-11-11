@@ -3,12 +3,12 @@ import {View} from 'react-native'
 // @ts-expect-error missing types
 import QRCode from 'react-native-qrcode-styled'
 import {type ViewShotRef} from 'react-native-view-shot'
-import {Image} from 'expo-image'
 import {LinearGradient} from 'expo-linear-gradient'
 
 import {Logo} from '#/view/icons/Logo'
 import {atoms as a, useTheme} from '#/alf'
 import {hexToRgb, rgbToHex} from '#/alf/util/colorGeneration'
+import {Image} from '#/components/Image'
 import {Text} from '#/components/Typography'
 import {type InviteThemeVariant} from '../themes'
 

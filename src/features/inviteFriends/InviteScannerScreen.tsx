@@ -10,6 +10,7 @@ import {
 import {useLingui} from '@lingui/react/macro'
 import {useNavigation} from '@react-navigation/native'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {
   type CommonNavigatorParams,
   type NavigationProp,
@@ -106,7 +107,7 @@ export function InviteScannerScreen() {
               t.atoms.text_contrast_medium,
               {maxWidth: 320},
             ]}>
-            {l`Bluesky needs camera access to scan QR codes from other profiles.`}
+            {l`${APP_NAME} needs camera access to scan QR codes from other profiles.`}
           </Text>
           <Button
             label={l`Grant access`}

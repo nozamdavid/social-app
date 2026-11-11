@@ -2,6 +2,7 @@ import {useCallback} from 'react'
 import {type Client} from '@atproto/lex'
 import {AtUri, type AtUriString, type HandleString} from '@atproto/syntax'
 import {deleteLike, deletePost, deleteRepost, like, repost} from '@bsky/sdk'
+import {useLingui} from '@lingui/react/macro'
 import {
   type QueryClient,
   useMutation,
@@ -10,12 +11,15 @@ import {
 } from '@tanstack/react-query'
 
 import {useToggleMutationQueue} from '#/lib/hooks/useToggleMutationQueue'
-import {updatePostShadow} from '#/state/cache/post-shadow'
+import {getPostLikeUri, updatePostShadow} from '#/state/cache/post-shadow'
 import {type Shadow} from '#/state/cache/types'
 import {useAppviewClient, usePdsClient, useSession} from '#/state/session'
 import * as userActionHistory from '#/state/userActionHistory'
+import * as Toast from '#/components/Toast'
 import {useAnalytics} from '#/analytics'
 import {type Metrics, toClout} from '#/analytics/metrics'
+import {getPostLikeQueue} from '#/features/customization/postLikeQueue'
+import {getAutoLikeReposts} from '#/features/customization/preferences'
 import {app, com} from '#/lexicons'
 import {useIsThreadMuted, useSetThreadMute} from '../cache/thread-mutes'
 import {findProfileQueryData} from './profile'
@@ -131,6 +135,7 @@ export function usePostLikeMutationQueue(
 
   const queueToggle = useToggleMutationQueue({
     initialState: initialLikeUri,
+    sharedQueue: getPostLikeQueue(queryClient, postUri),
     runMutation: async (prevLikeUri, shouldLike) => {
       if (shouldLike) {
         const {uri: likeUri} = await likeMutation.mutateAsync({
@@ -252,7 +257,14 @@ export function usePostRepostMutationQueue(
   feedDescriptor: string | undefined,
   logContext: Metrics['post:repost']['logContext'],
 ) {
+  const {t: l} = useLingui()
   const queryClient = useQueryClient()
+  const [queueLike] = usePostLikeMutationQueue(
+    post,
+    viaRepost,
+    feedDescriptor,
+    logContext,
+  )
   const postUri = post.uri
   const postCid = post.cid
   const initialRepostUri = post.viewer?.repost
@@ -272,6 +284,18 @@ export function usePostRepostMutationQueue(
           cid: postCid,
           via: viaRepost,
         })
+        if (getAutoLikeReposts() && !getPostLikeUri(queryClient, post)) {
+          try {
+            await queueLike()
+          } catch (error) {
+            if (!(error instanceof Error && error.name === 'AbortError')) {
+              Toast.show(
+                l`Reposted, but couldn’t like the post. Try liking it manually.`,
+                {type: 'warning'},
+              )
+            }
+          }
+        }
         return repostUri
       } else {
         if (prevRepostUri) {

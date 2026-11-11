@@ -20,7 +20,6 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
 import {useEvent, useEventListener} from 'expo'
-import {Image, type ImageStyle} from 'expo-image'
 import {LinearGradient} from 'expo-linear-gradient'
 import {createVideoPlayer, type VideoPlayer, VideoView} from 'expo-video'
 import {AtUri} from '@atproto/syntax'
@@ -95,6 +94,7 @@ import {ArrowLeft_Stroke2_Corner0_Rounded as ArrowLeftIcon} from '#/components/i
 import {Check_Stroke2_Corner0_Rounded as CheckIcon} from '#/components/icons/Check'
 import {EyeSlash_Stroke2_Corner0_Rounded as Eye} from '#/components/icons/EyeSlash'
 import {Leaf_Stroke2_Corner0_Rounded as LeafIcon} from '#/components/icons/Leaf'
+import {Image, type ImageStyle} from '#/components/Image'
 import {KeepAwake} from '#/components/KeepAwake'
 import * as Layout from '#/components/Layout'
 import {Link} from '#/components/Link'

@@ -321,7 +321,7 @@ export function BadgeCount({count}: {count: number}) {
           a.text_xs,
           a.leading_tight,
           a.font_semi_bold,
-          {color: t.palette.white, fontVariant: ['tabular-nums']},
+          {color: t.onAccent ?? t.palette.white, fontVariant: ['tabular-nums']},
         ]}
         numberOfLines={1}>
         {count >= UNREAD_NOTIFICATION_CAP

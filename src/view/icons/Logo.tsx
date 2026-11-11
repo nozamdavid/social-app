@@ -8,10 +8,13 @@ import Svg, {
   Stop,
   type SvgProps,
 } from 'react-native-svg'
-import {Image} from 'expo-image'
 
+import {APP_NAME, CAELUM_BRAND} from '#/lib/app-brand'
 import {useLogoVariant} from '#/view/icons/useLogoVariant'
 import {flatten, useTheme} from '#/alf'
+import {Image} from '#/components/Image'
+import artwork from '#/../assets/branding/caelum/generated/artwork.json'
+import {IS_BLUESKY_PLUS} from '#/env'
 
 const ratio = 57 / 64
 
@@ -34,6 +37,33 @@ export const Logo = forwardRef(function LogoImpl(props: Props, ref) {
 
   const logoVariant = useLogoVariant(allowVariants)
 
+  if (IS_BLUESKY_PLUS) {
+    return (
+      <Svg
+        // @ts-expect-error it's fiiiiine
+        ref={ref}
+        accessibilityLabel={APP_NAME}
+        accessibilityHint=""
+        {...rest}
+        viewBox={artwork.mark.viewBox}
+        style={[
+          {
+            width: size,
+            height: (size * artwork.mark.height) / artwork.mark.width,
+          },
+          styles,
+        ]}>
+        {artwork.mark.paths.map((d, i) => (
+          <Path
+            key={i}
+            d={d}
+            fill={gradient ? CAELUM_BRAND.colors.primary : _fill}
+          />
+        ))}
+      </Svg>
+    )
+  }
+
   if (logoVariant === 'kawaii') {
     return (
       <Image
@@ -42,7 +72,7 @@ export const Logo = forwardRef(function LogoImpl(props: Props, ref) {
             ? require('../../../assets/kawaii.png')
             : require('../../../assets/kawaii_smol.png')
         }
-        accessibilityLabel="Bluesky"
+        accessibilityLabel={APP_NAME}
         accessibilityHint=""
         accessibilityIgnoresInvertColors
         style={[{height: size, aspectRatio: 1.4}]}
