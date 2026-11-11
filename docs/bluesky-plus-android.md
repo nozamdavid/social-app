@@ -8,11 +8,16 @@ Assessment: [Android fork dependencies](android-fork-assessment.md).
 
 ## Current release scope
 
-Remote push notifications are out of scope for this release, as confirmed on
-2026-11-09. Keep permission prompts, token acquisition and upstream push
-registration disabled. No Firebase sender or independent push backend is
-required for this release. In-app notifications remain available and still need
-normal functional testing.
+Android social push is opt-in through our independent gateway. Configure
+`EXPO_PUBLIC_PUSH_GATEWAY_DID` and `CAELUM_GOOGLE_SERVICES_FILE` with a Firebase
+Android client registered for `am.noz.caelum`. Without a gateway DID, Caelum
+keeps remote push disabled; in-app notifications remain available.
+
+Authenticated PDS registration and synthetic FCM delivery have been verified on
+Android. Natural Jetstream-triggered delivery still needs acceptance testing.
+Private chat, bell subscriptions, and synchronization of private mutes and
+AppView push preferences are not covered. See the [gateway setup and validation
+notes](../tools/push-gateway/README.md).
 
 ## Naming
 
@@ -21,11 +26,12 @@ CDN/AppView, moderation services, official app, policy links and upstream
 attribution retain their names. Local app labels, permissions, wordmark,
 external-link prompts and the saved-media album use Caelum.
 
-The existing package `am.noz.blueskyplus`, `blueskyplus://` links, Expo slug,
-`IS_BLUESKY_PLUS` build switch and related environment keys remain compatible.
-The new `caelum-apk` profile aliases `bluesky-plus-apk`. Renaming the launcher
-label requires a native rebuild; installed app data remains under the same ID.
-Dated emulator reports and screenshots below retain the name shown at capture.
+The Play Console package is `am.noz.caelum`. This is a different installation
+identity from the legacy `am.noz.blueskyplus` package; app data is not migrated
+automatically. The `blueskyplus://` scheme, Expo slug, `IS_BLUESKY_PLUS` build
+switch and related environment keys remain in use. The `caelum-apk` profile
+aliases `bluesky-plus-apk`. Dated emulator reports and screenshots below retain
+the package and name shown at capture.
 
 ## Current foundation
 
@@ -34,7 +40,7 @@ The opt-in `caelum-apk` EAS profile sets
 Android; this profile does not configure an independent iOS app.
 
 - Display name: Caelum.
-- Android package: `am.noz.blueskyplus`.
+- Android package: `am.noz.caelum`.
 - URL scheme: `blueskyplus` (also used by the Android share-intent module).
 - OTA updates disabled, including upstream certificate configuration.
 - Product metrics disabled before event queuing or timer setup.
@@ -44,9 +50,10 @@ Android; this profile does not configure an independent iOS app.
 - Bitdrift build plugin and runtime key disabled. Android auto-linking also
   excludes its native SDK for the fork variant. The JavaScript dependency
   remains in the package manifest for upstream builds.
-- Remote push permission prompts, token acquisition/registration listeners and
-  unregister calls disabled. In-app notification queries remain available.
-- Upstream Firebase client file omitted. HTTPS `bsky.app` links are declared
+- Remote push permission prompts, token acquisition/refresh and logout cleanup
+  enabled only for configured Caelum Android builds. iOS Caelum push stays off.
+- Firebase client configuration comes from `CAELUM_GOOGLE_SERVICES_FILE`; the
+  fork does not use the upstream client file. HTTPS `bsky.app` links are declared
   in the Android intent filter so users can select this app as their handler.
   Automatic domain verification is not granted by this declaration.
 - Existing Bluesky network services remain in use, including auxiliary config
@@ -73,6 +80,15 @@ still require the domain owner to publish our package and signing certificate.
 The internal `blueskyplus://` scheme remains separate. A native rebuild is
 required to install the updated intent filter.
 
+## Open profiles and posts in other clients
+
+Profiles expose **More options → Open in…**. Posts expose **Share arrow → Open
+in…**. Both use a shared chooser for pds.ls, Blacksky, Witchsky and Red Dwarf.
+Profile links use the viewed account's DID; post links use the canonical post
+URI's author DID and record key. pds.ls opens the corresponding AT Protocol
+record. Native sheets close before another sheet or browser is opened; browser
+launch failures show a translated error message.
+
 ## Witchsky themes
 
 **Settings → Appearance → Themes** loads the signed-in account’s
@@ -88,7 +104,7 @@ until our DSN is supplied. Source-map uploads additionally require our
 `SENTRY_AUTH_TOKEN`, `SENTRY_ORG` and `SENTRY_PROJECT`. All three must be set
 before the fork enables the Expo Sentry plugin. Keep the auth token in private
 build secrets. Configure the upload release name as
-`am.noz.blueskyplus@<package.json version>`.
+`am.noz.caelum@<package.json version>`.
 
 Existing native reporting retains upstream sampling and PII settings, including
 `sendDefaultPii: true`. Review those settings and disclosures before public use.
@@ -101,9 +117,10 @@ names and credential sources are specific to the official application.
    `BLUESKY_PLUS_EAS_PROJECT_ID` in its build environment. Neither defaults to
    Bluesky's project in the fork variant. Own signing credentials and backups
    are also required.
-2. Complete the asset and branding inventory in Taproot. The current profile
-   still references upstream icons, splash images and other assets. See
-   [ASSETS.md](../ASSETS.md). No public redistribution is ready yet.
+2. Generate Caelum icons, splash artwork and palettes with
+   `pnpm branding:generate`. Larger 2048px/4096px icon exports are produced
+   alongside the launcher assets. See [branding](../assets/branding/caelum/README.md)
+   and the broader [asset inventory](../ASSETS.md).
 3. Build with `pnpm build-android --profile caelum-apk`. The existing script
    uses EAS version management; it needs access to our configured project.
 4. Verify the signed artifact on Android. Test installation alongside Bluesky,
@@ -117,8 +134,11 @@ privacy/legal links, dynamic icons and account/signup flows also remain open.
 
 A debug APK has been built, installed and launched in the Android 15 emulator;
 see [the emulator check](bluesky-plus-emulator-test.md) for evidence and limits.
-No publisher-signed release, Sentry account or Expo project has been provisioned.
-Independent remote push is deferred in Taproot and is not a release blocker.
+Local release APKs and upload-key-signed Play App Bundles have subsequently been
+built and validated. The dedicated upload key, passwords and Firebase sender
+credentials are stored outside the repository. Artifacts are not committed.
+Play publication and its account/store declarations are not performed by this
+change; no independent Sentry account or Expo project is provisioned here.
 
 ## Verification of the foundation
 

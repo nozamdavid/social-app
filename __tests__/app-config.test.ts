@@ -44,6 +44,7 @@ beforeEach(() => {
   delete process.env.SENTRY_ORG
   delete process.env.SENTRY_PROJECT
   delete process.env.DISABLE_UPDATES
+  delete process.env.CAELUM_GOOGLE_SERVICES_FILE
   process.env.EXPO_PUBLIC_ENV = 'production'
   process.env.EAS_BUILD_PLATFORM = 'android'
 })
@@ -61,7 +62,7 @@ it('isolates the fork from upstream updates, Firebase and build services', () =>
   expect(expo.name).toBe('Caelum')
   expect(expo.ios.infoPlist.CFBundleSpokenName).toBe('Caelum')
   expect(expo.scheme).toBe('blueskyplus')
-  expect(expo.android.package).toBe('am.noz.blueskyplus')
+  expect(expo.android.package).toBe('am.noz.caelum')
   expect(expo.android.googleServicesFile).toBeUndefined()
   expect(expo.android.intentFilters).toContainEqual({
     action: 'VIEW',

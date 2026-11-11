@@ -1,0 +1,15 @@
+services:
+  gateway:
+    build: .
+    ports:
+      - '127.0.0.1:18787:8080'
+    environment:
+      PUSH_GATEWAY_DID: did:web:push.noz.am
+      DEV_MODE: 'true'
+      DEV_MODE_ALLOW_PUBLIC: 'true'
+      SQLITE_PATH: /data/push-gateway.db
+      FCM_DATA_ONLY: 'true'
+    volumes:
+      - local-push-data:/data
+volumes:
+  local-push-data:

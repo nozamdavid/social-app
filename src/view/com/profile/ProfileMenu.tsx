@@ -43,6 +43,7 @@ import {
   RepostStrike_Stroke2_Corner0_Rounded as RepostStrikeIcon,
 } from '#/components/icons/Repost'
 import {SpeakerVolumeFull_Stroke2_Corner0_Rounded as UnmuteIcon} from '#/components/icons/Speaker'
+import {SquareArrowTopRight_Stroke2_Corner0_Rounded as ExternalLinkIcon} from '#/components/icons/Square'
 import {StarterPack_Stroke2_Corner0_Rounded as StarterPackIcon} from '#/components/icons/StarterPack'
 import * as Menu from '#/components/Menu'
 import {BlockDialog} from '#/components/moderation/BlockDialog'
@@ -50,13 +51,14 @@ import {
   ReportDialog,
   useReportDialogControl,
 } from '#/components/moderation/ReportDialog'
+import {OpenInMenu} from '#/components/OpenInMenu'
 import * as Prompt from '#/components/Prompt'
 import * as Toast from '#/components/Toast'
 import {useFullVerificationState} from '#/components/verification'
 import {VerificationCreatePrompt} from '#/components/verification/VerificationCreatePrompt'
 import {VerificationRemovePrompt} from '#/components/verification/VerificationRemovePrompt'
 import {useAnalytics} from '#/analytics'
-import {IS_WEB} from '#/env'
+import {IS_IOS, IS_WEB} from '#/env'
 import {useActorStatus, useLiveNowConfig} from '#/features/liveNow'
 import {EditLiveDialog} from '#/features/liveNow/components/EditLiveDialog'
 import {GoLiveDialog} from '#/features/liveNow/components/GoLiveDialog'
@@ -76,6 +78,8 @@ let ProfileMenu = ({
   const ax = useAnalytics()
   const {t: l} = useLingui()
   const {currentAccount, hasSession} = useSession()
+  const menuControl = Menu.useMenuControl()
+  const openInControl = useDialogControl()
   const reportDialogControl = useReportDialogControl()
   const queryClient = useQueryClient()
   const navigation = useNavigation<NavigationProp>()
@@ -282,7 +286,7 @@ let ProfileMenu = ({
 
   return (
     <EventStopper onKeyDown={false}>
-      <Menu.Root>
+      <Menu.Root control={menuControl}>
         <Menu.Trigger label={l`More options`}>
           {({props}) => {
             return (
@@ -326,6 +330,21 @@ let ProfileMenu = ({
               <Menu.ItemIcon
                 icon={IS_WEB ? ChainLinkIcon : ArrowOutOfBoxIcon}
               />
+            </Menu.Item>
+            <Menu.Item
+              testID="profileHeaderDropdownOpenInBtn"
+              label={l`Open in…`}
+              onPress={() => {
+                if (IS_IOS) {
+                  openInControl.open()
+                } else {
+                  menuControl.close(() => openInControl.open())
+                }
+              }}>
+              <Menu.ItemText>
+                <Trans>Open in…</Trans>
+              </Menu.ItemText>
+              <Menu.ItemIcon icon={ExternalLinkIcon} />
             </Menu.Item>
             <Menu.Item
               testID="profileHeaderDropdownSearchBtn"
@@ -569,6 +588,10 @@ let ProfileMenu = ({
           ) : null}
         </Menu.Outer>
       </Menu.Root>
+      <OpenInMenu
+        control={openInControl}
+        target={{type: 'profile', did: profile.did}}
+      />
       <StarterPackDialog
         control={addToStarterPacksDialogControl}
         targetDid={profile.did}
