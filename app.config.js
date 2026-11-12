@@ -1,5 +1,6 @@
 // @ts-check
 const pkg = require('./package.json')
+const {getNativeQueries} = require('./src/components/ShareDialog/catalog.ts')
 const caelum = require('./assets/branding/caelum/brand.json')
 const caelumAssets = require('./assets/branding/caelum/generated/build.json')
 
@@ -55,6 +56,12 @@ module.exports = function (_config) {
       (process.env.SENTRY_ORG && process.env.SENTRY_PROJECT)),
   )
 
+  /**
+   * Apps the share sheet can detect, generated from the share platform
+   * catalog. Changing these needs a native build.
+   */
+  const SHARE_PLATFORM_QUERIES = getNativeQueries()
+
   const IOS_ICON_FILE = IS_BLUESKY_PLUS
     ? caelumAssets.icon
     : PLATFORM === 'web' // web build doesn't like .icon files
@@ -99,6 +106,7 @@ module.exports = function (_config) {
           CADisableMinimumFrameDurationOnPhone: true,
           UIBackgroundModes: ['remote-notification'],
           NSUserActivityTypes: ['INSendMessageIntent'],
+          LSApplicationQueriesSchemes: SHARE_PLATFORM_QUERIES.iosSchemes,
           NSCameraUsageDescription:
             'Used for profile pictures, posts, and other kinds of content.',
           NSPhotoLibraryAddUsageDescription:
@@ -453,6 +461,13 @@ module.exports = function (_config) {
         './plugins/withAndroidManifestLargeHeapPlugin.js',
         './plugins/withAndroidManifestFCMIconPlugin.js',
         './plugins/withAndroidManifestIntentQueriesPlugin.js',
+        [
+          './plugins/withAndroidManifestSharePlatformQueriesPlugin.js',
+          {
+            packages: SHARE_PLATFORM_QUERIES.androidPackages,
+            schemes: SHARE_PLATFORM_QUERIES.androidSchemes,
+          },
+        ],
         './plugins/withAndroidManifestOptionalCameraPlugin.js',
         './plugins/withAndroidStylesAccentColorPlugin.js',
         './plugins/withAndroidNoJitpackPlugin.js',

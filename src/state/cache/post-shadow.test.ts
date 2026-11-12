@@ -16,9 +16,6 @@ jest.mock('#/state/queries/bookmarks/useBookmarksQuery', () => ({
 jest.mock('#/state/queries/explore-feed-previews', () => ({
   findAllPostsInQueryData: function* () {},
 }))
-jest.mock('#/state/queries/notifications/feed', () => ({
-  findAllPostsInQueryData: function* () {},
-}))
 jest.mock('#/state/queries/notifications/grouped', () => ({
   findAllPostsInQueryData: function* () {},
 }))
