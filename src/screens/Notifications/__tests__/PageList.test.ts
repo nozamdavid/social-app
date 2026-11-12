@@ -15,6 +15,7 @@ jest.mock('#/screens/Notifications/components/NotificationItem', () => ({}))
 jest.mock('#/screens/Notifications/components/PagerView', () => ({}))
 jest.mock('#/screens/Notifications/components/RefreshPill', () => ({}))
 jest.mock('#/components/Link', () => ({}))
+jest.mock('#/features/witchskyThemes/preferences', () => ({}))
 jest.mock('#/analytics', () => ({}))
 
 describe('getPlaceholderRow', () => {

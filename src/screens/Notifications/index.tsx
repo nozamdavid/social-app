@@ -79,7 +79,7 @@ export function NotificationsScreen({}: Props) {
       <FAB
         testID="composeFAB"
         onPress={() => openComposer({logContext: 'Fab'})}
-        icon={<EditBigIcon size="lg" fill={t.palette.white} />}
+        icon={<EditBigIcon size="lg" fill={t.onAccent ?? t.palette.white} />}
         accessibilityRole="button"
         accessibilityLabel={l({message: 'New post', context: 'action'})}
         accessibilityHint=""

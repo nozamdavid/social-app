@@ -1,10 +1,10 @@
-import {Image} from 'expo-image'
 import {plural} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react/macro'
 
 import {getGalleryImages} from '#/screens/Atmosphere/data/exploreData'
 import {atoms as a, useBreakpoints, useTheme} from '#/alf'
 import * as Gallery from '#/components/Gallery'
+import {Image} from '#/components/Image'
 import {ConstrainedImage} from '#/components/images/AutoSizedImage'
 import {
   computeDims,

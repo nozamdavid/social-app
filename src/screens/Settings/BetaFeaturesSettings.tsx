@@ -3,6 +3,7 @@ import {View} from 'react-native'
 import {Trans, useLingui} from '@lingui/react/macro'
 import {type NativeStackScreenProps} from '@react-navigation/native-stack'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {type CommonNavigatorParams} from '#/lib/routes/types'
 import {logger} from '#/logger'
 import {
@@ -77,8 +78,7 @@ export function BetaFeaturesSettingsScreen({}: Props) {
               comment: 'Name for a beta feature',
             }),
             description: l({
-              message:
-                'Bluesky adapts to your iPad’s screen in any orientation or window size.',
+              message: `${APP_NAME} adapts to your iPad’s screen in any orientation or window size.`,
               comment: 'Description of a beta feature (iPad support)',
             }),
           },

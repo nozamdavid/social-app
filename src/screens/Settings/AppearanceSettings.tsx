@@ -5,15 +5,14 @@ import Animated, {
   LayoutAnimationConfig,
   LinearTransition,
 } from 'react-native-reanimated'
-import {msg} from '@lingui/core/macro'
-import {useLingui} from '@lingui/react'
-import {Trans} from '@lingui/react/macro'
+import {Trans, useLingui} from '@lingui/react/macro'
 
 import {
   type CommonNavigatorParams,
   type NativeStackScreenProps,
 } from '#/lib/routes/types'
 import {useSetThemePrefs, useThemePrefs} from '#/state/shell'
+import * as SettingsList from '#/screens/Settings/components/SettingsList'
 import {type Alf, atoms as a, native, useAlf, useTheme} from '#/alf'
 import * as SegmentedControl from '#/components/forms/SegmentedControl'
 import {type Props as SVGIconProps} from '#/components/icons/common'
@@ -23,12 +22,15 @@ import {TextSize_Stroke2_Corner0_Rounded as TextSize} from '#/components/icons/T
 import {TitleCase_Stroke2_Corner0_Rounded as Aa} from '#/components/icons/TitleCase'
 import * as Layout from '#/components/Layout'
 import {Text} from '#/components/Typography'
-import * as SettingsList from './components/SettingsList'
+import {IS_BLUESKY_PLUS} from '#/env'
+import {useWitchskyThemeSelection} from '#/features/witchskyThemes/preferences'
+import {ThemesSection} from '#/features/witchskyThemes/ThemesSection'
 
 type Props = NativeStackScreenProps<CommonNavigatorParams, 'AppearanceSettings'>
 export function AppearanceSettingsScreen({}: Props) {
-  const {_} = useLingui()
+  const {t: l} = useLingui()
   const {fonts} = useAlf()
+  const [witchskyTheme] = useWitchskyThemeSelection()
 
   const {colorMode, darkTheme} = useThemePrefs()
   const {setColorMode, setDarkTheme} = useSetThemePrefs()
@@ -63,7 +65,7 @@ export function AppearanceSettingsScreen({}: Props) {
 
   return (
     <LayoutAnimationConfig skipExiting skipEntering>
-      <Layout.Screen testID="preferencesThreadsScreen">
+      <Layout.Screen testID="appearanceSettingsScreen">
         <Layout.Header.Outer>
           <Layout.Header.BackButton />
           <Layout.Header.Content>
@@ -75,66 +77,73 @@ export function AppearanceSettingsScreen({}: Props) {
         </Layout.Header.Outer>
         <Layout.Content>
           <SettingsList.Container>
-            <AppearanceToggleButtonGroup
-              title={_(msg`Color mode`)}
-              icon={PhoneIcon}
-              items={[
-                {
-                  label: _(msg`System`),
-                  name: 'system',
-                },
-                {
-                  label: _(msg`Light`),
-                  name: 'light',
-                },
-                {
-                  label: _(msg`Dark`),
-                  name: 'dark',
-                },
-              ]}
-              value={colorMode}
-              onChange={onChangeAppearance}
-            />
-
-            {colorMode !== 'light' && (
-              <Animated.View
-                entering={native(FadeInUp)}
-                exiting={native(FadeOutUp)}>
+            {IS_BLUESKY_PLUS && (
+              <>
+                <ThemesSection />
+                {!witchskyTheme && <SettingsList.Divider />}
+              </>
+            )}
+            {!witchskyTheme && (
+              <>
                 <AppearanceToggleButtonGroup
-                  title={_(msg`Dark theme`)}
-                  icon={MoonIcon}
+                  title={l`Color mode`}
+                  icon={PhoneIcon}
                   items={[
                     {
-                      label: _(msg`Dim`),
-                      name: 'dim',
+                      label: l`System`,
+                      name: 'system',
                     },
                     {
-                      label: _(msg`Dark`),
+                      label: l`Light`,
+                      name: 'light',
+                    },
+                    {
+                      label: l`Dark`,
                       name: 'dark',
                     },
                   ]}
-                  value={darkTheme ?? 'dim'}
-                  onChange={onChangeDarkTheme}
+                  value={colorMode}
+                  onChange={onChangeAppearance}
                 />
-              </Animated.View>
-            )}
 
+                {colorMode !== 'light' && (
+                  <Animated.View
+                    entering={native(FadeInUp)}
+                    exiting={native(FadeOutUp)}>
+                    <AppearanceToggleButtonGroup
+                      title={l`Dark theme`}
+                      icon={MoonIcon}
+                      items={[
+                        {
+                          label: l`Dim`,
+                          name: 'dim',
+                        },
+                        {
+                          label: l`Dark`,
+                          name: 'dark',
+                        },
+                      ]}
+                      value={darkTheme ?? 'dim'}
+                      onChange={onChangeDarkTheme}
+                    />
+                  </Animated.View>
+                )}
+              </>
+            )}
             <Animated.View layout={native(LinearTransition)}>
               <SettingsList.Divider />
 
               <AppearanceToggleButtonGroup
-                title={_(msg`Font`)}
-                description={_(
-                  msg`For the best experience, we recommend using the theme font.`,
-                )}
+                title={l`Font`}
+                description={l`For the best experience, we recommend using the theme font.`}
                 icon={Aa}
                 items={[
                   {
-                    label: _(msg`System`),
+                    label: l`System`,
                     name: 'system',
                   },
                   {
-                    label: _(msg`Theme`),
+                    label: l`Theme`,
                     name: 'theme',
                   },
                 ]}
@@ -143,19 +152,19 @@ export function AppearanceSettingsScreen({}: Props) {
               />
 
               <AppearanceToggleButtonGroup
-                title={_(msg`Font size`)}
+                title={l`Font size`}
                 icon={TextSize}
                 items={[
                   {
-                    label: _(msg`Smaller`),
+                    label: l`Smaller`,
                     name: '-1',
                   },
                   {
-                    label: _(msg`Default`),
+                    label: l`Default`,
                     name: '0',
                   },
                   {
-                    label: _(msg`Larger`),
+                    label: l`Larger`,
                     name: '1',
                   },
                 ]}

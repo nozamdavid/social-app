@@ -569,13 +569,13 @@
   },
   "src/lib/hooks/useToggleMutationQueue.ts": {
     "typescript/no-explicit-any": {
-      "count": 2
+      "count": 1
     },
     "typescript/no-floating-promises": {
       "count": 1
     },
     "typescript/no-unsafe-call": {
-      "count": 2
+      "count": 1
     }
   },
   "src/lib/hooks/useWebScrollRestoration.ts": {

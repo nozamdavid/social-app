@@ -35,6 +35,7 @@ import {ArrowShareRight_Stroke2_Corner2_Rounded as ShareIcon} from '#/components
 import * as PeekMenu from '#/components/PeekMenu'
 import {Text, type TextProps} from '#/components/Typography'
 import {IS_IOS, IS_NATIVE, IS_WEB} from '#/env'
+import {useInfrastructureSettings} from '#/features/infrastructure/preferences'
 import {router} from '#/routes'
 import {useGlobalDialogsControlContext} from './dialogs/Context'
 
@@ -413,13 +414,14 @@ function LinkPeek({
   const t = useTheme()
   const {t: l} = useLingui()
   const useInAppBrowserPref = useInAppBrowser()
+  const {useLinkRedirects} = useInfrastructureSettings()
 
   return (
     <PeekMenu.Root>
       <PeekMenu.Trigger
         preview={{
           type: 'link',
-          url: shouldProxy ? createProxiedUrl(href) : href,
+          url: shouldProxy ? createProxiedUrl(href, useLinkRedirects) : href,
           // Only morph natively when the user has explicitly opted in. When the
           // preference is unset (undefined), defer to the JS flow so the consent
           // dialog can show.
@@ -581,11 +583,12 @@ export function SimpleInlineLinkText({
     onOut: onInteractOut,
   } = useInteractionState()
   const flattenedStyle = flatten(style)
+  const {useLinkRedirects} = useInfrastructureSettings()
   const isExternal = isExternalUrl(to)
 
   let href = to
   if (shouldProxy) {
-    href = createProxiedUrl(href)
+    href = createProxiedUrl(href, useLinkRedirects)
   }
 
   const onPress = (e: GestureResponderEvent) => {

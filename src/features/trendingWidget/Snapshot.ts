@@ -2,6 +2,7 @@ import {type app} from '#/lexicons'
 
 export type TrendingWidgetCopy = {
   emptyMessage: string
+  openAppLabel: string
   shortTitle: string
   title: string
 }

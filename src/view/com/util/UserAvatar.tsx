@@ -10,7 +10,6 @@ import {
   type ViewStyle,
 } from 'react-native'
 import Svg, {Circle, Path, Rect} from 'react-native-svg'
-import {Image as ExpoImage} from 'expo-image'
 import {type ModerationUI} from '@bsky/sdk/moderation'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
@@ -49,12 +48,15 @@ import {
 } from '#/components/icons/Camera'
 import {StreamingLive_Stroke2_Corner0_Rounded as LibraryIcon} from '#/components/icons/StreamingLive'
 import {Trash_Stroke2_Corner0_Rounded as TrashIcon} from '#/components/icons/Trash'
+import {Image as ExpoImage} from '#/components/Image'
 import {Link} from '#/components/Link'
 import {MediaInsetBorder} from '#/components/MediaInsetBorder'
 import * as Menu from '#/components/Menu'
 import {ProfileHoverCard} from '#/components/ProfileHoverCard'
 import {useAnalytics} from '#/analytics'
 import {IS_ANDROID, IS_NATIVE, IS_WEB, IS_WEB_TOUCH_DEVICE} from '#/env'
+import {rewriteImageUrl} from '#/features/infrastructure/config'
+import {useInfrastructureSettings} from '#/features/infrastructure/preferences'
 import {useActorStatus} from '#/features/liveNow'
 import {LiveIndicator} from '#/features/liveNow/components/LiveIndicator'
 import {LiveStatusDialog} from '#/features/liveNow/components/LiveStatusDialog'
@@ -231,6 +233,7 @@ let UserAvatar = ({
   extraAviStyle,
 }: UserAvatarProps): React.ReactNode => {
   const t = useTheme()
+  const {imageCdnHostname} = useInfrastructureSettings()
   const finalShape = overrideShape ?? (type === 'user' ? 'circle' : 'square')
 
   const aviStyle = useMemo(() => {
@@ -317,7 +320,10 @@ let UserAvatar = ({
           style={aviStyle}
           resizeMode="cover"
           source={{
-            uri: hackModifyThumbnailPath(avatar, size < 90),
+            uri: rewriteImageUrl(
+              hackModifyThumbnailPath(avatar, size < 90),
+              imageCdnHostname,
+            ),
           }}
           blurRadius={moderation?.blur ? BLUR_AMOUNT : 0}
           onLoad={onLoad}

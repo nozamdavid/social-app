@@ -6,17 +6,17 @@ import {type Client} from '@atproto/lex'
 import BackgroundNotificationHandler from '@bsky.app/expo-background-notification-handler'
 import debounce from 'lodash.debounce'
 
+import {NOTIF_SERVICE} from '#/lib/constants'
 import {
-  NOTIF_SERVICE,
-  PUBLIC_APPVIEW_DID,
-  PUBLIC_STAGING_APPVIEW_DID,
-} from '#/lib/constants'
+  getPushRegistration,
+  PUSH_ENABLED,
+} from '#/lib/notifications/registration'
 import {logger as notyLogger} from '#/lib/notifications/util'
 import {isNetworkError} from '#/lib/strings/errors'
 import {type SessionAccount, usePdsClient, useSession} from '#/state/session'
 import {useAgeAssurance} from '#/ageAssurance'
 import {useAnalytics} from '#/analytics'
-import {IS_DEV, IS_NATIVE} from '#/env'
+import {IS_BLUESKY_PLUS, IS_DEV, IS_NATIVE} from '#/env'
 import {app} from '#/lexicons'
 
 /**
@@ -49,18 +49,18 @@ async function _registerPushToken({
     ageRestricted?: boolean
   }
 }) {
+  if (!PUSH_ENABLED) return
   try {
     const payload: app.bsky.notification.registerPush.$InputBody = {
-      serviceDid: currentAccount.service?.includes('staging')
-        ? PUBLIC_STAGING_APPVIEW_DID
-        : PUBLIC_APPVIEW_DID,
+      ...getPushRegistration(currentAccount.service),
       platform: Platform.OS,
       token: token.data,
-      appId: 'xyz.blueskyweb.app',
       ageRestricted: extra.ageRestricted ?? false,
     }
 
-    notyLogger.debug(`registerPushToken: registering`, {...payload})
+    notyLogger.debug(`registerPushToken: registering`, {
+      serviceDid: payload.serviceDid,
+    })
 
     await client.call(app.bsky.notification.registerPush, payload, {
       service: NOTIF_SERVICE,
@@ -157,7 +157,7 @@ export function useGetAndRegisterPushToken() {
     }: {
       isAgeRestricted?: boolean
     } = {}) => {
-      if (!IS_NATIVE || IS_DEV) return
+      if (!IS_NATIVE || !PUSH_ENABLED || (IS_DEV && !IS_BLUESKY_PLUS)) return
 
       /**
        * This will also fire the listener added via `addPushTokenListener`. That
@@ -165,9 +165,7 @@ export function useGetAndRegisterPushToken() {
        */
       const token = await getPushToken()
 
-      notyLogger.debug(`useGetAndRegisterPushToken`, {
-        token: token ?? 'undefined',
-      })
+      notyLogger.debug(`useGetAndRegisterPushToken`, {hasToken: !!token})
 
       if (token) {
         /**
@@ -205,7 +203,7 @@ export function useNotificationsRegistration() {
      * We want this to init right away _after_ we have a logged in user, and
      * _after_ we've loaded their age assurance state.
      */
-    if (!currentAccount) return
+    if (!currentAccount || !PUSH_ENABLED) return
 
     notyLogger.debug(`useNotificationsRegistration`)
 
@@ -234,7 +232,7 @@ export function useNotificationsRegistration() {
         token,
         isAgeRestricted: aa.state.access !== aa.Access.Full,
       })
-      notyLogger.debug(`addPushTokenListener callback`, {token})
+      notyLogger.debug(`addPushTokenListener callback`)
     })
 
     return () => {
@@ -259,6 +257,7 @@ export function useRequestNotificationsPermission() {
   return async (
     context: 'StartOnboarding' | 'AfterOnboarding' | 'Login' | 'Home',
   ) => {
+    if (!PUSH_ENABLED) return
     const permissions = await Notifications.getPermissionsAsync()
 
     if (
@@ -345,7 +344,7 @@ export async function resetBadgeCount() {
 }
 
 export async function unregisterPushToken(clients: TemporaryPushClient[]) {
-  if (!IS_NATIVE) return
+  if (!IS_NATIVE || !PUSH_ENABLED) return
 
   try {
     const token = await getPushToken()
@@ -354,12 +353,9 @@ export async function unregisterPushToken(clients: TemporaryPushClient[]) {
         await client.call(
           app.bsky.notification.unregisterPush,
           {
-            serviceDid: service.includes('staging')
-              ? PUBLIC_STAGING_APPVIEW_DID
-              : PUBLIC_APPVIEW_DID,
+            ...getPushRegistration(service),
             platform: Platform.OS,
             token: token.data,
-            appId: 'xyz.blueskyweb.app',
           },
           {
             service: NOTIF_SERVICE,

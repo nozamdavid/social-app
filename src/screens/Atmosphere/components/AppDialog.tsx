@@ -1,5 +1,4 @@
 import {type GestureResponderEvent, View} from 'react-native'
-import {Image} from 'expo-image'
 import {useLingui} from '@lingui/react/macro'
 import {useNavigation} from '@react-navigation/native'
 
@@ -11,6 +10,7 @@ import {atoms as a, useTheme, web} from '#/alf'
 import {ButtonIcon, ButtonText} from '#/components/Button'
 import * as Dialog from '#/components/Dialog'
 import {SquareArrowTopRight_Stroke2_Corner0_Rounded as ArrowIcon} from '#/components/icons/Square'
+import {Image} from '#/components/Image'
 import {isClickEventWithMetaKey, Link} from '#/components/Link'
 import {MediaInsetBorder} from '#/components/MediaInsetBorder'
 import {Text} from '#/components/Typography'

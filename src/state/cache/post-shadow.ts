@@ -47,6 +47,19 @@ export function dangerousGetPostShadow(post: app.bsky.feed.defs.PostView) {
   return shadows.get(post)
 }
 
+/** Read the latest like state after async work, including optimistic changes. */
+export function getPostLikeUri(
+  queryClient: QueryClient,
+  post: app.bsky.feed.defs.PostView,
+) {
+  for (const cachedPost of findPostsInCache(queryClient, post.uri)) {
+    const shadow = shadows.get(cachedPost)
+    if (shadow && 'likeUri' in shadow) return shadow.likeUri
+    if (cachedPost.viewer?.like) return cachedPost.viewer.like
+  }
+  return post.viewer?.like
+}
+
 export function usePostShadow(
   post: app.bsky.feed.defs.PostView,
 ): Shadow<app.bsky.feed.defs.PostView> | typeof POST_TOMBSTONE {

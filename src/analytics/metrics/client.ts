@@ -34,6 +34,7 @@ export class MetricsClient<M extends Record<string, any>> {
   private backoffUntil = 0
 
   start() {
+    if (env.IS_BLUESKY_PLUS) return
     if (this.started) return
     this.started = true
     this.flushInterval = setInterval(() => {
@@ -53,6 +54,7 @@ export class MetricsClient<M extends Record<string, any>> {
     payload: M[E],
     metadata: Record<string, any> = {},
   ) {
+    if (env.IS_BLUESKY_PLUS) return
     this.start()
 
     const e: Event<M> = {

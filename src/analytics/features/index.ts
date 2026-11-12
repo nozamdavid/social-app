@@ -43,13 +43,18 @@ const sdkOptions = {
   clientKey: env.GROWTHBOOK_CLIENT_KEY,
   enableDevMode: env.IS_INTERNAL,
 }
-const bootstrap = readFeatureBootstrap(sdkOptions)
+const bootstrap = env.IS_BLUESKY_PLUS
+  ? {features: {}, experiments: [], savedGroups: {}}
+  : readFeatureBootstrap(sdkOptions)
 
 /**
  * Shared SDK instance. Assumes a single active account context, with attributes
  * supplied by AnalyticsFeaturesContext before its children evaluate features.
  */
-export const features = createGrowthBook(sdkOptions, bootstrap)
+export const features = createGrowthBook(
+  env.IS_BLUESKY_PLUS ? {enableDevMode: env.IS_INTERNAL} : sdkOptions,
+  bootstrap,
+)
 
 /**
  * Initializer promise that must be awaited before using the GrowthBook
@@ -57,21 +62,24 @@ export const features = createGrowthBook(sdkOptions, bootstrap)
  * is available synchronously while this revalidates it. Without one, a slow
  * initialization may cause a flash of uncustomized content.
  */
-export const init = bootstrap
-  ? refreshGrowthBook(features, {timeout: TIMEOUT_INIT})
-  : features.init({timeout: TIMEOUT_INIT}).then(res => {
-      if (!res.success) {
-        logger.warn('GrowthBook initialization failed or timed out', {
-          source: res.source,
-          safeMessage: res.error?.toString(),
-        })
-      }
-    })
+export const init = env.IS_BLUESKY_PLUS
+  ? Promise.resolve()
+  : bootstrap
+    ? refreshGrowthBook(features, {timeout: TIMEOUT_INIT})
+    : features.init({timeout: TIMEOUT_INIT}).then(res => {
+        if (!res.success) {
+          logger.warn('GrowthBook initialization failed or timed out', {
+            source: res.source,
+            safeMessage: res.error?.toString(),
+          })
+        }
+      })
 
 /**
  * Refresh feature gates from GrowthBook.
  */
 export async function refresh({strategy}: {strategy: FeatureFetchStrategy}) {
+  if (env.IS_BLUESKY_PLUS) return
   const options = {
     timeout:
       strategy === 'prefer-low-latency'

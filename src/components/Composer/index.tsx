@@ -37,7 +37,12 @@ import {
   type AutosizedTextareaProps,
 } from '#/components/forms/AutosizedTextarea'
 import {Span, Text} from '#/components/Typography'
-import {IS_IOS, IS_WEB, IS_WEB_TOUCH_DEVICE} from '#/env'
+import {IS_BLUESKY_PLUS, IS_IOS, IS_WEB, IS_WEB_TOUCH_DEVICE} from '#/env'
+import {isExactEmojiShortcode} from '#/features/emojiSuggestions/search'
+import {
+  EMOJI_FACET_PATTERN,
+  getEmojiToken,
+} from '#/features/emojiSuggestions/tokens'
 
 type TextInputInstance = React.ComponentRef<typeof TextInput>
 type ViewInstance = React.ComponentRef<typeof View>
@@ -119,7 +124,7 @@ export function Composer({
   onRequestSubmit,
   autocompletePlacement,
   defaultValue,
-  disableEmojiFacets = !IS_WEB,
+  disableEmojiFacets = !IS_WEB && !IS_BLUESKY_PLUS,
   ...rest
 }: ComposerProps) {
   const {theme: t, fonts} = useAlf()
@@ -135,7 +140,7 @@ export function Composer({
           tag: facets.tag,
           url: facets.url,
         }
-      : facets,
+      : {...facets, emoji: EMOJI_FACET_PATTERN},
   })
   const sift = useSift({
     offset: a.p_sm.padding,
@@ -152,6 +157,14 @@ export function Composer({
    * Active facet state for controlling the visibility of the Autocomplete.
    */
   const [activeFacet, setActiveFacet] = useState<TapperActiveFacet | null>(null)
+  const emojiToken =
+    activeFacet?.type === 'emoji'
+      ? getEmojiToken(
+          tapper.state.text,
+          tapper.state.selection.start,
+          tapper.state.selection.end,
+        )
+      : null
 
   /*
    * Reanimated shared value for syncing scroll on all platforms.
@@ -281,7 +294,7 @@ export function Composer({
   }
 
   const textContent = (
-    <Text style={[textStyle, web({whiteSpace: 'pre-wrap'})]}>
+    <Text emoji style={[textStyle, web({whiteSpace: 'pre-wrap'})]}>
       {tapper.state.nodes.map((node, i) => {
         switch (node.type) {
           case 'text':
@@ -379,14 +392,35 @@ export function Composer({
         </AutosizedTextarea>
       </View>
 
-      {activeFacet && activeFacet.type !== 'url' && (
-        <AutocompleteInner
-          inverted={autocompletePlacement?.startsWith('top')}
-          sift={sift}
-          activeFacet={activeFacet}
-          onDismiss={() => setActiveFacet(null)}
-        />
-      )}
+      {activeFacet &&
+        activeFacet.type !== 'url' &&
+        (activeFacet.type !== 'emoji' || emojiToken) && (
+          <AutocompleteInner
+            inverted={autocompletePlacement?.startsWith('top')}
+            sift={sift}
+            activeFacet={activeFacet}
+            query={emojiToken?.query ?? activeFacet.value}
+            context={emojiToken?.context}
+            noTrailingSpace={
+              activeFacet.type === 'emoji' &&
+              (emojiToken?.end ?? activeFacet.range.end) <
+                tapper.state.text.length
+            }
+            onReplace={(value, noTrailingSpace) => {
+              if (emojiToken) {
+                /* Tapper's partial trigger ends at the cursor. Move to the token's
+                 * end first so choosing a suggestion also consumes its suffix. */
+                tapper.inputProps.onSelectionChange({
+                  nativeEvent: {
+                    selection: {start: emojiToken.end, end: emojiToken.end},
+                  },
+                })
+              }
+              activeFacet.replace(value, {noTrailingSpace})
+            }}
+            onDismiss={() => setActiveFacet(null)}
+          />
+        )}
     </>
   )
 }
@@ -399,30 +433,42 @@ function AutocompleteInner({
   inverted,
   sift,
   activeFacet,
+  query,
+  context,
+  noTrailingSpace,
+  onReplace,
   onDismiss,
 }: {
   inverted?: boolean
   sift: UseSiftReturn
   activeFacet: TapperActiveFacet
+  query: string
+  context?: string
+  noTrailingSpace?: boolean
+  onReplace: (value: string, noTrailingSpace?: boolean) => void
   onDismiss: () => void
 }) {
   const {items} = useAutocomplete({
     type: parseAutocompleteItemType(activeFacet.type),
-    query: activeFacet.value,
+    query,
+    context,
   })
 
   useEffect(() => {
     if (
       activeFacet?.type === 'emoji' &&
-      !!activeFacet.value.length &&
+      query === activeFacet.value &&
       activeFacet.raw.endsWith(':')
     ) {
-      if (items?.[0]) {
-        activeFacet.replace(items[0].value, {noTrailingSpace: true})
+      if (
+        items?.[0]?.type === 'emoji' &&
+        isExactEmojiShortcode(items[0], query)
+      ) {
+        onReplace(items[0].value, true)
         onDismiss()
       }
     }
-  }, [items, activeFacet])
+  }, [items, activeFacet, query, onDismiss, onReplace])
 
   return items && items.length ? (
     <AutocompleteBase
@@ -439,7 +485,7 @@ function AutocompleteInner({
         return <View />
       }}
       onSelect={item => {
-        activeFacet.replace(item.value)
+        onReplace(item.value, noTrailingSpace)
         onDismiss()
       }}
       onDismiss={onDismiss}

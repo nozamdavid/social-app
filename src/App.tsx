@@ -81,11 +81,15 @@ import {
 } from '#/analytics'
 import {getDeviceId} from '#/analytics/identifiers'
 import {IS_ANDROID, IS_IOS} from '#/env'
+import {InfrastructureProvider} from '#/features/infrastructure/preferences'
 import {
   prefetchLiveEvents,
   Provider as LiveEventsProvider,
 } from '#/features/liveEvents/context'
+import {LocalBookmarksSync} from '#/features/searchableBookmarks/hooks'
 import {TrendingTopicsWidgetSync} from '#/features/trendingWidget/Sync'
+import {useWitchskyThemeSelection} from '#/features/witchskyThemes/preferences'
+import {createWitchskyThemeOverrides} from '#/features/witchskyThemes/theme'
 import * as Geo from '#/geolocation'
 import {Splash} from '#/Splash'
 
@@ -113,6 +117,8 @@ function InnerApp() {
   const {currentAccount} = useSession()
   const {resumeSession} = useSessionApi()
   const theme = useColorModeTheme()
+  const [witchskyTheme] = useWitchskyThemeSelection()
+  const themesOverride = createWitchskyThemeOverrides(witchskyTheme)
   const {t: l} = useLingui()
   const hasCheckedLanding = useLandingEntry()
 
@@ -143,8 +149,8 @@ function InnerApp() {
   }, [l])
 
   return (
-    <Alf theme={theme}>
-      <ThemeProvider theme={theme}>
+    <Alf theme={theme} themesOverride={themesOverride}>
+      <ThemeProvider theme={theme} colors={witchskyTheme?.colors}>
         <ContextMenuProvider>
           <Splash isReady={isReady && hasCheckedLanding}>
             <VideoVolumeProvider>
@@ -154,6 +160,7 @@ function InnerApp() {
                   key={currentAccount?.did}>
                   <AnalyticsFeaturesContext>
                     <QueryProvider currentDid={currentAccount?.did}>
+                      <LocalBookmarksSync />
                       <BetaUserStorageSync />
                       <PolicyUpdateOverlayProvider>
                         <LiveEventsProvider>
@@ -249,7 +256,9 @@ function App() {
                                 <LandingProvider>
                                   <SafeAreaProvider
                                     initialMetrics={initialWindowMetrics}>
-                                    <InnerApp />
+                                    <InfrastructureProvider>
+                                      <InnerApp />
+                                    </InfrastructureProvider>
                                   </SafeAreaProvider>
                                 </LandingProvider>
                               </BottomSheetProvider>

@@ -1,9 +1,6 @@
 import {useRef, useState} from 'react'
 import {type ImageStyle, View} from 'react-native'
-import {Image} from 'expo-image'
-import {msg} from '@lingui/core/macro'
-import {useLingui} from '@lingui/react'
-import {Plural, Trans} from '@lingui/react/macro'
+import {Plural, Trans, useLingui} from '@lingui/react/macro'
 
 import {MAX_ALT_TEXT} from '#/lib/constants'
 import {enforceLen} from '#/lib/strings/helpers'
@@ -15,8 +12,10 @@ import * as Dialog from '#/components/Dialog'
 import {type DialogControlProps} from '#/components/Dialog'
 import * as TextField from '#/components/forms/TextField'
 import {CircleInfo_Stroke2_Corner0_Rounded as CircleInfo} from '#/components/icons/CircleInfo'
+import {Image} from '#/components/Image'
 import {Text} from '#/components/Typography'
-import {IS_WEB} from '#/env'
+import {IS_ANDROID, IS_WEB} from '#/env'
+import {AltTextTools} from '#/features/altTextGeneration/AltTextTools'
 
 type Props = {
   control: Dialog.DialogOuterProps['control']
@@ -73,7 +72,7 @@ const ImageAltTextInner = ({
   image: Props['image']
 }): React.ReactNode => {
   const [altText, setAltText] = useState(image.alt)
-  const {_, i18n} = useLingui()
+  const {t: l, i18n} = useLingui()
   const t = useTheme()
   const source = image.transformed ?? image.source
   const imageStyle: ImageStyle = {
@@ -83,7 +82,7 @@ const ImageAltTextInner = ({
   }
 
   return (
-    <Dialog.ScrollableInner label={_(msg`Add alt text`)}>
+    <Dialog.ScrollableInner label={l`Add alt text`}>
       <Dialog.Close />
 
       <View>
@@ -109,6 +108,19 @@ const ImageAltTextInner = ({
       </View>
 
       <View style={[a.mt_md, a.gap_md]}>
+        {IS_ANDROID && (
+          <AltTextTools
+            key={source.path}
+            uri={source.path}
+            hasAltText={!!altText.trim()}
+            onApply={(text, append) => {
+              const next =
+                append && altText.trim() ? `${altText}\n\n${text}` : text
+              setAltText(next)
+              onChangeText(next)
+            }}
+          />
+        )}
         <View style={[a.gap_sm]}>
           <View style={[a.relative, {width: '100%'}]}>
             <TextField.LabelText>
@@ -116,7 +128,7 @@ const ImageAltTextInner = ({
             </TextField.LabelText>
             <TextField.Root>
               <Dialog.Input
-                label={_(msg`Alt text`)}
+                label={l`Alt text`}
                 onChangeText={text => {
                   setAltText(text)
                   onChangeText(text)
@@ -152,7 +164,7 @@ const ImageAltTextInner = ({
 
         <AltTextCounterWrapper altText={altText}>
           <Button
-            label={_(msg`Save`)}
+            label={l`Save`}
             disabled={altText === image.alt}
             size="large"
             color="primary"

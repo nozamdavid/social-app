@@ -1,0 +1,6 @@
+{
+  "platforms": ["android"],
+  "android": {
+    "modules": ["am.noz.caelum.alttext.CaelumAltTextModule"]
+  }
+}

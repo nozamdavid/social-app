@@ -25,11 +25,13 @@ export function useAutocomplete({
   type,
   query: q,
   limit,
+  context = '',
   showSearchFallback = false,
 }: {
   type: AutocompleteItemType
   query: string
   limit?: number
+  context?: string
   showSearchFallback?: boolean
 }): AutocompleteApi {
   const client = useAppviewClient()
@@ -43,6 +45,8 @@ export function useAutocomplete({
       {
         type,
         query: q,
+        limit,
+        context: type === 'emoji' ? context : undefined,
       },
     ],
     async queryFn() {
@@ -65,7 +69,7 @@ export function useAutocomplete({
           profile,
         }))
       } else if (type === 'emoji') {
-        return emojiSearch(q, limit || 8)
+        return emojiSearch(q, limit ?? 8, context)
       }
 
       return []
@@ -95,7 +99,7 @@ export function useAutocomplete({
       },
       [q, moderationOpts],
     ),
-    placeholderData: keepPreviousData,
+    placeholderData: type === 'emoji' ? undefined : keepPreviousData,
   })
 
   const items = useMemo(() => {

@@ -1,0 +1,11 @@
+services:
+  gateway:
+    networks:
+      default:
+      proxy:
+        aliases:
+          - caelum-push-gateway
+networks:
+  proxy:
+    external: true
+    name: ${PUSH_PROXY_NETWORK:?Set PUSH_PROXY_NETWORK to the reverse proxy Docker network}

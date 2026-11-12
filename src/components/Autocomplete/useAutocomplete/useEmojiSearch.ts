@@ -1,39 +1,23 @@
 import {useCallback} from 'react'
-import {type Emoji} from '@emoji-mart/data'
-import Fuse from 'fuse.js'
 
 import {useGetEmojis} from '#/lib/useGetEmojis'
-import {type AutocompleteEmoji} from '#/components/Autocomplete/types'
+import {createEmojiSearch} from '#/features/emojiSuggestions/search'
 
-/*
- * Lazily loaded Fuse instance for emoji search. Built once on first search,
- * then reused for all subsequent searches.
- */
-let emojiFuseInstance: Fuse<Emoji> | null = null
+/** Share one lazy index, including concurrent first searches. */
+let searchPromise: Promise<ReturnType<typeof createEmojiSearch>> | undefined
 
-export function useEmojiSearch(): (
-  query: string,
-  limit?: number,
-) => Promise<AutocompleteEmoji[]> {
+export function useEmojiSearch() {
   const getEmojis = useGetEmojis()
-
   return useCallback(
-    async (query: string, limit: number = 8) => {
-      if (!emojiFuseInstance) {
-        const data = await getEmojis()
-        emojiFuseInstance = new Fuse(Object.values(data.emojis), {
-          keys: ['search'],
-          threshold: 0.3,
+    async (query: string, limit = 8, context = '') => {
+      searchPromise ??= getEmojis()
+        .then(createEmojiSearch)
+        .catch(error => {
+          searchPromise = undefined
+          throw error
         })
-      }
-
-      const results = emojiFuseInstance.search(query, {limit})
-      return results.map(result => ({
-        key: result.item.id,
-        type: 'emoji' as const,
-        value: result.item.skins[0].native,
-        emoji: result.item,
-      }))
+      const search = await searchPromise
+      return search(query, limit, context)
     },
     [getEmojis],
   )

@@ -157,7 +157,7 @@ export function NewChat({
         <FAB
           testID="newChatFAB"
           onPress={wrappedOnPress}
-          icon={<NewChatIcon size="lg" fill={t.palette.white} />}
+          icon={<NewChatIcon size="lg" fill={t.onAccent ?? t.palette.white} />}
           accessibilityRole="button"
           accessibilityLabel={l`New chat`}
           accessibilityHint=""

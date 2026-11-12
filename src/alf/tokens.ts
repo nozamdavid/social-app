@@ -1,5 +1,8 @@
 import {tokens} from '@bsky.app/alf'
 
+import brandPalette from '#/../assets/branding/caelum/generated/palette.json'
+import {IS_BLUESKY_PLUS} from '#/env'
+
 export * from '@bsky.app/alf/dist/tokens'
 
 export const color = {
@@ -9,20 +12,34 @@ export const color = {
 
 export const gradients = {
   primary: {
-    values: [
-      [0, '#054CFF'],
-      [0.4, '#1085FE'],
-      [0.6, '#1085FE'],
-      [1, '#59B9FF'],
-    ],
-    hover_value: '#1085FE',
+    values: IS_BLUESKY_PLUS
+      ? [
+          [0, brandPalette.defaultPalette.primary_600],
+          [1, brandPalette.defaultPalette.primary_400],
+        ]
+      : [
+          [0, '#054CFF'],
+          [0.4, '#1085FE'],
+          [0.6, '#1085FE'],
+          [1, '#59B9FF'],
+        ],
+    hover_value: IS_BLUESKY_PLUS
+      ? brandPalette.defaultPalette.primary_600
+      : '#1085FE',
   },
   sky: {
-    values: [
-      [0, '#0A7AFF'],
-      [1, '#59B9FF'],
-    ],
-    hover_value: '#0A7AFF',
+    values: IS_BLUESKY_PLUS
+      ? [
+          [0, brandPalette.defaultPalette.primary_500],
+          [1, brandPalette.defaultPalette.primary_300],
+        ]
+      : [
+          [0, '#0A7AFF'],
+          [1, '#59B9FF'],
+        ],
+    hover_value: IS_BLUESKY_PLUS
+      ? brandPalette.defaultPalette.primary_500
+      : '#0A7AFF',
   },
   midnight: {
     values: [

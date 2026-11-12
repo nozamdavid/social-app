@@ -5,6 +5,21 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "caelum-apk": {
+      "extends": "bluesky-plus-apk"
+    },
+    "bluesky-plus-apk": {
+      "extends": "base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_ENV": "production",
+        "EXPO_PUBLIC_APP_VARIANT": "bluesky-plus",
+        "DISABLE_UPDATES": "1"
+      }
+    },
     "base": {
       "node": "24.22.1"
     },

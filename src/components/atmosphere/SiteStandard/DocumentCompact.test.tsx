@@ -31,7 +31,7 @@ jest.mock('#/lib/haptics', () => ({
   useHaptics: () => ({tap: jest.fn(), longPress: jest.fn()}),
 }))
 jest.mock('#/lib/sharing', () => ({shareUrl: jest.fn()}))
-jest.mock('expo-image', () => ({Image: () => null}))
+jest.mock('#/components/Image', () => ({Image: () => null}))
 jest.mock('#/components/Link', () => ({
   Link: ({children}: {children: React.ReactNode}) => children,
 }))

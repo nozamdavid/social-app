@@ -16,7 +16,7 @@ There is a small amount of Go language source code (in `./bskyweb/`), for a web 
 
 The [Build Instructions](./docs/build.md) are a good place to get started with the app itself.
 
-The Authenticated Transfer Protocol ("AT Protocol" or "atproto") is a decentralized social media protocol. You don't *need* to understand AT Protocol to work with this application, but it can help. Learn more at:
+The Authenticated Transfer Protocol ("AT Protocol" or "atproto") is a decentralized social media protocol. You don't _need_ to understand AT Protocol to work with this application, but it can help. Learn more at:
 
 - [Overview and Guides](https://atproto.com/guides/overview)
 - [GitHub Discussions](https://github.com/bluesky-social/atproto/discussions) 👈 Great place to ask questions
@@ -44,11 +44,16 @@ The Bluesky Social application encompasses a set of schemas and APIs built in th
 - Stay away from PRs like...
   - Changing "Post" to "Skeet."
   - Refactoring the codebase, e.g., to replace React Query with Redux Toolkit or something.
-  - Adding entirely new features without prior discussion. 
+  - Adding entirely new features without prior discussion.
 
 Remember, we serve a wide community of users. Our day-to-day involves us constantly asking "which top priority is our top priority." If you submit well-written PRs that solve problems concisely, that's an awesome contribution. Otherwise, as much as we'd love to accept your ideas and contributions, we really don't have the bandwidth. That's what forking is for!
 
 ## Forking guidelines
+
+This checkout's independent Android fork is tracked as
+[Caelum Android](docs/bluesky-plus-android.md), separately from the Bsky+
+browser extension. Its build profile and remaining release prerequisites are
+documented there.
 
 You have our blessing 🪄✨ to fork this application! However, it's very important to be clear to users when you're giving them a fork.
 

@@ -139,10 +139,16 @@ const InternalItemContext = createContext<{
 export function Item({
   value,
   style,
+  containerStyle,
   children,
   onPress: onPressProp,
   ...props
-}: {value: string; children: React.ReactNode} & Omit<ButtonProps, 'children'>) {
+}: {
+  value: string
+  children: React.ReactNode
+  /** Styles the segment wrapper, including intrinsic width and flex behavior. */
+  containerStyle?: StyleProp<ViewStyle>
+} & Omit<ButtonProps, 'children'>) {
   const haptics = useHaptics()
   const [position, setPosition] = useState<{x: number; width: number} | null>(
     null,
@@ -185,7 +191,7 @@ export function Item({
 
   return (
     <View
-      style={[a.flex_1, a.flex_row]}
+      style={[a.flex_1, a.flex_row, containerStyle]}
       onLayout={evt => {
         const measuredPosition = {
           x: evt.nativeEvent.layout.x,

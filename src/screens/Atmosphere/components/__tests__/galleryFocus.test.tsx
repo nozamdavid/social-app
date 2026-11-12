@@ -43,7 +43,7 @@ jest.mock('#/components/Typography', () => {
     jest.requireActual<typeof import('react-native')>('react-native')
   return {Text}
 })
-jest.mock('expo-image', () => {
+jest.mock('#/components/Image', () => {
   const {View} =
     jest.requireActual<typeof import('react-native')>('react-native')
   return {Image: View}

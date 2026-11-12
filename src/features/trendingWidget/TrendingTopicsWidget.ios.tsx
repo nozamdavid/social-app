@@ -25,6 +25,7 @@ import {
 
 export type TrendingTopicsWidgetProps = {
   emptyMessage?: string
+  openAppLabel?: string
   /**
    * Header for the small widget, which has no room for `title`.
    */
@@ -43,6 +44,11 @@ function TrendingTopicsWidget(
 ) {
   'use no memo'
   'widget'
+
+  const appName =
+    process.env.EXPO_PUBLIC_APP_VARIANT === 'bluesky-plus'
+      ? 'Caelum'
+      : 'Bluesky'
 
   const isDark = environment.colorScheme === 'dark'
   const isSmall = environment.widgetFamily === 'systemSmall'
@@ -198,7 +204,7 @@ function TrendingTopicsWidget(
               foregroundStyle(secondaryTextColor),
               lineLimit(3),
             ]}>
-            {props.emptyMessage ?? 'Open Bluesky to load trending topics.'}
+            {props.emptyMessage}
           </Text>
           {/* the whole widget opens the app, this just makes that obvious */}
           {props.topics ? null : (
@@ -211,7 +217,7 @@ function TrendingTopicsWidget(
                 clipShape('capsule'),
                 padding({top: 6}),
               ]}>
-              Open Bluesky
+              {props.openAppLabel ?? appName}
             </Text>
           )}
         </VStack>

@@ -1,6 +1,8 @@
 // @ts-check
 const pkg = require('./package.json')
 const {getNativeQueries} = require('./src/components/ShareDialog/catalog.ts')
+const caelum = require('./assets/branding/caelum/brand.json')
+const caelumAssets = require('./assets/branding/caelum/generated/build.json')
 
 /**
  * @param {import('@expo/config-types').ExpoConfig} _config
@@ -23,6 +25,7 @@ module.exports = function (_config) {
   const IS_PRODUCTION = process.env.EXPO_PUBLIC_ENV === 'production'
   const IS_E2E = process.env.EXPO_PUBLIC_ENV === 'e2e'
   const IS_DEV = !IS_TESTFLIGHT && !IS_PRODUCTION
+  const IS_BLUESKY_PLUS = process.env.EXPO_PUBLIC_APP_VARIANT === 'bluesky-plus'
 
   const ASSOCIATED_DOMAINS = [
     'applinks:bsky.app',
@@ -43,9 +46,15 @@ module.exports = function (_config) {
    * dev client with updates on rejects unsigned manifests from a local Metro.
    */
   const UPDATES_ENABLED =
-    (IS_TESTFLIGHT || IS_PRODUCTION) && !process.env.DISABLE_UPDATES
+    !IS_BLUESKY_PLUS &&
+    (IS_TESTFLIGHT || IS_PRODUCTION) &&
+    !process.env.DISABLE_UPDATES
 
-  const USE_SENTRY = Boolean(process.env.SENTRY_AUTH_TOKEN)
+  const USE_SENTRY = Boolean(
+    process.env.SENTRY_AUTH_TOKEN &&
+    (!IS_BLUESKY_PLUS ||
+      (process.env.SENTRY_ORG && process.env.SENTRY_PROJECT)),
+  )
 
   /**
    * Apps the share sheet can detect, generated from the share platform
@@ -53,8 +62,9 @@ module.exports = function (_config) {
    */
   const SHARE_PLATFORM_QUERIES = getNativeQueries()
 
-  const IOS_ICON_FILE =
-    PLATFORM === 'web' // web build doesn't like .icon files
+  const IOS_ICON_FILE = IS_BLUESKY_PLUS
+    ? caelumAssets.icon
+    : PLATFORM === 'web' // web build doesn't like .icon files
       ? './assets/app-icons/ios_icon_default_next.png'
       : IS_TESTFLIGHT
         ? './assets/app-icons/ios_icon_testflight.icon'
@@ -63,16 +73,20 @@ module.exports = function (_config) {
   return {
     expo: {
       version: VERSION,
-      name: 'Bluesky',
-      slug: 'bluesky',
-      scheme: 'bluesky',
-      owner: 'blueskysocial',
+      name: IS_BLUESKY_PLUS ? caelum.name : 'Bluesky',
+      slug: IS_BLUESKY_PLUS ? 'bluesky-plus-android' : 'bluesky',
+      scheme: IS_BLUESKY_PLUS ? 'blueskyplus' : 'bluesky',
+      owner: IS_BLUESKY_PLUS
+        ? process.env.BLUESKY_PLUS_EAS_OWNER
+        : 'blueskysocial',
       runtimeVersion: {
         policy: 'appVersion',
       },
-      icon: './assets/app-icons/ios_icon_default_next.png',
+      icon: IS_BLUESKY_PLUS
+        ? caelumAssets.icon
+        : './assets/app-icons/ios_icon_default_next.png',
       userInterfaceStyle: 'automatic',
-      primaryColor: '#006AFF',
+      primaryColor: IS_BLUESKY_PLUS ? caelum.colors.primary : '#006AFF',
       ios: {
         supportsTablet: true,
         bundleIdentifier: 'xyz.blueskyweb.app',
@@ -99,7 +113,7 @@ module.exports = function (_config) {
             'Used to save images to your library.',
           NSPhotoLibraryUsageDescription:
             'Used for profile pictures, posts, and other kinds of content',
-          CFBundleSpokenName: 'Blue Sky',
+          CFBundleSpokenName: IS_BLUESKY_PLUS ? caelum.name : 'Blue Sky',
           CFBundleLocalizations: [
             'en',
             'an',
@@ -206,14 +220,22 @@ module.exports = function (_config) {
         },
       },
       android: {
-        icon: './assets/app-icons/android_icon_default_next.png',
+        icon: IS_BLUESKY_PLUS
+          ? caelumAssets.icon
+          : './assets/app-icons/android_icon_default_next.png',
         adaptiveIcon: {
-          foregroundImage: './assets/icon-android-foreground.png',
-          monochromeImage: './assets/icon-android-monochrome.png',
-          backgroundColor: '#006AFF',
+          foregroundImage: IS_BLUESKY_PLUS
+            ? caelumAssets.foreground
+            : './assets/icon-android-foreground.png',
+          monochromeImage: IS_BLUESKY_PLUS
+            ? caelumAssets.monochrome
+            : './assets/icon-android-monochrome.png',
+          backgroundColor: IS_BLUESKY_PLUS ? caelum.colors.primary : '#006AFF',
         },
-        googleServicesFile: './google-services.json',
-        package: 'xyz.blueskyweb.app',
+        googleServicesFile: IS_BLUESKY_PLUS
+          ? process.env.CAELUM_GOOGLE_SERVICES_FILE || undefined
+          : './google-services.json',
+        package: IS_BLUESKY_PLUS ? 'am.noz.caelum' : 'xyz.blueskyweb.app',
         blockedPermissions: ['android.permission.ACCESS_FINE_LOCATION'],
         intentFilters: [
           {
@@ -239,7 +261,9 @@ module.exports = function (_config) {
       },
       web: {
         bundler: 'metro',
-        favicon: './assets/favicon.png',
+        favicon: IS_BLUESKY_PLUS
+          ? caelumAssets.favicon
+          : './assets/favicon.png',
       },
       updates: {
         url: 'https://updates.bsky.app/manifest',
@@ -369,19 +393,25 @@ module.exports = function (_config) {
          * before Sentry so its plugins block is prepended after Sentry's apply
          * statement and remains at the top, as required by Gradle.
          */
-        [
-          '@bitdrift/react-native',
-          {
-            networkInstrumentation: true,
-          },
-        ],
+        ...(IS_BLUESKY_PLUS
+          ? []
+          : [
+              /** @type {[string, any]} */ ([
+                '@bitdrift/react-native',
+                {
+                  networkInstrumentation: true,
+                },
+              ]),
+            ]),
         ...(USE_SENTRY
           ? [
               /** @type {[string, any]} */ ([
                 '@sentry/react-native/expo',
                 {
-                  organization: 'blueskyweb',
-                  project: 'app',
+                  organization: IS_BLUESKY_PLUS
+                    ? process.env.SENTRY_ORG
+                    : 'blueskyweb',
+                  project: IS_BLUESKY_PLUS ? process.env.SENTRY_PROJECT : 'app',
                   url: 'https://sentry.io',
                   experimental_android: {
                     enableAndroidGradlePlugin: true,
@@ -407,6 +437,7 @@ module.exports = function (_config) {
               ],
             },
             android: {
+              minSdkVersion: 26,
               compileSdkVersion: 37,
               targetSdkVersion: 36,
               buildToolsVersion: '37.0.0',
@@ -418,8 +449,10 @@ module.exports = function (_config) {
         [
           'expo-notifications',
           {
-            icon: './assets/icon-android-notification.png',
-            color: '#1185fe',
+            icon: IS_BLUESKY_PLUS
+              ? caelumAssets.notification
+              : './assets/icon-android-notification.png',
+            color: IS_BLUESKY_PLUS ? caelum.colors.primary : '#1185fe',
             sounds: PLATFORM === 'ios' ? ['assets/dm.aiff'] : ['assets/dm.mp3'],
           },
         ],
@@ -476,97 +509,123 @@ module.exports = function (_config) {
         ],
         [
           'expo-splash-screen',
-          {
-            ios: {
-              enableFullScreenImage_legacy: true, // iOS only
-              backgroundColor: '#006AFF', // primary_500
-              image: './assets/splash/splash.png',
-              resizeMode: 'cover',
-              dark: {
-                enableFullScreenImage_legacy: true, // iOS only
-                backgroundColor: '#002861', // primary_900
-                image: './assets/splash/splash-dark.png',
-                resizeMode: 'cover',
+          IS_BLUESKY_PLUS
+            ? {
+                ios: {
+                  backgroundColor: caelum.colors.primary,
+                  image: caelumAssets.splash,
+                  imageWidth: 102,
+                  dark: {
+                    backgroundColor: caelum.colors.dark,
+                    image: caelumAssets.darkSplash,
+                  },
+                },
+                android: {
+                  backgroundColor: caelum.colors.primary,
+                  image: caelumAssets.splash,
+                  imageWidth: 102,
+                  dark: {
+                    backgroundColor: caelum.colors.dark,
+                    image: caelumAssets.darkSplash,
+                    imageWidth: 102,
+                  },
+                },
+              }
+            : {
+                ios: {
+                  enableFullScreenImage_legacy: true, // iOS only
+                  backgroundColor: '#006AFF', // primary_500
+                  image: './assets/splash/splash.png',
+                  resizeMode: 'cover',
+                  dark: {
+                    enableFullScreenImage_legacy: true, // iOS only
+                    backgroundColor: '#002861', // primary_900
+                    image: './assets/splash/splash-dark.png',
+                    resizeMode: 'cover',
+                  },
+                },
+                android: {
+                  backgroundColor: '#006AFF', // primary_500
+                  image: './assets/splash/android-splash-logo-white.png',
+                  imageWidth: 102, // even division of 306px
+                  dark: {
+                    backgroundColor: '#002861', // primary_900
+                    image: './assets/splash/android-splash-logo-white.png',
+                    imageWidth: 102,
+                  },
+                },
               },
-            },
-            android: {
-              backgroundColor: '#006AFF', // primary_500
-              image: './assets/splash/android-splash-logo-white.png',
-              imageWidth: 102, // even division of 306px
-              dark: {
-                backgroundColor: '#002861', // primary_900
-                image: './assets/splash/android-splash-logo-white.png',
-                imageWidth: 102,
-              },
-            },
-          },
         ],
         [
           '@bsky.app/expo-dynamic-app-icon',
-          {
-            /**
-             * Default set
-             */
-            default_light: {
-              ios: './assets/app-icons/ios_icon_legacy_light.png',
-              android: './assets/app-icons/android_icon_legacy_light.png',
-              prerendered: true,
-            },
-            default_dark: {
-              ios: './assets/app-icons/ios_icon_legacy_dark.png',
-              android: './assets/app-icons/android_icon_legacy_dark.png',
-              prerendered: true,
-            },
+          IS_BLUESKY_PLUS
+            ? caelumAssets.dynamicIcons
+            : {
+                /**
+                 * Default set
+                 */
+                default_light: {
+                  ios: './assets/app-icons/ios_icon_legacy_light.png',
+                  android: './assets/app-icons/android_icon_legacy_light.png',
+                  prerendered: true,
+                },
+                default_dark: {
+                  ios: './assets/app-icons/ios_icon_legacy_dark.png',
+                  android: './assets/app-icons/android_icon_legacy_dark.png',
+                  prerendered: true,
+                },
 
-            /**
-             * Bluesky+ core set
-             */
-            core_aurora: {
-              ios: './assets/app-icons/ios_icon_core_aurora.png',
-              android: './assets/app-icons/android_icon_core_aurora.png',
-              prerendered: true,
-            },
-            core_bonfire: {
-              ios: './assets/app-icons/ios_icon_core_bonfire.png',
-              android: './assets/app-icons/android_icon_core_bonfire.png',
-              prerendered: true,
-            },
-            core_sunrise: {
-              ios: './assets/app-icons/ios_icon_core_sunrise.png',
-              android: './assets/app-icons/android_icon_core_sunrise.png',
-              prerendered: true,
-            },
-            core_sunset: {
-              ios: './assets/app-icons/ios_icon_core_sunset.png',
-              android: './assets/app-icons/android_icon_core_sunset.png',
-              prerendered: true,
-            },
-            core_midnight: {
-              ios: './assets/app-icons/ios_icon_core_midnight.png',
-              android: './assets/app-icons/android_icon_core_midnight.png',
-              prerendered: true,
-            },
-            core_flat_blue: {
-              ios: './assets/app-icons/ios_icon_core_flat_blue.png',
-              android: './assets/app-icons/android_icon_core_flat_blue.png',
-              prerendered: true,
-            },
-            core_flat_white: {
-              ios: './assets/app-icons/ios_icon_core_flat_white.png',
-              android: './assets/app-icons/android_icon_core_flat_white.png',
-              prerendered: true,
-            },
-            core_flat_black: {
-              ios: './assets/app-icons/ios_icon_core_flat_black.png',
-              android: './assets/app-icons/android_icon_core_flat_black.png',
-              prerendered: true,
-            },
-            core_classic: {
-              ios: './assets/app-icons/ios_icon_core_classic.png',
-              android: './assets/app-icons/android_icon_core_classic.png',
-              prerendered: true,
-            },
-          },
+                /**
+                 * Bluesky+ core set
+                 */
+                core_aurora: {
+                  ios: './assets/app-icons/ios_icon_core_aurora.png',
+                  android: './assets/app-icons/android_icon_core_aurora.png',
+                  prerendered: true,
+                },
+                core_bonfire: {
+                  ios: './assets/app-icons/ios_icon_core_bonfire.png',
+                  android: './assets/app-icons/android_icon_core_bonfire.png',
+                  prerendered: true,
+                },
+                core_sunrise: {
+                  ios: './assets/app-icons/ios_icon_core_sunrise.png',
+                  android: './assets/app-icons/android_icon_core_sunrise.png',
+                  prerendered: true,
+                },
+                core_sunset: {
+                  ios: './assets/app-icons/ios_icon_core_sunset.png',
+                  android: './assets/app-icons/android_icon_core_sunset.png',
+                  prerendered: true,
+                },
+                core_midnight: {
+                  ios: './assets/app-icons/ios_icon_core_midnight.png',
+                  android: './assets/app-icons/android_icon_core_midnight.png',
+                  prerendered: true,
+                },
+                core_flat_blue: {
+                  ios: './assets/app-icons/ios_icon_core_flat_blue.png',
+                  android: './assets/app-icons/android_icon_core_flat_blue.png',
+                  prerendered: true,
+                },
+                core_flat_white: {
+                  ios: './assets/app-icons/ios_icon_core_flat_white.png',
+                  android:
+                    './assets/app-icons/android_icon_core_flat_white.png',
+                  prerendered: true,
+                },
+                core_flat_black: {
+                  ios: './assets/app-icons/ios_icon_core_flat_black.png',
+                  android:
+                    './assets/app-icons/android_icon_core_flat_black.png',
+                  prerendered: true,
+                },
+                core_classic: {
+                  ios: './assets/app-icons/ios_icon_core_classic.png',
+                  android: './assets/app-icons/android_icon_core_classic.png',
+                  prerendered: true,
+                },
+              },
         ],
         ['expo-screen-orientation'],
         [
@@ -632,7 +691,9 @@ module.exports = function (_config) {
               },
             },
           },
-          projectId: '55bd077a-d905-4184-9c7f-94789ba0f302',
+          projectId: IS_BLUESKY_PLUS
+            ? process.env.BLUESKY_PLUS_EAS_PROJECT_ID
+            : '55bd077a-d905-4184-9c7f-94789ba0f302',
         },
       },
       experiments: {

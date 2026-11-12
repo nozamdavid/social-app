@@ -4,6 +4,7 @@ import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
 import {Trans} from '@lingui/react/macro'
 
+import {APP_NAME} from '#/lib/app-brand'
 import {wait} from '#/lib/async/wait'
 import {useCleanError} from '#/lib/hooks/useCleanError'
 import {isNetworkError} from '#/lib/network-error'
@@ -84,7 +85,7 @@ function DeviceLocationRequestDialogInner({onLocationAcquired}: Props) {
       } else {
         setError(
           _(
-            msg`Unable to access location. You'll need to visit your system settings to enable location services for Bluesky.`,
+            msg`Unable to access location. You'll need to visit your system settings to enable location services for ${APP_NAME}.`,
           ),
         )
       }
@@ -108,8 +109,8 @@ function DeviceLocationRequestDialogInner({onLocationAcquired}: Props) {
       <View style={[a.gap_sm, a.pb_xs]}>
         <Text style={[a.text_md, a.leading_snug, t.atoms.text_contrast_medium]}>
           <Trans>
-            Tap below to allow Bluesky to access your approximate location via
-            GPS. We will then use that data to more accurately determine the
+            Tap below to allow {APP_NAME} to access your approximate location
+            via GPS. We will then use that data to more accurately determine the
             content and features available in your region.
           </Trans>
         </Text>

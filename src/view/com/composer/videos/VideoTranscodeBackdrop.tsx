@@ -1,6 +1,5 @@
 import Animated, {FadeIn} from 'react-native-reanimated'
 import {File} from 'expo-file-system'
-import {Image} from 'expo-image'
 import {
   getThumbnailAsync,
   type VideoThumbnailsResult,
@@ -8,6 +7,7 @@ import {
 import {type QueryClient, useQuery} from '@tanstack/react-query'
 
 import {atoms as a} from '#/alf'
+import {Image} from '#/components/Image'
 
 export const RQKEY = 'video-thumbnail'
 

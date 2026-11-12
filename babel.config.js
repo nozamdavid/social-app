@@ -91,7 +91,16 @@ module.exports = function (api) {
       ],
     ],
     plugins: [
-      '@lingui/babel-plugin-lingui-macro',
+      [
+        '@lingui/babel-plugin-lingui-macro',
+        {
+          // Fork strings can ship before the upstream translation CI runs.
+          stripMessageField:
+            process.env.EXPO_PUBLIC_APP_VARIANT === 'bluesky-plus'
+              ? false
+              : undefined,
+        },
+      ],
       ['babel-plugin-react-compiler', {target: '19'}],
       [
         'module-resolver',

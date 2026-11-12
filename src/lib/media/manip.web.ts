@@ -1,3 +1,5 @@
+import {rewriteImageUrl} from '#/features/infrastructure/config'
+import {getInfrastructureSettings} from '#/features/infrastructure/preferences'
 import {type PickerImage} from './picker.shared'
 import {type Dimensions} from './types'
 import {
@@ -30,7 +32,9 @@ export interface DownloadAndResizeOpts {
 export async function downloadAndResize(opts: DownloadAndResizeOpts) {
   const controller = new AbortController()
   const to = setTimeout(() => controller.abort(), opts.timeout || 5e3)
-  const res = await fetch(opts.uri)
+  const res = await fetch(
+    rewriteImageUrl(opts.uri, getInfrastructureSettings().imageCdnHostname),
+  )
   const resBody = await res.blob()
   clearTimeout(to)
 
@@ -53,7 +57,10 @@ export async function shareImageModal(_opts: {uri: string}) {
  * on web it triggers a browser download.
  */
 export async function saveImageToMediaLibrary({uri}: {uri: string}) {
-  const downloadUri = convertCdnPreset(uri, 'download')
+  const downloadUri = rewriteImageUrl(
+    convertCdnPreset(uri, 'download'),
+    getInfrastructureSettings().imageCdnHostname,
+  )
   const segments = downloadUri.split('/')
   const filename = `bluesky-${segments.at(-1)}.jpg`
   downloadUrl(downloadUri, filename)

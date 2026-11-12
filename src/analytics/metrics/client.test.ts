@@ -1,6 +1,7 @@
 import {MetricsClient} from './client'
 
 let appStateCallback: (state: string) => void
+let mockIsBlueskyPlus = false
 
 jest.mock('#/lib/appState', () => ({
   onAppStateChange: jest.fn(cb => {
@@ -23,6 +24,9 @@ jest.mock('#/logger', () => ({
 jest.mock('#/env', () => ({
   METRICS_API_HOST: 'https://test.metrics.api',
   IS_WEB: false,
+  get IS_BLUESKY_PLUS() {
+    return mockIsBlueskyPlus
+  },
 }))
 
 type TestEvents = {
@@ -48,6 +52,21 @@ describe('MetricsClient', () => {
   afterEach(() => {
     jest.useRealTimers()
     jest.clearAllMocks()
+  })
+
+  it('does not queue or send analytics in the independent fork', async () => {
+    mockIsBlueskyPlus = true
+    try {
+      const client = new MetricsClient<TestEvents>()
+      client.start()
+      client.track('click', {button: 'post'})
+      client.flush()
+      await jest.advanceTimersByTimeAsync(30_000)
+      expect(fetchMock).not.toHaveBeenCalled()
+      expect(jest.getTimerCount()).toBe(0)
+    } finally {
+      mockIsBlueskyPlus = false
+    }
   })
 
   it('flushes events on interval', async () => {

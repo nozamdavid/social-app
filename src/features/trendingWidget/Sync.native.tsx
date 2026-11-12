@@ -4,6 +4,7 @@ import {WidgetInfo} from '@bsky.app/expo-bluesky-swiss-army'
 import {useLingui} from '@lingui/react/macro'
 
 import {aggregateUserInterests} from '#/lib/api/feed/utils'
+import {APP_NAME} from '#/lib/app-brand'
 import {logger} from '#/logger'
 import {useLanguagePrefs} from '#/state/preferences'
 import {usePreferencesQuery} from '#/state/queries/preferences'
@@ -38,6 +39,7 @@ export function TrendingTopicsWidgetSync() {
   const languagePrefs = useLanguagePrefs()
   const copy = {
     emptyMessage: l`No trending topics are available right now.`,
+    openAppLabel: l`Open ${APP_NAME}`,
     shortTitle: l({
       message: 'Trending',
       comment:

@@ -3,6 +3,8 @@ import {createContext, useContext} from 'react'
 import {type TextStyle, type ViewStyle} from 'react-native'
 import {type ThemeName} from '@bsky.app/alf'
 
+import {type SemanticColors} from '#/features/witchskyThemes/schema'
+import {applyLegacyThemeColors} from '#/features/witchskyThemes/theme'
 import {darkTheme, defaultTheme, dimTheme} from './themes'
 
 export type ColorScheme = 'light' | 'dark'
@@ -80,6 +82,7 @@ export interface Theme {
 export interface ThemeProviderProps {
   children?: ReactNode
   theme: ThemeName
+  colors?: SemanticColors
 }
 
 export const ThemeContext = createContext<Theme>(defaultTheme)
@@ -102,9 +105,11 @@ function getTheme(theme: ThemeName) {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   theme,
+  colors,
   children,
 }) => {
-  const themeValue = getTheme(theme)
+  const base = getTheme(theme)
+  const themeValue = colors ? applyLegacyThemeColors(base, colors) : base
 
   return (
     <ThemeContext.Provider value={themeValue}>{children}</ThemeContext.Provider>

@@ -22,6 +22,7 @@ export type AutocompleteEmoji = {
   type: 'emoji'
   value: string
   emoji: Emoji
+  shortcodes?: string[]
 }
 
 export type AutocompleteSearch = {

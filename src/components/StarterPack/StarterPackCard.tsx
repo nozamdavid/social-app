@@ -1,6 +1,5 @@
 import {useMemo} from 'react'
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {AtUri} from '@atproto/syntax'
 import {Plural, Trans, useLingui} from '@lingui/react/macro'
 import {useQueryClient} from '@tanstack/react-query'
@@ -12,6 +11,7 @@ import {precacheStarterPack} from '#/state/queries/starter-packs'
 import {useSession} from '#/state/session'
 import {atoms as a, useTheme} from '#/alf'
 import {StarterPackMultiPathLarge as StarterPackIcon} from '#/components/icons/StarterPack'
+import {Image} from '#/components/Image'
 import {
   Link as BaseLink,
   type LinkProps as BaseLinkProps,

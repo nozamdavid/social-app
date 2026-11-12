@@ -4,7 +4,6 @@ import Animated, {
   type AnimatedRef,
   useAnimatedRef,
 } from 'react-native-reanimated'
-import {Image} from 'expo-image'
 import {utils} from '@bsky.app/alf'
 import {Trans, useLingui} from '@lingui/react/macro'
 import debounce from 'lodash.debounce'
@@ -16,6 +15,7 @@ import {useLargeAltBadgeEnabled} from '#/state/preferences/large-alt-badge'
 import {atoms as a, tokens, useBreakpoints, useTheme, web} from '#/alf'
 import * as GalleryPrimitive from '#/components/Gallery'
 import {ArrowsDiagonalOut_Stroke2_Corner0_Rounded as Fullscreen} from '#/components/icons/ArrowsDiagonal'
+import {Image} from '#/components/Image'
 import {AutoSizedImage} from '#/components/images/AutoSizedImage'
 import {
   computeDims,

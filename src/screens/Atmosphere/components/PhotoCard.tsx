@@ -1,5 +1,4 @@
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {moderateProfile} from '@bsky/sdk/moderation'
 import {useLingui} from '@lingui/react/macro'
 
@@ -19,6 +18,7 @@ import {type ItemFocusProps} from '#/components/Gallery'
 import {useInteractionState} from '#/components/hooks/useInteractionState'
 import {Heart2_Stroke2_Corner0_Rounded as Heart} from '#/components/icons/Heart2'
 import {Image_Stroke2_Corner2_Rounded as ImageIcon} from '#/components/icons/Image'
+import {Image} from '#/components/Image'
 import {Text} from '#/components/Typography'
 import {type app, social} from '#/lexicons'
 import {AtmosphereCardMenu} from './AtmosphereCardMenu'

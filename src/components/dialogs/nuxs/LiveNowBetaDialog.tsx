@@ -1,6 +1,5 @@
 import {useCallback, useMemo} from 'react'
 import {View} from 'react-native'
-import {Image} from 'expo-image'
 import {LinearGradient} from 'expo-linear-gradient'
 import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
@@ -15,6 +14,7 @@ import {
   isExistingUserAsOf,
 } from '#/components/dialogs/nuxs/utils'
 import {Beaker_Stroke2_Corner2_Rounded as BeakerIcon} from '#/components/icons/Beaker'
+import {Image} from '#/components/Image'
 import {Text} from '#/components/Typography'
 import {IS_E2E, IS_WEB} from '#/env'
 

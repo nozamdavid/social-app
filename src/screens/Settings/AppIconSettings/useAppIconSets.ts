@@ -3,11 +3,66 @@ import {msg} from '@lingui/core/macro'
 import {useLingui} from '@lingui/react'
 
 import {type AppIconSet} from '#/screens/Settings/AppIconSettings/types'
+import {IS_BLUESKY_PLUS} from '#/env'
 
 export function useAppIconSets() {
   const {_} = useLingui()
 
   return useMemo(() => {
+    if (IS_BLUESKY_PLUS) {
+      return {
+        defaults: [
+          {
+            id: 'default_light',
+            name: _(
+              msg({context: 'Name of app icon variant', message: 'Purple'}),
+            ),
+            iosImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-purple.png'),
+            androidImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-purple.png'),
+          },
+          {
+            id: 'default_dark',
+            name: _(
+              msg({context: 'Name of app icon variant', message: 'Dark'}),
+            ),
+            iosImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-dark.png'),
+            androidImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-dark.png'),
+          },
+          {
+            id: 'core_flat_white',
+            name: _(
+              msg({
+                context: 'Name of app icon variant',
+                message: 'Light monochrome',
+              }),
+            ),
+            iosImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-light.png'),
+            androidImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-light.png'),
+          },
+          {
+            id: 'core_flat_black',
+            name: _(
+              msg({
+                context: 'Name of app icon variant',
+                message: 'Dark monochrome',
+              }),
+            ),
+            iosImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-black.png'),
+            androidImage: () =>
+              require('../../../../assets/branding/caelum/generated/icon-black.png'),
+          },
+        ] satisfies AppIconSet[],
+        core: [] satisfies AppIconSet[],
+      }
+    }
+
     const defaults = [
       {
         id: 'default_light',

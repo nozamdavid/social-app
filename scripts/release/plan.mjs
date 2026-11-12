@@ -29,7 +29,14 @@ export function workflowHashes() {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
   return Object.fromEntries(
     buildWorkflows.map(({file}) => {
-      const content = readFileSync(join(root, '.github/workflows', file))
+      let content
+      try {
+        content = readFileSync(join(root, '.github/workflows', file))
+      } catch (error) {
+        /** Retired workflows must block release plans rather than crash hashing. */
+        if (error.code === 'ENOENT') return [file, null]
+        throw error
+      }
       const sha = createHash('sha1')
         .update(`blob ${content.length}\0`)
         .update(content)
