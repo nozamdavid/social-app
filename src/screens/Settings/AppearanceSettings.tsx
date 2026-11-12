@@ -12,6 +12,7 @@ import {
   type NativeStackScreenProps,
 } from '#/lib/routes/types'
 import {useSetThemePrefs, useThemePrefs} from '#/state/shell'
+import {SettingsListItem as AppIconSettingsListItem} from '#/screens/Settings/AppIconSettings/SettingsListItem'
 import * as SettingsList from '#/screens/Settings/components/SettingsList'
 import {type Alf, atoms as a, native, useAlf, useTheme} from '#/alf'
 import * as SegmentedControl from '#/components/forms/SegmentedControl'
@@ -22,7 +23,7 @@ import {TextSize_Stroke2_Corner0_Rounded as TextSize} from '#/components/icons/T
 import {TitleCase_Stroke2_Corner0_Rounded as Aa} from '#/components/icons/TitleCase'
 import * as Layout from '#/components/Layout'
 import {Text} from '#/components/Typography'
-import {IS_BLUESKY_PLUS} from '#/env'
+import {IS_BLUESKY_PLUS, IS_INTERNAL, IS_NATIVE} from '#/env'
 import {useWitchskyThemeSelection} from '#/features/witchskyThemes/preferences'
 import {ThemesSection} from '#/features/witchskyThemes/ThemesSection'
 
@@ -172,12 +173,12 @@ export function AppearanceSettingsScreen({}: Props) {
                 onChange={onChangeFontScale}
               />
 
-              {/*{IS_NATIVE && IS_INTERNAL && (
+              {IS_NATIVE && (IS_INTERNAL || IS_BLUESKY_PLUS) && (
                 <>
                   <SettingsList.Divider />
                   <AppIconSettingsListItem />
                 </>
-              )}*/}
+              )}
             </Animated.View>
           </SettingsList.Container>
         </Layout.Content>

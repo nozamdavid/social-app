@@ -7,7 +7,6 @@ import {Trans} from '@lingui/react/macro'
 import {type NativeStackScreenProps} from '@react-navigation/native-stack'
 
 import {APP_NAME} from '#/lib/app-brand'
-import {PressableScale} from '#/lib/custom-animations/PressableScale'
 import {type CommonNavigatorParams} from '#/lib/routes/types'
 import {AppIconImage} from '#/screens/Settings/AppIconSettings/AppIconImage'
 import {type AppIconSet} from '#/screens/Settings/AppIconSettings/types'
@@ -80,7 +79,7 @@ export function AppIconSettingsScreen({}: Props) {
               key={icon.id}
               icon={icon}
               isEnd={i === sets.defaults.length - 1}>
-              <AppIcon icon={icon} key={icon.id} size={40} />
+              <AppIconImage icon={icon} size={40} />
               <RowText>{icon.name}</RowText>
             </Row>
           ))}
@@ -107,7 +106,7 @@ export function AppIconSettingsScreen({}: Props) {
                   key={icon.id}
                   icon={icon}
                   isEnd={i === sets.core.length - 1}>
-                  <AppIcon icon={icon} key={icon.id} size={40} />
+                  <AppIconImage icon={icon} size={40} />
                   <RowText>{icon.name}</RowText>
                 </Row>
               ))}
@@ -224,40 +223,5 @@ function RowText({children}: {children: React.ReactNode}) {
       emoji>
       {children}
     </Text>
-  )
-}
-
-function AppIcon({icon, size = 50}: {icon: AppIconSet; size: number}) {
-  const {_} = useLingui()
-  return (
-    <PressableScale
-      accessibilityLabel={icon.name}
-      accessibilityHint={_(msg`Changes app icon`)}
-      targetScale={0.95}
-      onPress={() => {
-        if (IS_ANDROID) {
-          Alert.alert(
-            _(msg`Change app icon to "${icon.name}"`),
-            _(msg`The app will be restarted`),
-            [
-              {
-                text: _(msg`Cancel`),
-                style: 'cancel',
-              },
-              {
-                text: _(msg`OK`),
-                onPress: () => {
-                  DynamicAppIcon.setAppIcon(icon.id)
-                },
-                style: 'default',
-              },
-            ],
-          )
-        } else {
-          DynamicAppIcon.setAppIcon(icon.id)
-        }
-      }}>
-      <AppIconImage icon={icon} size={size} />
-    </PressableScale>
   )
 }
