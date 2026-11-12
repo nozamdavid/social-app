@@ -51,12 +51,12 @@ export function Post({
   onBeforePress?: () => void
 }) {
   const moderationOpts = useModerationOpts()
-  const record = useMemo<app.bsky.feed.post.Main | undefined>(
-    () =>
-      bsky.matches(app.bsky.feed.post, post.record) ? post.record : undefined,
-    [post],
-  )
   const postShadowed = usePostShadow(post)
+  const record = useMemo<app.bsky.feed.post.Main | undefined>(() => {
+    const candidate =
+      postShadowed !== POST_TOMBSTONE ? postShadowed.record : post.record
+    return bsky.matches(app.bsky.feed.post, candidate) ? candidate : undefined
+  }, [postShadowed, post.record])
   const richText = useMemo(
     () =>
       record

@@ -29,6 +29,7 @@ export interface PostShadow {
   pinned: boolean
   optimisticReplyCount: number | undefined
   bookmarked: boolean | undefined
+  record: app.bsky.feed.post.Main | undefined
 }
 
 export const POST_TOMBSTONE = Symbol('PostTombstone')
@@ -157,6 +158,7 @@ function mergeShadow(
 
   return castAsShadow({
     ...post,
+    record: shadow.record ?? post.record,
     embed: embed || post.embed,
     likeCount: likeCount,
     repostCount: repostCount,

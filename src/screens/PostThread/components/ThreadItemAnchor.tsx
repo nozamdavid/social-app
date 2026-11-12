@@ -186,7 +186,9 @@ const ThreadItemAnchorInner = memo(function ThreadItemAnchorInner({
   const formatPostStatCount = useFormatPostStatCount()
 
   const post = postShadow
-  const record = item.value.post.record
+  const record = bsky.isType(app.bsky.feed.post, postShadow.record)
+    ? postShadow.record
+    : item.value.post.record
   const postNumbering = item.value
   const showPostNumber = useHasThreadItemPostNumber(postNumbering)
   const moderation = item.moderation
