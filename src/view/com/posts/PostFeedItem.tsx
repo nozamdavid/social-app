@@ -104,13 +104,18 @@ export function PostFeedItem({
   onShowLess?: (interaction: app.bsky.feed.defs.Interaction) => void
 }): React.ReactNode {
   const postShadowed = usePostShadow(post)
+  const shadowedRecord =
+    postShadowed !== POST_TOMBSTONE &&
+    bsky.isType(app.bsky.feed.post, postShadowed.record)
+      ? postShadowed.record
+      : record
   const richText = useMemo(
     () =>
       new RichTextAPI({
-        text: record.text,
-        facets: record.facets,
+        text: shadowedRecord.text,
+        facets: shadowedRecord.facets,
       }),
-    [record],
+    [shadowedRecord],
   )
   if (postShadowed === POST_TOMBSTONE) {
     return null
@@ -120,7 +125,7 @@ export function PostFeedItem({
       <ReportDialogMetadataContext.Provider key={postShadowed.uri}>
         <FeedItemInner
           post={postShadowed}
-          record={record}
+          record={shadowedRecord}
           postNumbering={postNumbering}
           reason={reason}
           feedContext={feedContext}

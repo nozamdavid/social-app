@@ -38,6 +38,7 @@ import {
   usePostDeleteMutation,
   useThreadMuteMutationQueue,
 } from '#/state/queries/post'
+import {isPostEditable} from '#/state/queries/post-edit'
 import {useToggleQuoteDetachmentMutation} from '#/state/queries/postgate'
 import {getMaybeDetachedQuoteEmbed} from '#/state/queries/postgate/util'
 import {
@@ -54,6 +55,7 @@ import {useRequireAuth, useSession} from '#/state/session'
 import {useMergedThreadgateHiddenReplies} from '#/state/threadgate-hidden-replies'
 import {useDialogControl} from '#/components/Dialog'
 import {useGlobalDialogsControlContext} from '#/components/dialogs/Context'
+import {EditPostDialog} from '#/components/dialogs/EditPostDialog'
 import {
   PostInteractionSettingsDialog,
   usePrefetchPostInteractionSettings,
@@ -72,6 +74,7 @@ import {
   Mute_Stroke2_Corner0_Rounded as Mute,
   Mute_Stroke2_Corner0_Rounded as MuteIcon,
 } from '#/components/icons/Mute'
+import {PencilLine_Stroke2_Corner0_Rounded as PencilIcon} from '#/components/icons/Pencil'
 import {PersonX_Stroke2_Corner0_Rounded as PersonX} from '#/components/icons/Person'
 import {Pin_Stroke2_Corner0_Rounded as PinIcon} from '#/components/icons/Pin'
 import {SettingsGear2_Stroke2_Corner0_Rounded as Gear} from '#/components/icons/SettingsGear2'
@@ -148,6 +151,7 @@ let PostMenuItems = ({
   const blockPromptControl = useDialogControl()
   const reportDialogControl = useReportDialogControl()
   const deletePromptControl = useDialogControl()
+  const editPostDialogControl = useDialogControl()
   const hidePromptControl = useDialogControl()
   const postInteractionSettingsDialogControl = useDialogControl()
   const quotePostDetachConfirmControl = useDialogControl()
@@ -174,6 +178,7 @@ let PostMenuItems = ({
   )
   const isPostHidden = hiddenPosts && hiddenPosts.includes(postUri)
   const isAuthor = postAuthor.did === currentAccount?.did
+  const canEditPost = isAuthor && isPostEditable(record)
   const isRootPostAuthor = new AtUri(rootUri).host === currentAccount?.did
   const threadgateHiddenReplies = useMergedThreadgateHiddenReplies({
     threadgateRecord,
@@ -196,6 +201,16 @@ let PostMenuItems = ({
     const urip = new AtUri(postUri)
     return makeProfileLink(postAuthor, 'post', urip.rkey)
   }, [postUri, postAuthor])
+
+  const onPressEditPost = () => {
+    if (!isPostEditable(record)) {
+      Toast.show(l`Posts can only be edited within 10 minutes of posting.`, {
+        type: 'info',
+      })
+      return
+    }
+    editPostDialogControl.open()
+  }
 
   const onDeletePost = () => {
     deletePostMutate({uri: postUri}).then(
@@ -816,6 +831,15 @@ let PostMenuItems = ({
                     </Menu.ItemText>
                     <Menu.ItemIcon icon={Gear} position="right" />
                   </Menu.Item>
+                  {canEditPost && (
+                    <Menu.Item
+                      testID="postDropdownEditBtn"
+                      label={l`Edit post`}
+                      onPress={onPressEditPost}>
+                      <Menu.ItemText>{l`Edit post`}</Menu.ItemText>
+                      <Menu.ItemIcon icon={PencilIcon} position="right" />
+                    </Menu.Item>
+                  )}
                   <Menu.Item
                     testID="postDropdownDeleteBtn"
                     label={l`Delete post`}
@@ -884,6 +908,13 @@ let PostMenuItems = ({
         profile={postAuthor}
         onBlock={onBlockAuthor}
       />
+      {canEditPost && (
+        <EditPostDialog
+          control={editPostDialogControl}
+          post={post}
+          record={record}
+        />
+      )}
     </>
   )
 }

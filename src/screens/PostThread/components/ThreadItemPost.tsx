@@ -50,7 +50,8 @@ import * as Skele from '#/components/Skeleton'
 import {SubtleHover} from '#/components/SubtleHover'
 import {Text} from '#/components/Typography'
 import {useActorStatus} from '#/features/liveNow'
-import {type app} from '#/lexicons'
+import {app} from '#/lexicons'
+import * as bsky from '#/types/bsky'
 
 export type ThreadItemPostProps = {
   item: Extract<ThreadItem, {type: 'threadPost'}>
@@ -199,8 +200,10 @@ const ThreadItemPostInner = memo(function ThreadItemPostInner({
   const {openComposer} = useOpenComposer()
   const {currentAccount} = useSession()
 
-  const post = item.value.post
-  const record = item.value.post.record
+  const post = postShadow
+  const record = bsky.isType(app.bsky.feed.post, postShadow.record)
+    ? postShadow.record
+    : item.value.post.record
   const postNumbering = item.value
   const showPostNumber = useHasThreadItemPostNumber(postNumbering)
   const moderation = item.moderation
@@ -247,7 +250,7 @@ const ThreadItemPostInner = memo(function ThreadItemPostInner({
         author: post.author,
         embed: post.embed,
         moderation,
-        langs: post.record.langs,
+        langs: record.langs,
       },
       onPostSuccess: onPostSuccess,
       logContext: 'PostReply',
