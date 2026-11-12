@@ -590,7 +590,11 @@ let ProfileMenu = ({
       </Menu.Root>
       <OpenInMenu
         control={openInControl}
-        target={{type: 'profile', did: profile.did}}
+        target={{
+          type: 'profile',
+          did: profile.did,
+          handle: profile.handle,
+        }}
       />
       <StarterPackDialog
         control={addToStarterPacksDialogControl}
