@@ -9,6 +9,7 @@ import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {type DialogControlProps} from '#/components/Dialog'
 import {OpenInMenu} from '#/components/OpenInMenu'
 import * as Toast from '#/components/Toast'
+import {useAtprotoAppsQuery} from '#/features/atprotoApps/queries'
 
 let mockWeb = false
 
@@ -30,6 +31,11 @@ jest.mock('@lingui/react', () => {
 jest.mock('#/components/icons/Square', () => ({
   SquareArrowTopRight_Stroke2_Corner0_Rounded: () => null,
 }))
+jest.mock('#/features/atprotoApps/queries', () => ({
+  useAtprotoAppsQuery: jest.fn(() => ({isLoading: false, data: undefined})),
+}))
+jest.mock('#/components/Loader', () => ({Loader: () => null}))
+jest.mock('#/components/Image', () => ({Image: () => null}))
 jest.mock('#/components/Toast', () => ({show: jest.fn()}))
 jest.mock('#/components/Button', () => {
   const {Pressable, Text} =
@@ -65,13 +71,23 @@ jest.mock('#/components/Typography', () => {
   const {Text} = jest.requireActual<typeof ReactNative>('react-native')
   return {Text}
 })
+let latestDialogCallbacks: {onOpen?: () => void; onClose?: () => void} = {}
+
 jest.mock('#/components/Dialog', () => {
   const {View} = jest.requireActual<typeof ReactNative>('react-native')
+  function Outer({
+    children,
+    onOpen,
+    onClose,
+  }: React.PropsWithChildren<{onOpen?: () => void; onClose?: () => void}>) {
+    latestDialogCallbacks = {onOpen, onClose}
+    return <View>{children}</View>
+  }
   function Container({children}: React.PropsWithChildren) {
     return <View>{children}</View>
   }
   return {
-    Outer: Container,
+    Outer,
     ScrollableInner: Container,
     Handle: () => null,
     Close: () => null,
@@ -84,31 +100,24 @@ const control = {close} as unknown as DialogControlProps
 
 beforeEach(() => {
   mockWeb = false
+  latestDialogCallbacks = {}
   jest.clearAllMocks()
   jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined)
 })
 
 afterEach(() => jest.restoreAllMocks())
 
-it.each([
-  ['pds', 'https://pds.ls/at/'],
-  ['blacksky', 'https://blacksky.community/profile/'],
-  ['witchsky', 'https://witchsky.app/profile/'],
-  ['red-dwarf', 'https://reddwarf.app/profile/'],
-])(
-  'opens %s with the viewed DID only after the Android sheet closes',
-  async (id, baseUrl) => {
-    render(<OpenInMenu control={control} target={{type: 'profile', did}} />)
-    fireEvent.press(screen.getByTestId(`profileOpenIn-${id}`))
-    expect(close).toHaveBeenCalledTimes(1)
-    expect(Linking.openURL).not.toHaveBeenCalled()
-    await act(async () => {
-      close.mock.calls[0][0]?.()
-      await Promise.resolve()
-    })
-    expect(Linking.openURL).toHaveBeenCalledWith(`${baseUrl}${did}`)
-  },
-)
+it('opens pds.ls with the viewed DID only after the Android sheet closes', async () => {
+  render(<OpenInMenu control={control} target={{type: 'profile', did}} />)
+  fireEvent.press(screen.getByTestId('profileOpenIn-pds'))
+  expect(close).toHaveBeenCalledTimes(1)
+  expect(Linking.openURL).not.toHaveBeenCalled()
+  await act(async () => {
+    close.mock.calls[0][0]?.()
+    await Promise.resolve()
+  })
+  expect(Linking.openURL).toHaveBeenCalledWith(`https://pds.ls/at/${did}`)
+})
 
 it('shows an error if no browser can open the chosen site', async () => {
   jest.mocked(Linking.openURL).mockRejectedValue(new Error('No activity'))
@@ -132,14 +141,12 @@ it('uses the latest profile DID after the viewed profile changes', async () => {
   rerender(
     <OpenInMenu control={control} target={{type: 'profile', did: nextDid}} />,
   )
-  fireEvent.press(screen.getByTestId('profileOpenIn-blacksky'))
+  fireEvent.press(screen.getByTestId('profileOpenIn-pds'))
   await act(async () => {
     close.mock.calls[0][0]?.()
     await Promise.resolve()
   })
-  expect(Linking.openURL).toHaveBeenCalledWith(
-    `https://blacksky.community/profile/${nextDid}`,
-  )
+  expect(Linking.openURL).toHaveBeenCalledWith(`https://pds.ls/at/${nextDid}`)
 })
 
 it('opens web links during the user gesture before dismissing the dialog', () => {
@@ -150,18 +157,7 @@ it('opens web links during the user gesture before dismissing the dialog', () =>
   expect(close).toHaveBeenCalledWith()
 })
 
-it.each([
-  ['pds', 'https://pds.ls/at/did:plc:postauthor/app.bsky.feed.post/3example'],
-  [
-    'blacksky',
-    'https://blacksky.community/profile/did:plc:postauthor/post/3example',
-  ],
-  ['witchsky', 'https://witchsky.app/profile/did:plc:postauthor/post/3example'],
-  [
-    'red-dwarf',
-    'https://reddwarf.app/profile/did:plc:postauthor/post/3example',
-  ],
-])('opens the exact post in %s after closing the sheet', async (id, url) => {
+it('opens the exact post in pds.ls after closing the sheet', async () => {
   render(
     <OpenInMenu
       control={control}
@@ -171,11 +167,82 @@ it.each([
       }}
     />,
   )
-  fireEvent.press(screen.getByTestId(`postOpenIn-${id}`))
+  fireEvent.press(screen.getByTestId('postOpenIn-pds'))
   expect(Linking.openURL).not.toHaveBeenCalled()
   await act(async () => {
     close.mock.calls[0][0]?.()
     await Promise.resolve()
   })
-  expect(Linking.openURL).toHaveBeenCalledWith(url)
+  expect(Linking.openURL).toHaveBeenCalledWith(
+    'https://pds.ls/at/did:plc:postauthor/app.bsky.feed.post/3example',
+  )
+})
+
+it('lists discovered apps for profiles and opens them', async () => {
+  jest.mocked(useAtprotoAppsQuery).mockReturnValue({
+    isLoading: false,
+    data: [
+      {id: 'tangled', name: 'Tangled', url: 'https://tangled.org/a.test'},
+      {
+        id: 'standard-r1',
+        name: 'Blog',
+        url: 'https://blog.test',
+        icon: {
+          uri: 'https://pds.example.com/xrpc/com.atproto.sync.getBlob?did=d&cid=c',
+        },
+      },
+    ],
+  } as ReturnType<typeof useAtprotoAppsQuery>)
+  render(
+    <OpenInMenu
+      control={control}
+      target={{type: 'profile', did, handle: 'a.test'}}
+    />,
+  )
+  expect(screen.getByTestId('profileOpenIn-standard-r1')).toBeTruthy()
+  fireEvent.press(screen.getByTestId('profileOpenIn-tangled'))
+  await act(async () => {
+    close.mock.calls[0][0]?.()
+    await Promise.resolve()
+  })
+  expect(Linking.openURL).toHaveBeenCalledWith('https://tangled.org/a.test')
+})
+
+it('enables discovery only while the dialog is open for profiles', () => {
+  render(
+    <OpenInMenu
+      control={control}
+      target={{type: 'profile', did, handle: 'a.test'}}
+    />,
+  )
+  expect(useAtprotoAppsQuery).toHaveBeenLastCalledWith(
+    expect.objectContaining({did, handle: 'a.test', enabled: false}),
+  )
+  act(() => {
+    latestDialogCallbacks.onOpen?.()
+  })
+  expect(useAtprotoAppsQuery).toHaveBeenLastCalledWith(
+    expect.objectContaining({did, handle: 'a.test', enabled: true}),
+  )
+  act(() => {
+    latestDialogCallbacks.onClose?.()
+  })
+  expect(useAtprotoAppsQuery).toHaveBeenLastCalledWith(
+    expect.objectContaining({did, handle: 'a.test', enabled: false}),
+  )
+})
+
+it('does not run discovery for posts', () => {
+  render(
+    <OpenInMenu
+      control={control}
+      target={{type: 'post', uri: 'at://did:plc:x/app.bsky.feed.post/1'}}
+    />,
+  )
+  act(() => {
+    latestDialogCallbacks.onOpen?.()
+  })
+  expect(useAtprotoAppsQuery).toHaveBeenLastCalledWith(
+    expect.objectContaining({enabled: false}),
+  )
 })
