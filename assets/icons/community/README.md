@@ -5,8 +5,12 @@ The icons in this directory are the marks of third-party services that appear in
 | `Leaflet.svg` | [Leaflet](https://leaflet.pub) |
 | `Offprint.svg` | [Offprint](https://offprint.net) |
 | `Pckt.svg`, `PcktFull.svg` | [pckt](https://pckt.blog) |
-| `StandardSite.svg` | [Standard.site](https://standard.site) |
+| `StandardSite.svg`, `standard_site_favicon.png` | [Standard.site](https://standard.site) |
 | `germ_logo.webp` | [Germ Network](https://germnetwork.com) |
+| `grain_favicon.png` | [Grain](https://grain.social) |
+| `pdsls_favicon.png` | [PDSls](https://pds.ls) |
+| `sifa_favicon.png` | [sifa.id](https://sifa.id) |
+| `tangled_favicon.png` | [Tangled](https://tangled.org) |
 | `BigCartel.svg` | [Big Cartel](https://www.bigcartel.com) |
 | `Boosty.svg` | [Boosty](https://boosty.to) |
 | `Booth.svg` | [BOOTH](https://booth.pm) |
