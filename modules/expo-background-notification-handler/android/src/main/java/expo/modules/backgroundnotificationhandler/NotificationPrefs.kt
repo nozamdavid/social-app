@@ -143,4 +143,27 @@ class NotificationPrefs(
         putStringSet(key, set)
       }.apply()
   }
+
+  private fun disabledPushReasonsKey(recipientDid: String) = "disabledPushReasons:$recipientDid"
+
+  fun setDisabledPushReasons(
+    recipientDid: String,
+    reasons: Array<String>,
+  ) {
+    if (recipientDid.isBlank()) return
+    prefs
+      .edit()
+      .putString(disabledPushReasonsKey(recipientDid), reasons.joinToString(","))
+      .apply()
+  }
+
+  fun isPushDisabled(
+    recipientDid: String?,
+    reason: String?,
+  ): Boolean {
+    if (recipientDid.isNullOrBlank() || reason.isNullOrBlank()) return false
+    val raw = prefs.getString(disabledPushReasonsKey(recipientDid), null)
+    if (raw.isNullOrEmpty()) return false
+    return raw.split(',').contains(reason)
+  }
 }

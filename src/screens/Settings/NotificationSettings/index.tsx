@@ -1,10 +1,12 @@
-import {useEffect} from 'react'
+import {useEffect, useRef} from 'react'
 import {Linking, View} from 'react-native'
 import * as Notification from 'expo-notifications'
 import {Trans, useLingui} from '@lingui/react/macro'
 import {useQuery, useQueryClient} from '@tanstack/react-query'
 
 import {useAppState} from '#/lib/appState'
+import {useGetAndRegisterPushToken} from '#/lib/notifications/notifications'
+import {getPushRegistration} from '#/lib/notifications/registration'
 import {
   type CommonNavigatorParams,
   type NativeStackScreenProps,
@@ -50,6 +52,7 @@ type Props = NativeStackScreenProps<
 export function NotificationSettingsScreen({}: Props) {
   const {t: l} = useLingui()
   const queryClient = useQueryClient()
+  const getAndRegisterPushToken = useGetAndRegisterPushToken()
   const {data: settings, isError} = useNotificationSettingsQuery()
   const {data: chatSettings, isError: chatError} =
     useChatNotificationSettingsQuery()
@@ -81,6 +84,15 @@ export function NotificationSettingsScreen({}: Props) {
     }
   }, [appState, refetch])
 
+  const prevGrantedRef = useRef<boolean | undefined>(undefined)
+  useEffect(() => {
+    if (!permissions) return
+    if (prevGrantedRef.current === false && permissions.granted) {
+      void getAndRegisterPushToken()
+    }
+    prevGrantedRef.current = permissions.granted
+  }, [permissions, getAndRegisterPushToken])
+
   const onRequestPermissions = async () => {
     if (IS_WEB) return
     if (permissions?.canAskAgain) {
@@ -106,7 +118,7 @@ export function NotificationSettingsScreen({}: Props) {
             [
               {
                 key: 'android.provider.extra.APP_PACKAGE',
-                value: 'xyz.blueskyweb.app',
+                value: getPushRegistration().appId,
               },
             ],
           )

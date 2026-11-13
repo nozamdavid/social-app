@@ -1,8 +1,20 @@
 diff --git a/internal/jetstream/consumer.go b/internal/jetstream/consumer.go
-index 2d28a4b..aa835f4 100644
+index 2d28a4b..c3de69a 100644
 --- a/internal/jetstream/consumer.go
 +++ b/internal/jetstream/consumer.go
-@@ -761,6 +761,7 @@ func (c *Consumer) sendNotification(actorDID, targetDID, reason, recordURI, subj
+@@ -734,6 +734,11 @@ func (c *Consumer) sendNotification(actorDID, targetDID, reason, recordURI, subj
+ 		return
+ 	}
+ 
++	if c.store.IsPushDisabled(targetDID, reason) {
++		log.Printf("[jetstream] suppressed %s notification: disabled by recipient preferences (%s)", reason, targetDID)
++		return
++	}
++
+ 	tokens, err := c.store.GetTokensForDID(targetDID)
+ 	if err != nil {
+ 		log.Printf("[jetstream] error getting tokens for %s: %v", targetDID, err)
+@@ -761,6 +766,7 @@ func (c *Consumer) sendNotification(actorDID, targetDID, reason, recordURI, subj
  
  	for _, token := range tokens {
  		n := push.Notification{
@@ -10,6 +22,81 @@ index 2d28a4b..aa835f4 100644
  			Token:    token.PushToken,
  			Platform: token.Platform,
  			Title:    title,
+diff --git a/internal/jetstream/consumer_test.go b/internal/jetstream/consumer_test.go
+index 1afa690..2d697b9 100644
+--- a/internal/jetstream/consumer_test.go
++++ b/internal/jetstream/consumer_test.go
+@@ -2,9 +2,13 @@ package jetstream
+ 
+ import (
+ 	"encoding/json"
++	"path/filepath"
+ 	"testing"
+ 
+ 	"github.com/klauspost/compress/zstd"
++
++	"github.com/dracoblue/atproto-push-gateway/internal/push"
++	"github.com/dracoblue/atproto-push-gateway/internal/store"
+ )
+ 
+ func TestExtractDIDFromURI(t *testing.T) {
+@@ -333,3 +337,56 @@ func TestFormatNotification(t *testing.T) {
+ 		})
+ 	}
+ }
++
++type recordingSender struct {
++	sent []push.Notification
++}
++
++func (r *recordingSender) Send(n push.Notification) error {
++	r.sent = append(r.sent, n)
++	return nil
++}
++
++func TestSendNotificationRespectsDisabledPreferences(t *testing.T) {
++	s, err := store.New(filepath.Join(t.TempDir(), "test.db"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer s.Close()
++
++	if err := s.RegisterToken("did:plc:target", "android", "tok-1", "am.noz.caelum"); err != nil {
++		t.Fatal(err)
++	}
++	if err := s.SetPushPreferences("did:plc:target", map[string]bool{
++		"like": false,
++	}); err != nil {
++		t.Fatal(err)
++	}
++
++	sender := &recordingSender{}
++	c := NewConsumer("wss://example.invalid/subscribe", s, sender, nil)
++
++	c.sendNotification(
++		"did:plc:actor",
++		"did:plc:target",
++		"like",
++		"at://did:plc:actor/app.bsky.feed.like/1",
++		"at://did:plc:target/app.bsky.feed.post/1",
++		"",
++	)
++	if len(sender.sent) != 0 {
++		t.Fatalf("expected disabled like notification to be suppressed, got %d", len(sender.sent))
++	}
++
++	c.sendNotification(
++		"did:plc:actor",
++		"did:plc:target",
++		"reply",
++		"at://did:plc:actor/app.bsky.feed.post/2",
++		"at://did:plc:target/app.bsky.feed.post/1",
++		"hello",
++	)
++	if len(sender.sent) != 1 {
++		t.Fatalf("expected enabled reply notification to be sent, got %d", len(sender.sent))
++	}
++}
 diff --git a/internal/push/fcm.go b/internal/push/fcm.go
 index 0b87836..a9a07a2 100644
 --- a/internal/push/fcm.go
@@ -92,5 +179,444 @@ index e20f417..75aeca2 100644
 +				t.Fatal("sender mutated event data")
 +			}
 +		})
++	}
++}
+diff --git a/internal/store/store.go b/internal/store/store.go
+index 90ced80..b26bf72 100644
+--- a/internal/store/store.go
++++ b/internal/store/store.go
+@@ -28,6 +28,7 @@ type Store struct {
+ 	blocks              map[string]map[string]bool   // blocker -> blocked -> true
+ 	blocksByRKey        map[string]map[string]string // blocker -> rkey -> blocked
+ 	verificationsByRKey map[string]map[string]string // verifier -> rkey -> subject
++	disabledReasons     map[string]map[string]bool   // actor -> reason -> true
+ }
+ 
+ func New(dbPath string) (*Store, error) {
+@@ -75,6 +76,13 @@ func New(dbPath string) (*Store, error) {
+ 		);
+ 		CREATE INDEX IF NOT EXISTS idx_webpush_device
+ 			ON webpush_endpoints (device_token, app_id);
++		CREATE TABLE IF NOT EXISTS notification_preferences (
++			actor_did TEXT NOT NULL,
++			reason TEXT NOT NULL,
++			push_enabled INTEGER NOT NULL DEFAULT 1,
++			updated_at TEXT DEFAULT (datetime('now')),
++			PRIMARY KEY (actor_did, reason)
++		);
+ 	`); err != nil {
+ 		return nil, err
+ 	}
+@@ -85,6 +93,7 @@ func New(dbPath string) (*Store, error) {
+ 		blocks:              make(map[string]map[string]bool),
+ 		blocksByRKey:        make(map[string]map[string]string),
+ 		verificationsByRKey: make(map[string]map[string]string),
++		disabledReasons:     make(map[string]map[string]bool),
+ 	}
+ 
+ 	// loadIntoMemory is called without holding locks because the Store has not
+@@ -152,6 +161,23 @@ func (s *Store) loadIntoMemory() error {
+ 		s.verificationsByRKey[verifier][rkey] = subject
+ 	}
+ 
++	// Load disabled push preferences
++	prefRows, err := s.db.Query("SELECT actor_did, reason FROM notification_preferences WHERE push_enabled = 0")
++	if err != nil {
++		return err
++	}
++	defer prefRows.Close()
++	for prefRows.Next() {
++		var actorDID, reason string
++		if err := prefRows.Scan(&actorDID, &reason); err != nil {
++			return err
++		}
++		if s.disabledReasons[actorDID] == nil {
++			s.disabledReasons[actorDID] = make(map[string]bool)
++		}
++		s.disabledReasons[actorDID][reason] = true
++	}
++
+ 	return nil
+ }
+ 
+@@ -414,6 +440,80 @@ func (s *Store) RemoveVerificationByRKey(verifierDID, rkey string) (string, erro
+ 	return subjectDID, nil
+ }
+ 
++func (s *Store) SetPushPreferences(actorDID string, updates map[string]bool) error {
++	if len(updates) == 0 {
++		return nil
++	}
++
++	tx, err := s.db.Begin()
++	if err != nil {
++		return err
++	}
++	defer tx.Rollback()
++
++	for reason, enabled := range updates {
++		enabledInt := 0
++		if enabled {
++			enabledInt = 1
++		}
++		if _, err := tx.Exec(
++			`INSERT OR REPLACE INTO notification_preferences (actor_did, reason, push_enabled, updated_at)
++			 VALUES (?, ?, ?, datetime('now'))`,
++			actorDID, reason, enabledInt,
++		); err != nil {
++			return err
++		}
++	}
++
++	if err := tx.Commit(); err != nil {
++		return err
++	}
++
++	s.mu.Lock()
++	for reason, enabled := range updates {
++		if enabled {
++			if s.disabledReasons[actorDID] != nil {
++				delete(s.disabledReasons[actorDID], reason)
++				if len(s.disabledReasons[actorDID]) == 0 {
++					delete(s.disabledReasons, actorDID)
++				}
++			}
++		} else {
++			if s.disabledReasons[actorDID] == nil {
++				s.disabledReasons[actorDID] = make(map[string]bool)
++			}
++			s.disabledReasons[actorDID][reason] = true
++		}
++	}
++	s.mu.Unlock()
++
++	return nil
++}
++
++func (s *Store) IsPushDisabled(actorDID, reason string) bool {
++	if actorDID == "" || reason == "" {
++		return false
++	}
++	s.mu.RLock()
++	defer s.mu.RUnlock()
++	if s.disabledReasons[actorDID] == nil {
++		return false
++	}
++	return s.disabledReasons[actorDID][reason]
++}
++
++func (s *Store) GetDisabledPushReasons(actorDID string) map[string]bool {
++	s.mu.RLock()
++	defer s.mu.RUnlock()
++	out := make(map[string]bool)
++	for reason, disabled := range s.disabledReasons[actorDID] {
++		if disabled {
++			out[reason] = true
++		}
++	}
++	return out
++}
++
+ func (s *Store) Close() error {
+ 	return s.db.Close()
+ }
+diff --git a/internal/store/store_test.go b/internal/store/store_test.go
+index d605020..1269f57 100644
+--- a/internal/store/store_test.go
++++ b/internal/store/store_test.go
+@@ -342,3 +342,47 @@ func TestVerificationsPersistAcrossRestart(t *testing.T) {
+ 		t.Errorf("expected did:plc:subject after restart, got %q", subject)
+ 	}
+ }
++
++func TestPushPreferencesPersistAcrossRestart(t *testing.T) {
++	dbPath := filepath.Join(t.TempDir(), "test.db")
++	s, err := New(dbPath)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	if err := s.SetPushPreferences("did:plc:alice", map[string]bool{
++		"like":            false,
++		"like-via-repost": false,
++		"reply":           true,
++	}); err != nil {
++		t.Fatalf("SetPushPreferences failed: %v", err)
++	}
++	if !s.IsPushDisabled("did:plc:alice", "like") {
++		t.Error("expected like push to be disabled")
++	}
++	if !s.IsPushDisabled("did:plc:alice", "like-via-repost") {
++		t.Error("expected like-via-repost push to be disabled")
++	}
++	if s.IsPushDisabled("did:plc:alice", "reply") {
++		t.Error("expected reply push to remain enabled")
++	}
++	s.Close()
++
++	s2, err := New(dbPath)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer s2.Close()
++
++	if !s2.IsPushDisabled("did:plc:alice", "like") {
++		t.Error("expected disabled like preference to persist across restart")
++	}
++	if err := s2.SetPushPreferences("did:plc:alice", map[string]bool{
++		"like": true,
++	}); err != nil {
++		t.Fatalf("re-enabling like failed: %v", err)
++	}
++	if s2.IsPushDisabled("did:plc:alice", "like") {
++		t.Error("expected like push to be enabled after update")
++	}
++}
+diff --git a/internal/xrpc/handler.go b/internal/xrpc/handler.go
+index c2d6dbb..81e458f 100644
+--- a/internal/xrpc/handler.go
++++ b/internal/xrpc/handler.go
+@@ -44,10 +44,65 @@ type RegisterPushRequest struct {
+ }
+ 
+ const (
+-	lexiconRegisterPush   = "app.bsky.notification.registerPush"
+-	lexiconUnregisterPush = "app.bsky.notification.unregisterPush"
++	lexiconRegisterPush     = "app.bsky.notification.registerPush"
++	lexiconUnregisterPush   = "app.bsky.notification.unregisterPush"
++	lexiconPutPreferencesV2 = "app.bsky.notification.putPreferencesV2"
+ )
+ 
++type preferenceInput struct {
++	List    *bool   `json:"list,omitempty"`
++	Push    *bool   `json:"push,omitempty"`
++	Include *string `json:"include,omitempty"`
++}
++
++type PutPreferencesV2Request struct {
++	Chat              *preferenceInput `json:"chat,omitempty"`
++	Follow            *preferenceInput `json:"follow,omitempty"`
++	Like              *preferenceInput `json:"like,omitempty"`
++	LikeViaRepost     *preferenceInput `json:"likeViaRepost,omitempty"`
++	Mention           *preferenceInput `json:"mention,omitempty"`
++	Quote             *preferenceInput `json:"quote,omitempty"`
++	Reply             *preferenceInput `json:"reply,omitempty"`
++	Repost            *preferenceInput `json:"repost,omitempty"`
++	RepostViaRepost   *preferenceInput `json:"repostViaRepost,omitempty"`
++	StarterpackJoined *preferenceInput `json:"starterpackJoined,omitempty"`
++	SubscribedPost    *preferenceInput `json:"subscribedPost,omitempty"`
++	Unverified        *preferenceInput `json:"unverified,omitempty"`
++	Verified          *preferenceInput `json:"verified,omitempty"`
++}
++
++type preferenceResponse struct {
++	List bool `json:"list"`
++	Push bool `json:"push"`
++}
++
++type filterablePreferenceResponse struct {
++	Include string `json:"include"`
++	List    bool   `json:"list"`
++	Push    bool   `json:"push"`
++}
++
++type chatPreferenceResponse struct {
++	Include string `json:"include"`
++	Push    bool   `json:"push"`
++}
++
++type preferencesResponse struct {
++	Chat              chatPreferenceResponse       `json:"chat"`
++	Follow            filterablePreferenceResponse `json:"follow"`
++	Like              filterablePreferenceResponse `json:"like"`
++	LikeViaRepost     filterablePreferenceResponse `json:"likeViaRepost"`
++	Mention           filterablePreferenceResponse `json:"mention"`
++	Quote             filterablePreferenceResponse `json:"quote"`
++	Reply             filterablePreferenceResponse `json:"reply"`
++	Repost            filterablePreferenceResponse `json:"repost"`
++	RepostViaRepost   filterablePreferenceResponse `json:"repostViaRepost"`
++	StarterpackJoined preferenceResponse           `json:"starterpackJoined"`
++	SubscribedPost    preferenceResponse           `json:"subscribedPost"`
++	Unverified        preferenceResponse           `json:"unverified"`
++	Verified          preferenceResponse           `json:"verified"`
++}
++
+ // StatsProvider returns jetstream stats for the health endpoint.
+ // Accepts any type — will be JSON-encoded directly.
+ type StatsProvider func() interface{}
+@@ -78,8 +133,10 @@ func (h *Handler) SetDIDResolver(r DIDResolver) {
+ func (h *Handler) RegisterRoutes(mux *http.ServeMux, serviceDID string) {
+ 	mux.HandleFunc("POST /xrpc/"+lexiconRegisterPush, h.handleRegisterPush)
+ 	mux.HandleFunc("POST /xrpc/"+lexiconUnregisterPush, h.handleUnregisterPush)
++	mux.HandleFunc("POST /xrpc/"+lexiconPutPreferencesV2, h.handlePutPreferencesV2)
+ 	mux.HandleFunc("GET /xrpc/"+lexiconRegisterPush, methodNotAllowed)
+ 	mux.HandleFunc("GET /xrpc/"+lexiconUnregisterPush, methodNotAllowed)
++	mux.HandleFunc("GET /xrpc/"+lexiconPutPreferencesV2, methodNotAllowed)
+ 
+ 	// DID Document
+ 	mux.HandleFunc("GET /.well-known/did.json", func(w http.ResponseWriter, r *http.Request) {
+@@ -231,6 +288,97 @@ func (h *Handler) handleUnregisterPush(w http.ResponseWriter, r *http.Request) {
+ 	w.WriteHeader(http.StatusOK)
+ }
+ 
++func (h *Handler) handlePutPreferencesV2(w http.ResponseWriter, r *http.Request) {
++	const maxBodyBytes = 64 * 1024 // 64 KiB
++	r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
++
++	actorDID, err := h.verifyAuth(r, lexiconPutPreferencesV2)
++	if err != nil {
++		log.Printf("[xrpc] putPreferencesV2 auth error: %v", err)
++		http.Error(w, `{"error":"auth_required","message":"invalid service auth"}`, http.StatusUnauthorized)
++		return
++	}
++
++	var req PutPreferencesV2Request
++	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
++		http.Error(w, `{"error":"invalid_request","message":"invalid JSON"}`, http.StatusBadRequest)
++		return
++	}
++
++	updates := map[string]bool{}
++	collectPref := func(reason string, pref *preferenceInput) {
++		if pref != nil && pref.Push != nil {
++			updates[reason] = *pref.Push
++		}
++	}
++	collectPref("follow", req.Follow)
++	collectPref("like", req.Like)
++	collectPref("like-via-repost", req.LikeViaRepost)
++	collectPref("mention", req.Mention)
++	collectPref("quote", req.Quote)
++	collectPref("reply", req.Reply)
++	collectPref("repost", req.Repost)
++	collectPref("repost-via-repost", req.RepostViaRepost)
++	collectPref("starterpack-joined", req.StarterpackJoined)
++	collectPref("subscribed-post", req.SubscribedPost)
++	collectPref("unverified", req.Unverified)
++	collectPref("verified", req.Verified)
++
++	if err := h.store.SetPushPreferences(actorDID, updates); err != nil {
++		log.Printf("[xrpc] putPreferencesV2 store error: %v", err)
++		http.Error(w, `{"error":"internal_error"}`, http.StatusInternalServerError)
++		return
++	}
++
++	disabled := h.store.GetDisabledPushReasons(actorDID)
++	isEnabled := func(reason string) bool {
++		return !disabled[reason]
++	}
++
++	w.Header().Set("Content-Type", "application/json")
++	json.NewEncoder(w).Encode(map[string]interface{}{
++		"preferences": preferencesResponse{
++			Chat: chatPreferenceResponse{Include: "all", Push: true},
++			Follow: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("follow"),
++			},
++			Like: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("like"),
++			},
++			LikeViaRepost: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("like-via-repost"),
++			},
++			Mention: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("mention"),
++			},
++			Quote: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("quote"),
++			},
++			Reply: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("reply"),
++			},
++			Repost: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("repost"),
++			},
++			RepostViaRepost: filterablePreferenceResponse{
++				Include: "all", List: true, Push: isEnabled("repost-via-repost"),
++			},
++			StarterpackJoined: preferenceResponse{
++				List: true, Push: isEnabled("starterpack-joined"),
++			},
++			SubscribedPost: preferenceResponse{
++				List: true, Push: isEnabled("subscribed-post"),
++			},
++			Unverified: preferenceResponse{
++				List: true, Push: isEnabled("unverified"),
++			},
++			Verified: preferenceResponse{
++				List: true, Push: isEnabled("verified"),
++			},
++		},
++	})
++}
++
+ func (h *Handler) verifyAuth(r *http.Request, expectedLXM string) (string, error) {
+ 	if h.devMode {
+ 		// In dev mode, accept a simple X-Actor-DID header for testing
+diff --git a/internal/xrpc/handler_test.go b/internal/xrpc/handler_test.go
+index 3bf19b6..3a9ef02 100644
+--- a/internal/xrpc/handler_test.go
++++ b/internal/xrpc/handler_test.go
+@@ -754,3 +754,62 @@ func TestMaybeStartBlocksBackfill_OnlyRunsOncePerDID(t *testing.T) {
+ 		t.Error("expected did:plc:alice to already be marked as backfilled")
+ 	}
+ }
++
++func TestPutPreferencesV2(t *testing.T) {
++	h, s := newTestHandler(t)
++	mux := http.NewServeMux()
++	h.RegisterRoutes(mux, "did:web:push.example.org")
++
++	body := []byte(`{"like":{"include":"all","list":true,"push":false},"reply":{"include":"all","list":true,"push":true}}`)
++	req := httptest.NewRequest("POST", "/xrpc/app.bsky.notification.putPreferencesV2", bytes.NewReader(body))
++	req.Header.Set("Content-Type", "application/json")
++	req.Header.Set("X-Actor-DID", "did:plc:alice")
++	w := httptest.NewRecorder()
++	mux.ServeHTTP(w, req)
++
++	if w.Code != http.StatusOK {
++		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
++	}
++	if !s.IsPushDisabled("did:plc:alice", "like") {
++		t.Error("expected like push to be disabled in store")
++	}
++	if s.IsPushDisabled("did:plc:alice", "reply") {
++		t.Error("expected reply push to be enabled in store")
++	}
++
++	var resp struct {
++		Preferences struct {
++			Like struct {
++				Push bool `json:"push"`
++			} `json:"like"`
++			Reply struct {
++				Push bool `json:"push"`
++			} `json:"reply"`
++		} `json:"preferences"`
++	}
++	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
++		t.Fatalf("failed to parse response: %v", err)
++	}
++	if resp.Preferences.Like.Push {
++		t.Error("expected response preferences.like.push=false")
++	}
++	if !resp.Preferences.Reply.Push {
++		t.Error("expected response preferences.reply.push=true")
++	}
++}
++
++func TestPutPreferencesV2_RequiresAuth(t *testing.T) {
++	h, _ := newTestHandler(t)
++	h.devMode = false
++	mux := http.NewServeMux()
++	h.RegisterRoutes(mux, "did:web:push.example.org")
++
++	req := httptest.NewRequest("POST", "/xrpc/app.bsky.notification.putPreferencesV2", bytes.NewReader([]byte(`{}`)))
++	req.Header.Set("Content-Type", "application/json")
++	w := httptest.NewRecorder()
++	mux.ServeHTTP(w, req)
++
++	if w.Code != http.StatusUnauthorized {
++		t.Errorf("expected 401 without auth, got %d", w.Code)
 +	}
 +}

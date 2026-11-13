@@ -31,6 +31,10 @@ export type ExpoBackgroundNotificationHandlerModule = {
     forKey: keyof BackgroundNotificationHandlerPreferences,
     value: string[],
   ) => Promise<void>
+  setDisabledPushReasonsAsync: (
+    recipientDid: string,
+    reasons: string[],
+  ) => Promise<void>
   setBadgeCountAsync: (count: number) => Promise<void>
 }
 
