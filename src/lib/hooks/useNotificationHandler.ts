@@ -7,13 +7,19 @@ import {
   type NavigationState,
   useNavigation,
 } from '@react-navigation/native'
+import {useQueryClient} from '@tanstack/react-query'
 
 import {useAccountSwitcher} from '#/lib/hooks/useAccountSwitcher'
+import {isNotificationReasonPushDisabled} from '#/lib/notifications/preferences'
 import {logger as notyLogger} from '#/lib/notifications/util'
 import {getMessagesNavigationAction} from '#/lib/routes/navigation'
 import {type NavigationProp} from '#/lib/routes/types'
 import {emitPushNotificationOpened} from '#/state/events'
 import {useCurrentConvoId} from '#/state/messages/current-convo-id'
+import {
+  type AppNotificationSettingsPreferences,
+  RQKEY_APP,
+} from '#/state/queries/notifications/settings'
 import {useSession} from '#/state/session'
 import {useLoggedOutViewControls} from '#/state/shell/logged-out'
 import {useCloseAllActiveElements} from '#/state/util'
@@ -117,6 +123,7 @@ export function useNotificationsHandler() {
   const {currentConvoId} = useCurrentConvoId()
   const {setShowLoggedOut} = useLoggedOutViewControls()
   const closeAllActiveElements = useCloseAllActiveElements()
+  const queryClient = useQueryClient()
   const {t: l} = useLingui()
 
   // On Android, we cannot control which sound is used for a notification on Android
@@ -322,6 +329,24 @@ export function useNotificationsHandler() {
             shouldPlaySound: false,
             shouldSetBadge: false,
           } satisfies Notifications.NotificationBehavior)
+        }
+
+        if (
+          !isChatNotificationPayload(payload) &&
+          payload.recipientDid === currentAccount?.did
+        ) {
+          const appPrefs =
+            queryClient.getQueryData<AppNotificationSettingsPreferences>(
+              RQKEY_APP,
+            )
+          if (isNotificationReasonPushDisabled(appPrefs, payload.reason)) {
+            return Promise.resolve({
+              shouldShowBanner: false,
+              shouldShowList: false,
+              shouldPlaySound: false,
+              shouldSetBadge: false,
+            } satisfies Notifications.NotificationBehavior)
+          }
         }
 
         return Promise.resolve(DEFAULT_HANDLER_OPTIONS)

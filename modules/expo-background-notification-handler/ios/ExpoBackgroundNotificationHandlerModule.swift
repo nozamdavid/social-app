@@ -113,6 +113,9 @@ public class ExpoBackgroundNotificationHandlerModule: Module {
       }
     }
 
+    AsyncFunction("setDisabledPushReasonsAsync") { (_: String, _: [String]) in
+    }
+
     AsyncFunction("setBadgeCountAsync") { (count: Int) in
       userDefaults?.setValue(count, forKey: "badgeCount")
     }

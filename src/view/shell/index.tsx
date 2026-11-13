@@ -15,6 +15,7 @@ import {useOTAUpdateRecovery} from '#/lib/hooks/useOTAUpdates'
 import {useNotificationsRegistration} from '#/lib/notifications/notifications'
 import {isStateAtTabRoot} from '#/lib/routes/helpers'
 import {useDialogFullyExpandedCountContext} from '#/state/dialogs'
+import {usePushNotificationPreferencesSync} from '#/state/queries/notifications/settings'
 import {useSession} from '#/state/session'
 import {
   useIsDrawerOpen,
@@ -58,6 +59,7 @@ function ShellInner() {
   const closeAnyActiveElement = useCloseAnyActiveElement()
 
   useNotificationsRegistration()
+  usePushNotificationPreferencesSync()
   useNotificationsHandler()
 
   useEffect(() => {

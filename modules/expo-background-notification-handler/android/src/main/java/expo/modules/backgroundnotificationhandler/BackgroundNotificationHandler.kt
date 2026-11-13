@@ -13,7 +13,13 @@ class BackgroundNotificationHandler(
       return
     }
 
-    if (remoteMessage.data["reason"] == "chat-message" || remoteMessage.data["reason"] == "chat-reaction") {
+    val reason = remoteMessage.data["reason"]
+    val recipientDid = remoteMessage.data["recipientDid"]
+    if (NotificationPrefs(context).isPushDisabled(recipientDid, reason)) {
+      return
+    }
+
+    if (reason == "chat-message" || reason == "chat-reaction") {
       mutateWithChatMessage(remoteMessage)
     } else {
       mutateWithOtherReason(remoteMessage)

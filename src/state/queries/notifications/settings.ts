@@ -6,14 +6,27 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 
+import {
+  syncDisabledPushReasonsNative,
+  syncPreferencesToPushGateway,
+  useSyncEffectForNotificationPreferences,
+} from '#/lib/notifications/preferences'
+import {PUSH_ENABLED} from '#/lib/notifications/registration'
 import {logger} from '#/logger'
-import {useAppviewClient, useChatClient} from '#/state/session'
+import {
+  useAppviewClient,
+  useChatClient,
+  useMaybePdsClient,
+  useSession,
+} from '#/state/session'
 import * as Toast from '#/components/Toast'
+import {IS_NATIVE} from '#/env'
 import {app, chat} from '#/lexicons'
 
 const RQKEY_ROOT = 'notification-settings'
-const RQKEY_APP = [RQKEY_ROOT, 'app']
+export const RQKEY_APP = [RQKEY_ROOT, 'app']
 const RQKEY_CHAT = [RQKEY_ROOT, 'chat']
+const MUTATION_KEY = [RQKEY_ROOT]
 
 // App notification preferences live on the appview. Chat preferences live on a
 // separate chat service proxy that can be up or down independently, so they are
@@ -89,6 +102,20 @@ export function useChatNotificationSettingsQuery({
     enabled,
   })
 }
+export function usePushNotificationPreferencesSync() {
+  const {currentAccount} = useSession()
+  const pdsClient = useMaybePdsClient()
+  const {data} = useNotificationSettingsQuery({
+    enabled: Boolean(currentAccount && IS_NATIVE && PUSH_ENABLED),
+  })
+
+  useSyncEffectForNotificationPreferences({
+    did: currentAccount?.did,
+    preferences: data,
+    pdsClient,
+  })
+}
+
 export function useNotificationSettingsUpdateMutation() {
   /*
    * App preferences live on the appview and chat preferences on the chat
@@ -96,12 +123,16 @@ export function useNotificationSettingsUpdateMutation() {
    */
   const appviewClient = useAppviewClient()
   const chatClient = useChatClient()
+  const pdsClient = useMaybePdsClient()
+  const {currentAccount} = useSession()
   const queryClient = useQueryClient()
 
   return useMutation({
+    mutationKey: MUTATION_KEY,
+    scope: {id: RQKEY_ROOT},
     mutationFn: async (update: NotificationSettingsUpdate) => {
       const {appUpdate, chatUpdate} = splitNotificationSettingsUpdate(update)
-      await Promise.all([
+      const [appRes, chatRes] = await Promise.all([
         hasUpdates(appUpdate)
           ? appviewClient.call(
               app.bsky.notification.putPreferencesV2,
@@ -112,14 +143,103 @@ export function useNotificationSettingsUpdateMutation() {
           ? chatClient.call(chat.bsky.notification.putPreferences, chatUpdate)
           : undefined,
       ])
+      return {
+        appPreferences: appRes
+          ? appPreferencesWithoutChat(appRes.preferences)
+          : undefined,
+        chatPreferences: chatRes
+          ? chatPreferencesForSettings(chatRes.preferences)
+          : undefined,
+      }
     },
-    onMutate: update => {
+    onMutate: async update => {
+      const {appUpdate, chatUpdate} = splitNotificationSettingsUpdate(update)
+      const hasApp = hasUpdates(appUpdate)
+      const hasChat = hasUpdates(chatUpdate)
+      const previousApp = hasApp
+        ? queryClient.getQueryData<AppNotificationSettingsPreferences>(
+            RQKEY_APP,
+          )
+        : undefined
+      const previousChat = hasChat
+        ? queryClient.getQueryData<ChatNotificationSettingsPreferences>(
+            RQKEY_CHAT,
+          )
+        : undefined
+
+      /*
+       * Apply the optimistic update synchronously before cancelling queries so
+       * rapid consecutive toggles read the latest optimistic preference.
+       */
       optimisticUpdateNotificationSettings(queryClient, update)
+      if (hasApp && currentAccount?.did) {
+        const nextApp =
+          queryClient.getQueryData<AppNotificationSettingsPreferences>(
+            RQKEY_APP,
+          ) ?? appUpdate
+        void syncDisabledPushReasonsNative(currentAccount.did, nextApp)
+      }
+
+      await Promise.all([
+        hasApp ? queryClient.cancelQueries({queryKey: RQKEY_APP}) : undefined,
+        hasChat ? queryClient.cancelQueries({queryKey: RQKEY_CHAT}) : undefined,
+      ])
+
+      return {previousApp, previousChat}
     },
-    onError: e => {
+    onSuccess: data => {
+      if (
+        data.appPreferences &&
+        countPendingSideMutations(queryClient, 'app') <= 1
+      ) {
+        queryClient.setQueryData(RQKEY_APP, data.appPreferences)
+        if (currentAccount?.did) {
+          void syncDisabledPushReasonsNative(
+            currentAccount.did,
+            data.appPreferences,
+          )
+          void syncPreferencesToPushGateway({
+            client: pdsClient,
+            did: currentAccount.did,
+            preferences: data.appPreferences,
+            force: true,
+          })
+        }
+      }
+      if (
+        data.chatPreferences &&
+        countPendingSideMutations(queryClient, 'chat') <= 1
+      ) {
+        queryClient.setQueryData(RQKEY_CHAT, data.chatPreferences)
+      }
+    },
+    onError: (e, update, context) => {
       logger.error('Could not update notification settings', {message: e})
-      void queryClient.invalidateQueries({queryKey: RQKEY_APP})
-      void queryClient.invalidateQueries({queryKey: RQKEY_CHAT})
+      const {appUpdate, chatUpdate} = splitNotificationSettingsUpdate(update)
+      if (
+        hasUpdates(appUpdate) &&
+        countPendingSideMutations(queryClient, 'app') <= 1
+      ) {
+        if (context?.previousApp !== undefined) {
+          queryClient.setQueryData(RQKEY_APP, context.previousApp)
+          if (currentAccount?.did) {
+            void syncDisabledPushReasonsNative(
+              currentAccount.did,
+              context.previousApp,
+            )
+          }
+        }
+        void queryClient.invalidateQueries({queryKey: RQKEY_APP})
+      }
+      if (
+        hasUpdates(chatUpdate) &&
+        countPendingSideMutations(queryClient, 'chat') <= 1
+      ) {
+        if (context?.previousChat !== undefined) {
+          queryClient.setQueryData(RQKEY_CHAT, context.previousChat)
+        }
+        void queryClient.invalidateQueries({queryKey: RQKEY_CHAT})
+      }
       Toast.show(t`Could not update notification settings`, {
         type: 'error',
       })
@@ -187,4 +307,20 @@ function splitNotificationSettingsUpdate(update: NotificationSettingsUpdate): {
 
 function hasUpdates(update: object) {
   return Object.keys(update).length > 0
+}
+
+function countPendingSideMutations(
+  queryClient: QueryClient,
+  side: 'app' | 'chat',
+) {
+  return queryClient
+    .getMutationCache()
+    .findAll({mutationKey: MUTATION_KEY, status: 'pending'})
+    .filter(mutation => {
+      const variables = mutation.state.variables as
+        NotificationSettingsUpdate | undefined
+      if (!variables) return false
+      const {appUpdate, chatUpdate} = splitNotificationSettingsUpdate(variables)
+      return side === 'app' ? hasUpdates(appUpdate) : hasUpdates(chatUpdate)
+    }).length
 }
