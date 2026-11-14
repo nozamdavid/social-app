@@ -17,6 +17,7 @@ import {
 } from '#/state/queries/pds-detection'
 import {useSession, useSessionApi} from '#/state/session'
 import {useLoggedOutViewControls} from '#/state/shell/logged-out'
+import {UsernameSuggestions} from '#/screens/Login/components/UsernameSuggestions'
 import {atoms as a, native, useBreakpoints, useTheme} from '#/alf'
 import * as Admonition from '#/components/Admonition'
 import {Button, ButtonIcon, ButtonText} from '#/components/Button'
@@ -75,6 +76,7 @@ export const LoginForm = ({
   const [identifier, setIdentifier] = useState(initialHandle || '')
   const [password, setPassword] = useState('')
   const [identifierFocused, setIdentifierFocused] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
   const [authFactorToken, setAuthFactorToken] = useState('')
   const identifierRef = useRef<React.ComponentRef<typeof TextInput>>(null)
   const passwordRef = useRef<React.ComponentRef<typeof TextInput>>(null)
@@ -320,10 +322,14 @@ export const LoginForm = ({
             value={identifier}
             onChangeText={v => {
               setIdentifier(v)
+              setShowSuggestions(true)
               if (errorField) setErrorField('none')
               if (showResolveError) setShowResolveError(false)
             }}
-            onFocus={() => setIdentifierFocused(true)}
+            onFocus={() => {
+              setIdentifierFocused(true)
+              setShowSuggestions(true)
+            }}
             onBlur={() => setIdentifierFocused(false)}
             onSubmitEditing={() => {
               passwordRef.current?.focus()
@@ -333,6 +339,17 @@ export const LoginForm = ({
             accessibilityHint={l`Enter the username or email address you used when you created your account`}
           />
         </TextField.Root>
+        <UsernameSuggestions
+          identifier={identifier}
+          enabled={showSuggestions && !isProcessing}
+          onSelect={handle => {
+            setIdentifier(handle)
+            setShowSuggestions(false)
+            setErrorField('none')
+            setShowResolveError(false)
+            passwordRef.current?.focus()
+          }}
+        />
         {showUnresolvedError && (
           <Text
             style={[
@@ -363,6 +380,7 @@ export const LoginForm = ({
         <PasswordField
           isInvalid={errorField === 'password'}
           testID="loginPasswordInput"
+          onFocus={() => setShowSuggestions(false)}
           inputRef={passwordRef}
           label={l`Password`}
           placeholder={null}
