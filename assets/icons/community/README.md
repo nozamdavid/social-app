@@ -10,6 +10,7 @@ The icons in this directory are the marks of third-party services that appear in
 | `grain_favicon.png` | [Grain](https://grain.social) |
 | `pdsls_favicon.png` | [PDSls](https://pds.ls) |
 | `sifa_favicon.png` | [sifa.id](https://sifa.id) |
+| `streamplace_favicon.png` | [Streamplace](https://stream.place) |
 | `tangled_favicon.png` | [Tangled](https://tangled.org) |
 | `BigCartel.svg` | [Big Cartel](https://www.bigcartel.com) |
 | `Boosty.svg` | [Boosty](https://boosty.to) |

@@ -17,6 +17,7 @@ describe('getAppsFromCollections', () => {
         'org.tangled.actor.profile',
         'social.grain.actor.profile',
         'id.sifa.profile.self',
+        'place.stream.livestream',
       ],
       did,
       handle: 'alice.test',
@@ -25,6 +26,7 @@ describe('getAppsFromCollections', () => {
       ['tangled', 'https://tangled.org/alice.test'],
       ['grain', 'https://grain.social/profile/alice.test'],
       ['sifa', 'https://sifa.id/p/alice.test'],
+      ['streamplace', 'https://stream.place/alice.test'],
     ])
     expect(apps.map(a => a.icon)).toEqual(APP_COLLECTIONS.map(a => a.icon))
     for (const app of apps) {
