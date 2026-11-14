@@ -45,4 +45,11 @@ export const APP_COLLECTIONS: {
     icon: require('../../../assets/icons/community/sifa_favicon.png'),
     getUrl: identifier => `https://sifa.id/p/${identifier}`,
   },
+  {
+    id: 'streamplace',
+    name: 'Streamplace',
+    collection: 'place.stream.livestream',
+    icon: require('../../../assets/icons/community/streamplace_favicon.png'),
+    getUrl: identifier => `https://stream.place/${identifier}`,
+  },
 ]
