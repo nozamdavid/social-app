@@ -2,6 +2,7 @@ import {createTheme, type Palette} from '@bsky.app/alf'
 
 import {type Theme as LegacyTheme} from '#/lib/ThemeContext'
 import {themes} from '#/alf/themes'
+import {getBundledAlfTheme} from '#/features/witchskyThemes/bundled'
 import {
   type SemanticColors,
   type ThemeOption,
@@ -52,6 +53,8 @@ function ramp(
 
 /** Semantic anchors stay exact; intermediate ALF shades are derived from them. */
 export function createWitchskyTheme(option: ThemeOption) {
+  const bundled = getBundledAlfTheme(option.id)
+  if (bundled) return bundled
   const c = option.colors
   const name = option.mode === 'light' ? 'light' : 'dark'
   const palette: Palette = {

@@ -13,7 +13,8 @@ import {useCloseAllActiveElements} from '#/state/util'
 import {ErrorBoundary} from '#/view/com/util/ErrorBoundary'
 import {Deactivated} from '#/screens/Deactivated'
 import {Takendown} from '#/screens/Takendown'
-import {atoms as a, select, useBreakpoints, useTheme} from '#/alf'
+import {atoms as a, useBreakpoints, useTheme} from '#/alf'
+import {getDrawerOverlayColor} from '#/alf/util/drawerOverlay'
 import {AgeAssuranceRedirectDialog} from '#/components/ageAssurance/AgeAssuranceRedirectDialog'
 import {EmailDialog} from '#/components/dialogs/EmailDialog'
 import {LinkWarningDialog} from '#/components/dialogs/LinkWarning'
@@ -132,11 +133,7 @@ function DrawerLayout({children}: {children: React.ReactNode}) {
                 styles.drawerMask,
                 {
                   backgroundColor: showDrawer
-                    ? select(t.name, {
-                        light: 'rgba(0, 57, 117, 0.1)',
-                        dark: 'rgba(1, 82, 168, 0.1)',
-                        dim: 'rgba(10, 13, 16, 0.8)',
-                      })
+                    ? getDrawerOverlayColor(t)
                     : 'transparent',
                 },
                 a.transition_color,
