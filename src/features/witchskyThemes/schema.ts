@@ -1,6 +1,11 @@
 import {processColor} from 'react-native'
 import {z} from 'zod'
 
+import {
+  BUNDLED_THEME_URI,
+  getBundledTheme,
+} from '#/features/witchskyThemes/bundled'
+
 export const THEME_COLLECTION = 'app.witchsky.theme.colors'
 
 /** Normalize native-supported color strings before they reach styles or ramps. */
@@ -52,7 +57,10 @@ const recordSchema = z.object({
 
 export const themeOptionSchema = z.object({
   id: z.string().max(2048),
-  uri: z.string().startsWith('at://').max(2048),
+  uri: z.union([
+    z.string().startsWith('at://').max(2048),
+    z.literal(BUNDLED_THEME_URI),
+  ]),
   name: z.string().max(64),
   variantName: z.string().max(48),
   mode: z.enum(['light', 'dark']),
@@ -113,6 +121,9 @@ export function readThemeSelection(raw: string | undefined, did: string) {
   if (!raw) return null
   try {
     const parsed = selectionEnvelopeSchema.safeParse(JSON.parse(raw) as unknown)
+    if (parsed.success && parsed.data.data.uri === BUNDLED_THEME_URI) {
+      return getBundledTheme(parsed.data.data.id) ?? null
+    }
     if (
       parsed.success &&
       parsed.data.data.uri.startsWith(`at://${did}/${THEME_COLLECTION}/`)

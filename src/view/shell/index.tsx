@@ -26,7 +26,8 @@ import {useCloseAnyActiveElement} from '#/state/util'
 import {ErrorBoundary} from '#/view/com/util/ErrorBoundary'
 import {Deactivated} from '#/screens/Deactivated'
 import {Takendown} from '#/screens/Takendown'
-import {atoms as a, select, useBreakpoints, useTheme} from '#/alf'
+import {atoms as a, useBreakpoints, useTheme} from '#/alf'
+import {getDrawerOverlayColor} from '#/alf/util/drawerOverlay'
 import {setSystemUITheme} from '#/alf/util/systemUI'
 import {AgeAssuranceRedirectDialog} from '#/components/ageAssurance/AgeAssuranceRedirectDialog'
 import {EmailDialog} from '#/components/dialogs/EmailDialog'
@@ -216,13 +217,7 @@ function DrawerLayout({children}: {children: React.ReactNode}) {
       swipeMinDistance={10}
       drawerType={IS_IOS ? 'slide' : 'front'}
       overlayStyle={{
-        backgroundColor: select(t.name, {
-          light: 'rgba(0, 57, 117, 0.1)',
-          dark: IS_ANDROID
-            ? 'rgba(16, 133, 254, 0.1)'
-            : 'rgba(1, 82, 168, 0.1)',
-          dim: 'rgba(10, 13, 16, 0.8)',
-        }),
+        backgroundColor: getDrawerOverlayColor(t, IS_ANDROID),
       }}>
       {children}
     </Drawer>

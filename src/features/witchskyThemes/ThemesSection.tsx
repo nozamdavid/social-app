@@ -13,6 +13,7 @@ import {Loader} from '#/components/Loader'
 import {Text} from '#/components/Typography'
 import {AddThemesDialog} from '#/features/witchskyThemes/AddThemesDialog'
 import {ApplyingThemeModal} from '#/features/witchskyThemes/ApplyingThemeModal'
+import {bundledThemes} from '#/features/witchskyThemes/bundled'
 import {
   getThemeGroupOption,
   groupThemes,
@@ -31,7 +32,19 @@ export function ThemesSection() {
   const {selected} = application
   const query = useWitchskyThemesQuery()
   const loaded = query.data?.pages.flatMap(page => page.themes) ?? []
-  const themes = groupThemes(loaded, selected)
+  const savedThemes = groupThemes(
+    loaded,
+    selected?.uri.startsWith('at://') ? selected : null,
+  )
+  const includedThemes = bundledThemes.map(option => ({
+    ...option,
+    variantName: option.id.endsWith('#light')
+      ? l`Light`
+      : option.id.endsWith('#dim')
+        ? l`Dim`
+        : l`Dark`,
+  }))
+  const themes = [...groupThemes(includedThemes, null), ...savedThemes]
   const activeGroup = themes.find(group =>
     group.variants.some(variant => variant.id === application.radioId),
   )
@@ -67,8 +80,8 @@ export function ThemesSection() {
       </SettingsList.ItemText>
       <Text style={t.atoms.text_contrast_medium}>
         <Trans>
-          Choose a Witchsky theme saved to your account. Themes include their
-          own light or dark appearance.
+          Choose a bundled theme or a Witchsky theme saved to your account.
+          Themes include their own light or dark appearance.
         </Trans>
       </Text>
       <Toggle.Group
@@ -80,7 +93,7 @@ export function ThemesSection() {
         style={[a.gap_xs]}>
         <Toggle.Item
           name="default"
-          label={l`Default theme`}
+          label={l`Bluesky default theme`}
           testID="witchsky-theme-default"
           style={[
             a.flex_row,
@@ -92,16 +105,19 @@ export function ThemesSection() {
           <Toggle.Radio />
           <View style={[a.flex_1, a.gap_2xs]}>
             <Text style={[a.text_md, a.font_semi_bold]}>
-              <Trans>Default</Trans>
+              <Trans>Bluesky default</Trans>
             </Text>
             <Text style={t.atoms.text_contrast_medium}>
-              <Trans>Use {APP_NAME}’s color mode settings.</Trans>
+              <Trans>
+                Bluesky colors with {APP_NAME}’s color mode settings.
+              </Trans>
             </Text>
           </View>
         </Toggle.Item>
-        {themes.map(theme => (
+        {themes.map((theme, index) => (
           <ThemeRow
             key={theme.uri}
+            bundled={index === 0}
             group={theme}
             selectedId={application.radioId}
           />
@@ -144,7 +160,7 @@ export function ThemesSection() {
             <Trans>Loading themes…</Trans>
           </Text>
         </View>
-      ) : !query.isError && themes.length === 0 && !query.hasNextPage ? (
+      ) : !query.isError && savedThemes.length === 0 && !query.hasNextPage ? (
         <Text style={t.atoms.text_contrast_medium}>
           <Trans>No saved themes yet.</Trans>
         </Text>
@@ -205,7 +221,9 @@ export function ThemesSection() {
 function ThemeRow({
   group,
   selectedId,
+  bundled = false,
 }: {
+  bundled?: boolean
   group: ThemeGroup
   selectedId: string
 }) {
@@ -227,7 +245,7 @@ function ThemeRow({
       testID={`witchsky-theme-${group.uri}`}
       style={[a.flex_row, a.align_center, a.gap_md, a.py_sm, {minHeight: 64}]}>
       <Toggle.Radio />
-      <ThemePreview group={group} selectedId={selectedId} />
+      <ThemePreview group={group} selectedId={selectedId} bundled={bundled} />
     </Toggle.Item>
   )
 }

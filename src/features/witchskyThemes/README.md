@@ -105,3 +105,10 @@ pagination/repeated cursors, signed-out behavior and server errors.
 
 Device checks and remaining limitations are recorded in
 [the Android emulator report](../../../docs/bluesky-plus-emulator-test.md).
+
+Bluesky's stock Light, Dim and Dark palettes remain the default. Caelum ships
+as a separate bundled theme with three variants in Appearance. Bundled selections
+use a local `builtin://caelum` identity and resolve to trusted app colors on
+startup; they are never copied to or fetched from the user's PDS. Saved Witchsky
+themes remain account-scoped and appear alongside the bundled choice. Selecting
+Bluesky default clears the optional selection.

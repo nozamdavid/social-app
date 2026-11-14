@@ -10,7 +10,9 @@ import {getThemeGroupOption, type ThemeGroup} from './groups'
 export function ThemePreview({
   group,
   selectedId = '',
+  bundled = false,
 }: {
+  bundled?: boolean
   group: ThemeGroup
   selectedId?: string
 }) {
@@ -34,6 +36,11 @@ export function ThemePreview({
         <Text emoji style={t.atoms.text_contrast_medium}>
           {details}
         </Text>
+        {bundled && (
+          <Text style={t.atoms.text_contrast_medium}>
+            <Trans>Included with Caelum</Trans>
+          </Text>
+        )}
         {group.cachedVariantId === theme.id && (
           <Text style={t.atoms.text_contrast_medium}>
             <Trans>Saved on this device</Trans>
