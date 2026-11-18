@@ -82,6 +82,7 @@ import {
   SpeakerVolumeFull_Stroke2_Corner0_Rounded as Unmute,
   SpeakerVolumeFull_Stroke2_Corner0_Rounded as UnmuteIcon,
 } from '#/components/icons/Speaker'
+import {SquareArrowTopRight_Stroke2_Corner0_Rounded as ExternalLinkIcon} from '#/components/icons/Square'
 import {Trash_Stroke2_Corner0_Rounded as Trash} from '#/components/icons/Trash'
 import {Warning_Stroke2_Corner0_Rounded as Warning} from '#/components/icons/Warning'
 import {Loader} from '#/components/Loader'
@@ -91,10 +92,11 @@ import {
   ReportDialog,
   useReportDialogControl,
 } from '#/components/moderation/ReportDialog'
+import {OpenInMenu} from '#/components/OpenInMenu'
 import * as Prompt from '#/components/Prompt'
 import * as Toast from '#/components/Toast'
 import {useAnalytics} from '#/analytics'
-import {IS_INTERNAL} from '#/env'
+import {IS_INTERNAL, IS_IOS} from '#/env'
 import {type app} from '#/lexicons'
 import {PostMenuControlItems} from './PostMenuControlItems'
 
@@ -148,6 +150,8 @@ let PostMenuItems = ({
   })
   const navigation = useNavigation<NavigationProp>()
   const {mutedWordsDialogControl} = useGlobalDialogsControlContext()
+  const openInControl = useDialogControl()
+  const {control: menuControl} = Menu.useMenuContext()
   const blockPromptControl = useDialogControl()
   const reportDialogControl = useReportDialogControl()
   const deletePromptControl = useDialogControl()
@@ -561,6 +565,19 @@ let PostMenuItems = ({
         )}
 
         <Menu.Group>
+          <Menu.Item
+            testID="postDropdownOpenInBtn"
+            label={l`Open in…`}
+            onPress={() => {
+              if (IS_IOS) {
+                openInControl.open()
+              } else {
+                menuControl.close(() => openInControl.open())
+              }
+            }}>
+            <Menu.ItemText>{l`Open in…`}</Menu.ItemText>
+            <Menu.ItemIcon icon={ExternalLinkIcon} position="right" />
+          </Menu.Item>
           {!hideInPWI || hasSession ? (
             <>
               {translationState.status === 'loading' ? (
@@ -853,6 +870,10 @@ let PostMenuItems = ({
           </>
         )}
       </Menu.Outer>
+      <OpenInMenu
+        control={openInControl}
+        target={{type: 'post', uri: post.uri}}
+      />
       <Prompt.Basic
         control={deletePromptControl}
         title={l`Delete this post?`}
