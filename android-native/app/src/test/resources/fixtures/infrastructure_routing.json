@@ -1,0 +1,236 @@
+{
+  "hostTests": [
+    {
+      "input": "api.eurosky.network",
+      "appview": {
+        "ok": true,
+        "value": "api.eurosky.network"
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": "api.eurosky.network"
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": "api.eurosky.network"
+      }
+    },
+    {
+      "input": "https://API.BLACKSKY.COMMUNITY/",
+      "appview": {
+        "ok": true,
+        "value": "api.blacksky.community"
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": "api.blacksky.community"
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": "api.blacksky.community"
+      }
+    },
+    {
+      "input": "api.bsky.app",
+      "appview": {
+        "ok": true,
+        "value": ""
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": "api.bsky.app"
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": "api.bsky.app"
+      }
+    },
+    {
+      "input": "public.api.bsky.app",
+      "appview": {
+        "ok": true,
+        "value": ""
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": "public.api.bsky.app"
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": "public.api.bsky.app"
+      }
+    },
+    {
+      "input": "cdn.bsky.app",
+      "appview": {
+        "ok": true,
+        "value": "cdn.bsky.app"
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": ""
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": "cdn.bsky.app"
+      }
+    },
+    {
+      "input": "https://luna.danielmorrisey.com/",
+      "appview": {
+        "ok": true,
+        "value": "luna.danielmorrisey.com"
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": "luna.danielmorrisey.com"
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": "luna.danielmorrisey.com"
+      }
+    },
+    {
+      "input": "plc.directory",
+      "appview": {
+        "ok": true,
+        "value": "plc.directory"
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": "plc.directory"
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": ""
+      }
+    },
+    {
+      "input": "https://PLC.WAFFLEHOUSE.DEV/",
+      "appview": {
+        "ok": true,
+        "value": "plc.wafflehouse.dev"
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": "plc.wafflehouse.dev"
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": "plc.wafflehouse.dev"
+      }
+    },
+    {
+      "input": "http://insecure.example.com",
+      "appview": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "imageCdn": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "plcDirectory": {
+        "ok": false,
+        "error": "Invalid hostname"
+      }
+    },
+    {
+      "input": "example.com/path",
+      "appview": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "imageCdn": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "plcDirectory": {
+        "ok": false,
+        "error": "Invalid hostname"
+      }
+    },
+    {
+      "input": "example.com:8443",
+      "appview": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "imageCdn": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "plcDirectory": {
+        "ok": false,
+        "error": "Invalid hostname"
+      }
+    },
+    {
+      "input": "user@example.com",
+      "appview": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "imageCdn": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "plcDirectory": {
+        "ok": false,
+        "error": "Invalid hostname"
+      }
+    },
+    {
+      "input": "bad..host",
+      "appview": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "imageCdn": {
+        "ok": false,
+        "error": "Invalid hostname"
+      },
+      "plcDirectory": {
+        "ok": false,
+        "error": "Invalid hostname"
+      }
+    },
+    {
+      "input": "",
+      "appview": {
+        "ok": true,
+        "value": ""
+      },
+      "imageCdn": {
+        "ok": true,
+        "value": ""
+      },
+      "plcDirectory": {
+        "ok": true,
+        "value": ""
+      }
+    }
+  ],
+  "imageRewriteTests": [
+    {
+      "uri": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:abc/bafkrei123@jpeg",
+      "host": "luna.danielmorrisey.com",
+      "rewritten": "https://luna.danielmorrisey.com/img/feed_thumbnail/plain/did:plc:abc/bafkrei123@jpeg"
+    },
+    {
+      "uri": "https://cdn.bsky.app/img/avatar/plain/did:plc:abc/bafkrei123@jpeg",
+      "host": "",
+      "rewritten": "https://cdn.bsky.app/img/avatar/plain/did:plc:abc/bafkrei123@jpeg"
+    },
+    {
+      "uri": "https://video.bsky.app/watch/did:plc:abc/playlist.m3u8",
+      "host": "luna.danielmorrisey.com",
+      "rewritten": "https://video.bsky.app/watch/did:plc:abc/playlist.m3u8"
+    },
+    {
+      "uri": "https://pds.example.com/xrpc/com.atproto.sync.getBlob?did=x&cid=y",
+      "host": "luna.danielmorrisey.com",
+      "rewritten": "https://pds.example.com/xrpc/com.atproto.sync.getBlob?did=x&cid=y"
+    }
+  ]
+}

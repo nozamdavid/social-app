@@ -1,0 +1,1520 @@
+{
+  "labelDefs": {
+    "did:plc:customlabeler": [
+      {
+        "identifier": "spoiler",
+        "severity": "alert",
+        "blurs": "content",
+        "defaultSetting": "warn",
+        "adultOnly": false,
+        "locales": [
+          {
+            "lang": "en",
+            "name": "Spoiler",
+            "description": "Contains spoilers"
+          }
+        ],
+        "definedBy": "did:plc:customlabeler",
+        "configurable": true,
+        "flags": [
+          "no-self"
+        ],
+        "behaviors": {
+          "account": {
+            "profileList": "alert",
+            "profileView": "alert",
+            "contentList": "blur",
+            "contentView": "alert"
+          },
+          "profile": {
+            "profileList": "alert",
+            "profileView": "alert"
+          },
+          "content": {
+            "contentList": "blur",
+            "contentView": "alert"
+          }
+        }
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "adult_disabled_porn_label",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [
+          {
+            "src": "did:plc:author1",
+            "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+            "val": "porn",
+            "cts": "2026-11-01T00:00:00.000Z"
+          }
+        ],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": true,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "label"
+          ],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": true,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "label"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "adult_enabled_porn_warn",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "warn",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [
+          {
+            "src": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+            "val": "porn",
+            "cts": "2026-11-01T00:00:00.000Z"
+          }
+        ],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": true,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "label"
+          ],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": true,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "label"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "unauthed_no_unauthenticated",
+      "userDid": null,
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [
+            {
+              "src": "did:plc:author1",
+              "uri": "at://did:plc:author1/app.bsky.actor.profile/self",
+              "val": "!no-unauthenticated",
+              "cts": "2026-11-01T00:00:00.000Z"
+            }
+          ],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": true,
+          "filter": true,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "label"
+          ],
+          "blurs": [
+            "label"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": true,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "label"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": true,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "label",
+            "label"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": true,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "label"
+          ],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "authed_no_unauthenticated",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [
+            {
+              "src": "did:plc:author1",
+              "uri": "at://did:plc:author1/app.bsky.actor.profile/self",
+              "val": "!no-unauthenticated",
+              "cts": "2026-11-01T00:00:00.000Z"
+            }
+          ],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "custom_labeler_spoiler_warn",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          },
+          {
+            "did": "did:plc:customlabeler",
+            "labels": {
+              "spoiler": "warn"
+            }
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [
+          {
+            "src": "did:plc:customlabeler",
+            "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+            "val": "spoiler",
+            "cts": "2026-11-01T00:00:00.000Z"
+          }
+        ],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "label"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": true,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [
+            "label"
+          ],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "muted_word_boundary_punctuation",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [
+          {
+            "value": "spoilers",
+            "targets": [
+              "content"
+            ],
+            "actorTarget": "all"
+          }
+        ],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Watch out for (spoilers!) today",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": true,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "mute-word"
+          ],
+          "blurs": [
+            "mute-word"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "mute-word"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "muted_word_slash_no_match",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [
+          {
+            "value": "andor",
+            "targets": [
+              "content"
+            ],
+            "actorTarget": "all"
+          }
+        ],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "choose and/or pick",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "muted_word_japanese_substring",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [
+          {
+            "value": "ネタバレ",
+            "targets": [
+              "content"
+            ],
+            "actorTarget": "all"
+          }
+        ],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "映画のネタバレ注意です",
+          "createdAt": "2026-11-01T00:00:00.000Z",
+          "langs": [
+            "ja"
+          ]
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": true,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "mute-word"
+          ],
+          "blurs": [
+            "mute-word"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "mute-word"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "muted_word_exclude_following",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [
+          {
+            "value": "crypto",
+            "targets": [
+              "content"
+            ],
+            "actorTarget": "exclude-following"
+          }
+        ],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "following": "at://did:plc:viewer/app.bsky.graph.follow/1"
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "crypto update",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "muted_word_alt_text",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [
+          {
+            "value": "spider",
+            "targets": [
+              "content"
+            ],
+            "actorTarget": "all"
+          }
+        ],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Look at this photo",
+          "createdAt": "2026-11-01T00:00:00.000Z",
+          "embed": {
+            "$type": "app.bsky.embed.images",
+            "images": [
+              {
+                "alt": "A tiny spider on a leaf",
+                "image": {
+                  "$type": "blob",
+                  "ref": {
+                    "$link": "bafy1"
+                  },
+                  "mimeType": "image/jpeg",
+                  "size": 100
+                }
+              }
+            ]
+          }
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": true,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "mute-word"
+          ],
+          "blurs": [
+            "mute-word"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "mute-word"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "hidden_post",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": [
+          "at://did:plc:author1/app.bsky.feed.post/3k1"
+        ]
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": false,
+            "blockedBy": false
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": false,
+        "contentList": {
+          "noOverride": false,
+          "filter": true,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "hidden"
+          ],
+          "blurs": [
+            "hidden"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "hidden"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "blocking_author",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "blocking": "at://did:plc:viewer/app.bsky.graph.block/1"
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": true,
+        "muted": false,
+        "contentList": {
+          "noOverride": true,
+          "filter": true,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "blocking"
+          ],
+          "blurs": [
+            "blocking"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": true,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "blocking"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": true,
+          "filter": false,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [
+            "blocking"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": true,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [
+            "blocking"
+          ],
+          "informs": []
+        }
+      }
+    },
+    {
+      "id": "muted_author",
+      "userDid": "did:plc:viewer",
+      "prefs": {
+        "adultContentEnabled": false,
+        "labels": {
+          "porn": "hide",
+          "sexual": "warn",
+          "nudity": "ignore",
+          "graphic-media": "warn"
+        },
+        "labelers": [
+          {
+            "did": "did:plc:ar7c4by46qjdydhdevvrndac",
+            "labels": {}
+          }
+        ],
+        "mutedWords": [],
+        "hiddenPosts": []
+      },
+      "post": {
+        "uri": "at://did:plc:author1/app.bsky.feed.post/3k1",
+        "cid": "bafycid1",
+        "author": {
+          "did": "did:plc:author1",
+          "handle": "author1.bsky.social",
+          "displayName": "Author One",
+          "labels": [],
+          "viewer": {
+            "muted": true
+          }
+        },
+        "record": {
+          "$type": "app.bsky.feed.post",
+          "text": "Normal post text",
+          "createdAt": "2026-11-01T00:00:00.000Z"
+        },
+        "labels": [],
+        "indexedAt": "2026-11-01T00:00:00.000Z"
+      },
+      "expected": {
+        "blocked": false,
+        "muted": true,
+        "contentList": {
+          "noOverride": false,
+          "filter": true,
+          "blur": true,
+          "alert": false,
+          "inform": false,
+          "filters": [
+            "muted"
+          ],
+          "blurs": [
+            "muted"
+          ],
+          "alerts": [],
+          "informs": []
+        },
+        "contentView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": true,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": [
+            "muted"
+          ]
+        },
+        "contentMedia": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "avatar": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": false,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [],
+          "informs": []
+        },
+        "profileView": {
+          "noOverride": false,
+          "filter": false,
+          "blur": false,
+          "alert": true,
+          "inform": false,
+          "filters": [],
+          "blurs": [],
+          "alerts": [
+            "muted"
+          ],
+          "informs": []
+        }
+      }
+    }
+  ]
+}

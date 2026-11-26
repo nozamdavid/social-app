@@ -1,0 +1,389 @@
+{
+  "tokenCases": [
+    {
+      "text": ":smile",
+      "start": 6,
+      "end": 6,
+      "token": {
+        "start": 0,
+        "end": 6,
+        "query": "smile",
+        "context": ""
+      },
+      "replacedWithSmile": {
+        "text": "😄 ",
+        "selection": {
+          "start": 3,
+          "end": 3
+        }
+      }
+    },
+    {
+      "text": "hello :roc",
+      "start": 10,
+      "end": 10,
+      "token": {
+        "start": 6,
+        "end": 10,
+        "query": "roc",
+        "context": "hello "
+      },
+      "replacedWithSmile": {
+        "text": "hello 😄 ",
+        "selection": {
+          "start": 9,
+          "end": 9
+        }
+      }
+    },
+    {
+      "text": "hello (:hear suffix)",
+      "start": 12,
+      "end": 12,
+      "token": {
+        "start": 7,
+        "end": 12,
+        "query": "hear",
+        "context": "hello ("
+      },
+      "replacedWithSmile": {
+        "text": "hello (😄 suffix)",
+        "selection": {
+          "start": 9,
+          "end": 9
+        }
+      }
+    },
+    {
+      "text": "http://localhost:8080",
+      "start": 21,
+      "end": 21,
+      "token": null,
+      "replacedWithSmile": null
+    },
+    {
+      "text": "foo:bar",
+      "start": 7,
+      "end": 7,
+      "token": null,
+      "replacedWithSmile": null
+    },
+    {
+      "text": "hi :smil",
+      "start": 4,
+      "end": 6,
+      "token": null,
+      "replacedWithSmile": null
+    },
+    {
+      "text": "happy birthday :ca",
+      "start": 18,
+      "end": 18,
+      "token": {
+        "start": 15,
+        "end": 18,
+        "query": "ca",
+        "context": "happy birthday "
+      },
+      "replacedWithSmile": {
+        "text": "happy birthday 😄 ",
+        "selection": {
+          "start": 18,
+          "end": 18
+        }
+      }
+    }
+  ],
+  "searchCases": [
+    {
+      "query": "smile",
+      "limit": 4,
+      "context": "",
+      "results": [
+        {
+          "id": "smile",
+          "native": "😄",
+          "shortcodes": [
+            "smile"
+          ]
+        },
+        {
+          "id": "smile_cat",
+          "native": "😸",
+          "shortcodes": [
+            "smile_cat"
+          ]
+        },
+        {
+          "id": "smiley",
+          "native": "😃",
+          "shortcodes": [
+            "smiley"
+          ]
+        },
+        {
+          "id": "smiley_cat",
+          "native": "😺",
+          "shortcodes": [
+            "smiley_cat"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "smiel",
+      "limit": 4,
+      "context": "",
+      "results": [
+        {
+          "id": "smile",
+          "native": "😄",
+          "shortcodes": [
+            "smile"
+          ]
+        },
+        {
+          "id": "slightly_smiling_face",
+          "native": "🙂",
+          "shortcodes": [
+            "slightly_smiling_face"
+          ]
+        },
+        {
+          "id": "shield",
+          "native": "🛡️",
+          "shortcodes": [
+            "shield"
+          ]
+        },
+        {
+          "id": "smiley",
+          "native": "😃",
+          "shortcodes": [
+            "smiley"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "thumbsup",
+      "limit": 4,
+      "context": "",
+      "results": [
+        {
+          "id": "+1",
+          "native": "👍",
+          "shortcodes": [
+            "+1",
+            "thumbsup"
+          ]
+        },
+        {
+          "id": "-1",
+          "native": "👎",
+          "shortcodes": [
+            "-1",
+            "thumbsdown"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ca",
+      "limit": 4,
+      "context": "happy birthday to you",
+      "results": [
+        {
+          "id": "birthday",
+          "native": "🎂",
+          "shortcodes": [
+            "birthday"
+          ]
+        },
+        {
+          "id": "joy_cat",
+          "native": "😹",
+          "shortcodes": [
+            "joy_cat"
+          ]
+        },
+        {
+          "id": "smiley_cat",
+          "native": "😺",
+          "shortcodes": [
+            "smiley_cat"
+          ]
+        },
+        {
+          "id": "cactus",
+          "native": "🌵",
+          "shortcodes": [
+            "cactus"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ca",
+      "limit": 4,
+      "context": "driving my car on the highway",
+      "results": [
+        {
+          "id": "car",
+          "native": "🚗",
+          "shortcodes": [
+            "car",
+            "red_car"
+          ]
+        },
+        {
+          "id": "blue_car",
+          "native": "🚙",
+          "shortcodes": [
+            "blue_car"
+          ]
+        },
+        {
+          "id": "bus",
+          "native": "🚌",
+          "shortcodes": [
+            "bus"
+          ]
+        },
+        {
+          "id": "minibus",
+          "native": "🚐",
+          "shortcodes": [
+            "minibus"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "roc",
+      "limit": 8,
+      "context": "space launch",
+      "results": [
+        {
+          "id": "rocket",
+          "native": "🚀",
+          "shortcodes": [
+            "rocket"
+          ]
+        },
+        {
+          "id": "female-astronaut",
+          "native": "👩‍🚀",
+          "shortcodes": [
+            "female-astronaut"
+          ]
+        },
+        {
+          "id": "male-astronaut",
+          "native": "👨‍🚀",
+          "shortcodes": [
+            "male-astronaut"
+          ]
+        },
+        {
+          "id": "rock",
+          "native": "🪨",
+          "shortcodes": [
+            "rock"
+          ]
+        },
+        {
+          "id": "female-singer",
+          "native": "👩‍🎤",
+          "shortcodes": [
+            "female-singer"
+          ]
+        },
+        {
+          "id": "male-singer",
+          "native": "👨‍🎤",
+          "shortcodes": [
+            "male-singer"
+          ]
+        },
+        {
+          "id": "man_climbing",
+          "native": "🧗‍♂️",
+          "shortcodes": [
+            "man_climbing"
+          ]
+        },
+        {
+          "id": "moyai",
+          "native": "🗿",
+          "shortcodes": [
+            "moyai"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "heart",
+      "limit": 8,
+      "context": "",
+      "results": [
+        {
+          "id": "heart",
+          "native": "❤️",
+          "shortcodes": [
+            "heart"
+          ]
+        },
+        {
+          "id": "heart_decoration",
+          "native": "💟",
+          "shortcodes": [
+            "heart_decoration"
+          ]
+        },
+        {
+          "id": "heart_eyes",
+          "native": "😍",
+          "shortcodes": [
+            "heart_eyes"
+          ]
+        },
+        {
+          "id": "heart_eyes_cat",
+          "native": "😻",
+          "shortcodes": [
+            "heart_eyes_cat"
+          ]
+        },
+        {
+          "id": "heart_hands",
+          "native": "🫶",
+          "shortcodes": [
+            "heart_hands"
+          ]
+        },
+        {
+          "id": "heart_on_fire",
+          "native": "❤️‍🔥",
+          "shortcodes": [
+            "heart_on_fire"
+          ]
+        },
+        {
+          "id": "heartbeat",
+          "native": "💓",
+          "shortcodes": [
+            "heartbeat"
+          ]
+        },
+        {
+          "id": "heartpulse",
+          "native": "💗",
+          "shortcodes": [
+            "heartpulse"
+          ]
+        }
+      ]
+    }
+  ]
+}

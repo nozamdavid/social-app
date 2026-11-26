@@ -1,0 +1,498 @@
+{
+  "cases": [
+    {
+      "id": "rt_0",
+      "input": "Hello world!",
+      "graphemeLength": 12,
+      "utf8Length": 12,
+      "facets": [],
+      "shortenedText": "Hello world!",
+      "shortenedGraphemeLength": 12,
+      "shortenedUtf8Length": 12,
+      "shortenedFacets": []
+    },
+    {
+      "id": "rt_1",
+      "input": "Hi @alice.bsky.social check https://bsky.app/profile/bsky.app/post/123?foo=bar&baz=1.",
+      "graphemeLength": 85,
+      "utf8Length": 85,
+      "facets": [
+        {
+          "index": {
+            "byteStart": 3,
+            "byteEnd": 21
+          },
+          "features": [
+            {
+              "did": "alice.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 28,
+            "byteEnd": 84
+          },
+          "features": [
+            {
+              "uri": "https://bsky.app/profile/bsky.app/post/123?foo=bar&baz=1",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ],
+      "shortenedText": "Hi @alice.bsky.social check bsky.app/profile/bsky....",
+      "shortenedGraphemeLength": 53,
+      "shortenedUtf8Length": 53,
+      "shortenedFacets": [
+        {
+          "index": {
+            "byteStart": 3,
+            "byteEnd": 21
+          },
+          "features": [
+            {
+              "did": "alice.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 28,
+            "byteEnd": 52
+          },
+          "features": [
+            {
+              "uri": "https://bsky.app/profile/bsky.app/post/123?foo=bar&baz=1",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rt_2",
+      "input": "Paren link (https://example.com/a_(b)) and trailing https://example.com/path).",
+      "graphemeLength": 78,
+      "utf8Length": 78,
+      "facets": [
+        {
+          "index": {
+            "byteStart": 12,
+            "byteEnd": 38
+          },
+          "features": [
+            {
+              "uri": "https://example.com/a_(b))",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 52,
+            "byteEnd": 76
+          },
+          "features": [
+            {
+              "uri": "https://example.com/path",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ],
+      "shortenedText": "Paren link (example.com/a_(b)) and trailing example.com/path).",
+      "shortenedGraphemeLength": 62,
+      "shortenedUtf8Length": 62,
+      "shortenedFacets": [
+        {
+          "index": {
+            "byteStart": 12,
+            "byteEnd": 30
+          },
+          "features": [
+            {
+              "uri": "https://example.com/a_(b))",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 44,
+            "byteEnd": 60
+          },
+          "features": [
+            {
+              "uri": "https://example.com/path",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rt_3",
+      "input": "Emoji 👨‍👩‍👧‍👦 family and 🏳️‍🌈 flag before @bob.test #bluesky $BSKY!",
+      "graphemeLength": 58,
+      "utf8Length": 95,
+      "facets": [
+        {
+          "index": {
+            "byteStart": 70,
+            "byteEnd": 79
+          },
+          "features": [
+            {
+              "did": "bob.test",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 80,
+            "byteEnd": 88
+          },
+          "features": [
+            {
+              "tag": "bluesky",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 89,
+            "byteEnd": 94
+          },
+          "features": [
+            {
+              "tag": "$BSKY",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        }
+      ],
+      "shortenedText": "Emoji 👨‍👩‍👧‍👦 family and 🏳️‍🌈 flag before @bob.test #bluesky $BSKY!",
+      "shortenedGraphemeLength": 58,
+      "shortenedUtf8Length": 95,
+      "shortenedFacets": [
+        {
+          "index": {
+            "byteStart": 70,
+            "byteEnd": 79
+          },
+          "features": [
+            {
+              "did": "bob.test",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 80,
+            "byteEnd": 88
+          },
+          "features": [
+            {
+              "tag": "bluesky",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 89,
+            "byteEnd": 94
+          },
+          "features": [
+            {
+              "tag": "$BSKY",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rt_4",
+      "input": "Combining é café @carol.bsky.social #café",
+      "graphemeLength": 41,
+      "utf8Length": 46,
+      "facets": [
+        {
+          "index": {
+            "byteStart": 21,
+            "byteEnd": 39
+          },
+          "features": [
+            {
+              "did": "carol.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 40,
+            "byteEnd": 46
+          },
+          "features": [
+            {
+              "tag": "café",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        }
+      ],
+      "shortenedText": "Combining é café @carol.bsky.social #café",
+      "shortenedGraphemeLength": 41,
+      "shortenedUtf8Length": 46,
+      "shortenedFacets": [
+        {
+          "index": {
+            "byteStart": 21,
+            "byteEnd": 39
+          },
+          "features": [
+            {
+              "did": "carol.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 40,
+            "byteEnd": 46
+          },
+          "features": [
+            {
+              "tag": "café",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rt_5",
+      "input": "日本語テスト #テスト and @dev.bsky.social 👍🏽 cool",
+      "graphemeLength": 39,
+      "utf8Length": 64,
+      "facets": [
+        {
+          "index": {
+            "byteStart": 19,
+            "byteEnd": 29
+          },
+          "features": [
+            {
+              "tag": "テスト",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 34,
+            "byteEnd": 50
+          },
+          "features": [
+            {
+              "did": "dev.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        }
+      ],
+      "shortenedText": "日本語テスト #テスト and @dev.bsky.social 👍🏽 cool",
+      "shortenedGraphemeLength": 39,
+      "shortenedUtf8Length": 64,
+      "shortenedFacets": [
+        {
+          "index": {
+            "byteStart": 19,
+            "byteEnd": 29
+          },
+          "features": [
+            {
+              "tag": "テスト",
+              "$type": "app.bsky.richtext.facet#tag"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 34,
+            "byteEnd": 50
+          },
+          "features": [
+            {
+              "did": "dev.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        }
+      ]
+    },
+    {
+      "id": "rt_6",
+      "input": "مرحبا @dana.bsky.social في https://example.org/docs/getting-started-very-long-path-that-should-shorten",
+      "graphemeLength": 102,
+      "utf8Length": 109,
+      "facets": [
+        {
+          "index": {
+            "byteStart": 11,
+            "byteEnd": 28
+          },
+          "features": [
+            {
+              "did": "dana.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 34,
+            "byteEnd": 109
+          },
+          "features": [
+            {
+              "uri": "https://example.org/docs/getting-started-very-long-path-that-should-shorten",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ],
+      "shortenedText": "مرحبا @dana.bsky.social في example.org/docs/getting...",
+      "shortenedGraphemeLength": 54,
+      "shortenedUtf8Length": 61,
+      "shortenedFacets": [
+        {
+          "index": {
+            "byteStart": 11,
+            "byteEnd": 28
+          },
+          "features": [
+            {
+              "did": "dana.bsky.social",
+              "$type": "app.bsky.richtext.facet#mention"
+            }
+          ],
+          "$type": "app.bsky.richtext.facet"
+        },
+        {
+          "index": {
+            "byteStart": 34,
+            "byteEnd": 61
+          },
+          "features": [
+            {
+              "uri": "https://example.org/docs/getting-started-very-long-path-that-should-shorten",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rt_7",
+      "input": "Bare domain example.com/test/path and https://sub.domain.co.uk/a/b/c/d/e/f/g/h/i",
+      "graphemeLength": 80,
+      "utf8Length": 80,
+      "facets": [
+        {
+          "index": {
+            "byteStart": 12,
+            "byteEnd": 33
+          },
+          "features": [
+            {
+              "uri": "https://example.com/test/path",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 38,
+            "byteEnd": 80
+          },
+          "features": [
+            {
+              "uri": "https://sub.domain.co.uk/a/b/c/d/e/f/g/h/i",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ],
+      "shortenedText": "Bare domain example.com/test/path and sub.domain.co.uk/a/b/c/d/e/f/...",
+      "shortenedGraphemeLength": 70,
+      "shortenedUtf8Length": 70,
+      "shortenedFacets": [
+        {
+          "index": {
+            "byteStart": 12,
+            "byteEnd": 33
+          },
+          "features": [
+            {
+              "uri": "https://example.com/test/path",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        },
+        {
+          "index": {
+            "byteStart": 38,
+            "byteEnd": 70
+          },
+          "features": [
+            {
+              "uri": "https://sub.domain.co.uk/a/b/c/d/e/f/g/h/i",
+              "$type": "app.bsky.richtext.facet#link"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rt_8",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa👨‍👩‍👧‍👦",
+      "graphemeLength": 300,
+      "utf8Length": 324,
+      "facets": [],
+      "shortenedText": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa👨‍👩‍👧‍👦",
+      "shortenedGraphemeLength": 300,
+      "shortenedUtf8Length": 324,
+      "shortenedFacets": []
+    },
+    {
+      "id": "rt_9",
+      "input": "👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦",
+      "graphemeLength": 300,
+      "utf8Length": 7500,
+      "facets": [],
+      "shortenedText": "👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦",
+      "shortenedGraphemeLength": 300,
+      "shortenedUtf8Length": 7500,
+      "shortenedFacets": []
+    }
+  ]
+}

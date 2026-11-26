@@ -1,0 +1,80 @@
+# Caelum Native ART Baseline Profile (Human-Readable Format)
+# Covers cold/warm startup, Compose UI rendering, feed scrolling, ATProto networking, and image loading.
+
+# Application & MainActivity startup
+Lam/noz/caelum/CaelumApplication;
+Lam/noz/caelum/CaelumApplication$**;
+HSPLam/noz/caelum/CaelumApplication;->**(**)**
+HSPLam/noz/caelum/CaelumApplication$**;->**(**)**
+Lam/noz/caelum/MainActivity;
+Lam/noz/caelum/MainActivity$**;
+HSPLam/noz/caelum/MainActivity;->**(**)**
+HSPLam/noz/caelum/MainActivity$**;->**(**)**
+
+# Dependency Injection & AppContainer
+Lam/noz/caelum/di/**;
+HSPLam/noz/caelum/di/**;->**(**)**
+
+# Core modules (network, models, richtext, moderation, session, storage, i18n, emoji, media, post)
+Lam/noz/caelum/core/network/**;
+HSPLam/noz/caelum/core/network/**;->**(**)**
+Lam/noz/caelum/core/model/**;
+HSPLam/noz/caelum/core/model/**;->**(**)**
+Lam/noz/caelum/core/richtext/**;
+HSPLam/noz/caelum/core/richtext/**;->**(**)**
+Lam/noz/caelum/core/moderation/**;
+HSPLam/noz/caelum/core/moderation/**;->**(**)**
+Lam/noz/caelum/core/session/**;
+HSPLam/noz/caelum/core/session/**;->**(**)**
+Lam/noz/caelum/core/storage/**;
+HSPLam/noz/caelum/core/storage/**;->**(**)**
+Lam/noz/caelum/core/i18n/**;
+HSPLam/noz/caelum/core/i18n/**;->**(**)**
+Lam/noz/caelum/core/emoji/**;
+HSPLam/noz/caelum/core/emoji/**;->**(**)**
+Lam/noz/caelum/core/media/**;
+HSPLam/noz/caelum/core/media/**;->**(**)**
+Lam/noz/caelum/core/post/**;
+HSPLam/noz/caelum/core/post/**;->**(**)**
+
+# UI Root & Screens
+Lam/noz/caelum/ui/CaelumRootApp**;
+HSPLam/noz/caelum/ui/CaelumRootApp**;->**(**)**
+Lam/noz/caelum/ui/auth/**;
+HSPLam/noz/caelum/ui/auth/**;->**(**)**
+Lam/noz/caelum/ui/home/**;
+HSPLam/noz/caelum/ui/home/**;->**(**)**
+Lam/noz/caelum/ui/post/**;
+HSPLam/noz/caelum/ui/post/**;->**(**)**
+Lam/noz/caelum/ui/search/**;
+HSPLam/noz/caelum/ui/search/**;->**(**)**
+Lam/noz/caelum/ui/profile/**;
+HSPLam/noz/caelum/ui/profile/**;->**(**)**
+Lam/noz/caelum/ui/lists/**;
+HSPLam/noz/caelum/ui/lists/**;->**(**)**
+Lam/noz/caelum/ui/social/**;
+HSPLam/noz/caelum/ui/social/**;->**(**)**
+Lam/noz/caelum/ui/settings/**;
+HSPLam/noz/caelum/ui/settings/**;->**(**)**
+Lam/noz/caelum/ui/theme/**;
+HSPLam/noz/caelum/ui/theme/**;->**(**)**
+Lam/noz/caelum/ui/components/**;
+HSPLam/noz/caelum/ui/components/**;->**(**)**
+Lam/noz/caelum/ui/navigation/**;
+HSPLam/noz/caelum/ui/navigation/**;->**(**)**
+Lam/noz/caelum/ui/thread/**;
+HSPLam/noz/caelum/ui/thread/**;->**(**)**
+Lam/noz/caelum/ui/composer/**;
+HSPLam/noz/caelum/ui/composer/**;->**(**)**
+Lam/noz/caelum/ui/openin/**;
+HSPLam/noz/caelum/ui/openin/**;->**(**)**
+
+# Hot-path runtime libraries
+Landroidx/compose/**;
+HSPLandroidx/compose/**;->**(**)**
+Lkotlinx/serialization/**;
+HSPLkotlinx/serialization/**;->**(**)**
+Lokhttp3/**;
+HSPLokhttp3/**;->**(**)**
+Lcoil3/**;
+HSPLcoil3/**;->**(**)**

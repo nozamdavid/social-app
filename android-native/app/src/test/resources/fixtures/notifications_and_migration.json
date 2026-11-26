@@ -1,0 +1,116 @@
+{
+  "fcmPayloads": [
+    {
+      "name": "like_gateway_expo_data_only",
+      "data": {
+        "reason": "like",
+        "uri": "at://did:plc:recipient/app.bsky.feed.post/3abc",
+        "subject": "at://did:plc:recipient/app.bsky.feed.post/3abc",
+        "recipientDid": "did:plc:recipient",
+        "authorHandle": "alice.bsky.social",
+        "channelId": "like",
+        "title": "Alice liked your post",
+        "message": "Alice liked your post",
+        "body": "{\"reason\":\"like\",\"uri\":\"at://did:plc:recipient/app.bsky.feed.post/3abc\",\"subject\":\"at://did:plc:recipient/app.bsky.feed.post/3abc\",\"recipientDid\":\"did:plc:recipient\"}"
+      }
+    },
+    {
+      "name": "follow_gateway_flat",
+      "data": {
+        "reason": "follow",
+        "uri": "at://did:plc:follower/app.bsky.graph.follow/3xyz",
+        "authorDid": "did:plc:follower",
+        "authorHandle": "bob.bsky.social",
+        "recipientDid": "did:plc:recipient",
+        "channelId": "follow",
+        "title": "Bob followed you",
+        "message": "Bob followed you"
+      }
+    },
+    {
+      "name": "chat_message",
+      "data": {
+        "reason": "chat-message",
+        "convoId": "3convo1",
+        "messageId": "3msg1",
+        "recipientDid": "did:plc:recipient",
+        "title": "Carol",
+        "message": "Hey there"
+      }
+    }
+  ],
+  "legacyBskyStorage": {
+    "colorMode": "dark",
+    "darkTheme": "dim",
+    "session": {
+      "accounts": [
+        {
+          "service": "https://bsky.social",
+          "did": "did:plc:legacyuser1",
+          "handle": "legacy.bsky.social",
+          "email": "legacy@example.com",
+          "emailConfirmed": true,
+          "refreshJwt": "legacy-refresh-jwt-token",
+          "accessJwt": "legacy-access-jwt-token",
+          "active": true,
+          "pdsUrl": "https://morel.us-east.host.bsky.network"
+        }
+      ],
+      "currentAccount": {
+        "did": "did:plc:legacyuser1"
+      }
+    },
+    "reminders": {},
+    "languagePrefs": {
+      "primaryLanguage": "en",
+      "contentLanguages": [
+        "en",
+        "es"
+      ],
+      "postLanguage": "en",
+      "postLanguageHistory": [
+        "en",
+        "es",
+        "ja",
+        "pt",
+        "de"
+      ],
+      "appLanguage": "en"
+    },
+    "requireAltTextEnabled": true,
+    "largeAltBadgeEnabled": true,
+    "invites": {
+      "copiedInvites": []
+    },
+    "onboarding": {
+      "step": "Home"
+    },
+    "mutedThreads": [
+      "at://did:plc:abc/app.bsky.feed.post/123"
+    ],
+    "disableAutoplay": false,
+    "disableHaptics": false
+  },
+  "legacyDeviceMmkv": {
+    "searchableBookmarks": {
+      "data": true
+    },
+    "autoLikeReposts": {
+      "data": true
+    },
+    "infrastructure": {
+      "data": {
+        "useLinkRedirects": false,
+        "appviewHostname": "api.eurosky.network",
+        "imageCdnHostname": "luna.danielmorrisey.com",
+        "plcDirectoryHostname": "plc.eurosky.network"
+      }
+    },
+    "fontScale": {
+      "data": "1"
+    },
+    "fontFamily": {
+      "data": "theme"
+    }
+  }
+}

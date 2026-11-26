@@ -1,0 +1,12 @@
+{
+  "name": "Caelum",
+  "wordmarkGap": 76,
+  "colors": {
+    "primary": "#6550E5",
+    "onPrimary": "#FFFFFF",
+    "lavender": "#B7A8F9",
+    "ink": "#1E1B29",
+    "light": "#FAF9FE",
+    "dark": "#1D1A28"
+  }
+}

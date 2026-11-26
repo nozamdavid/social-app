@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trending_topics_widget_display_name">Trending Topics</string>
+    <string name="trending_topics_widget_description">See what people are talking about on Bluesky.</string>
+    <string name="default_notification_channel_id">default</string>
+</resources>
