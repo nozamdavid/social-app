@@ -5,12 +5,16 @@ import android.icu.math.BigDecimal.ROUND_DOWN
 import android.icu.text.CompactDecimalFormat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -301,12 +306,15 @@ private fun PostActionButton(
     onLongClick: (() -> Unit)? = null,
 ) {
     val color = if (enabled) tint else tint.copy(alpha = 0.6f)
-    Row(
+    val interactionSource = remember { MutableInteractionSource() }
+    val feedbackPadding = 5.dp
+    Box(
         modifier = modifier
             .heightIn(min = if (iconSize == 22.dp) 44.dp else 40.dp)
             .testTag(tag)
-            .clip(RoundedCornerShape(22.dp))
             .combinedClickable(
+                interactionSource = interactionSource,
+                indication = null,
                 enabled = enabled,
                 role = Role.Button,
                 onLongClickLabel = onLongClickLabel,
@@ -318,21 +326,31 @@ private fun PostActionButton(
                 contentDescription = label
                 if (isSelected != null) selected = isSelected
             },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = if (count == null) Arrangement.Center else Arrangement.spacedBy(4.dp),
+        contentAlignment = if (count == null) Alignment.Center else Alignment.CenterStart,
     ) {
-        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(iconSize))
-        if (count != null && count > 0) {
-            val locale = LocalI18n.current.locale
-            val formatted = remember(count, locale) { formatCompactCount(count, locale) }
-            Text(
-                text = formatted,
-                modifier = Modifier.clearAndSetSemantics {},
-                style = if (iconSize == 22.dp) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall,
-                color = color,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+        // The weighted slot keeps the tap target wide. Draw its indication around the content.
+        Row(
+            modifier = Modifier
+                .offset(x = if (count == null) 0.dp else -feedbackPadding)
+                .clip(RoundedCornerShape(percent = 50))
+                .indication(interactionSource, ripple(bounded = false))
+                .padding(feedbackPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(iconSize))
+            if (count != null && count > 0) {
+                val locale = LocalI18n.current.locale
+                val formatted = remember(count, locale) { formatCompactCount(count, locale) }
+                Text(
+                    text = formatted,
+                    modifier = Modifier.clearAndSetSemantics {},
+                    style = if (iconSize == 22.dp) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall,
+                    color = color,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }
