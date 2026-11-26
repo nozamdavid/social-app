@@ -5,7 +5,10 @@ import android.icu.math.BigDecimal.ROUND_DOWN
 import android.icu.text.CompactDecimalFormat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -29,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -51,6 +56,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.offset
 import am.noz.caelum.core.i18n.LocalI18n
 import am.noz.caelum.core.i18n.tr
 import am.noz.caelum.core.model.PostView
@@ -301,12 +307,15 @@ private fun PostActionButton(
     onLongClick: (() -> Unit)? = null,
 ) {
     val color = if (enabled) tint else tint.copy(alpha = 0.6f)
-    Row(
+    val interactionSource = remember { MutableInteractionSource() }
+    val feedbackPadding = 5.dp
+    Box(
         modifier = modifier
             .heightIn(min = if (iconSize == 22.dp) 44.dp else 40.dp)
             .testTag(tag)
-            .clip(RoundedCornerShape(22.dp))
             .combinedClickable(
+                interactionSource = interactionSource,
+                indication = null,
                 enabled = enabled,
                 role = Role.Button,
                 onLongClickLabel = onLongClickLabel,
@@ -318,21 +327,37 @@ private fun PostActionButton(
                 contentDescription = label
                 if (isSelected != null) selected = isSelected
             },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = if (count == null) Arrangement.Center else Arrangement.spacedBy(4.dp),
+        contentAlignment = if (count == null) Alignment.Center else Alignment.CenterStart,
     ) {
-        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(iconSize))
-        if (count != null && count > 0) {
-            val locale = LocalI18n.current.locale
-            val formatted = remember(count, locale) { formatCompactCount(count, locale) }
-            Text(
-                text = formatted,
-                modifier = Modifier.clearAndSetSemantics {},
-                style = if (iconSize == 22.dp) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall,
-                color = color,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+        // Let the ripple's horizontal padding extend beyond the content's layout width.
+        Row(
+            modifier = Modifier
+                .layout { measurable, constraints ->
+                    val outset = feedbackPadding.roundToPx()
+                    val placeable = measurable.measure(constraints.offset(horizontal = 2 * outset))
+                    layout(placeable.width - 2 * outset, placeable.height) {
+                        placeable.placeRelative(-outset, 0)
+                    }
+                }
+                .clip(RoundedCornerShape(percent = 50))
+                .indication(interactionSource, ripple(bounded = false))
+                .padding(feedbackPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(iconSize))
+            if (count != null && count > 0) {
+                val locale = LocalI18n.current.locale
+                val formatted = remember(count, locale) { formatCompactCount(count, locale) }
+                Text(
+                    text = formatted,
+                    modifier = Modifier.clearAndSetSemantics {},
+                    style = if (iconSize == 22.dp) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall,
+                    color = color,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }
