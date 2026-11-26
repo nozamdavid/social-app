@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -46,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -56,6 +56,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.offset
 import am.noz.caelum.core.i18n.LocalI18n
 import am.noz.caelum.core.i18n.tr
 import am.noz.caelum.core.model.PostView
@@ -328,10 +329,16 @@ private fun PostActionButton(
             },
         contentAlignment = if (count == null) Alignment.Center else Alignment.CenterStart,
     ) {
-        // The weighted slot keeps the tap target wide. Draw its indication around the content.
+        // Let the ripple's horizontal padding extend beyond the content's layout width.
         Row(
             modifier = Modifier
-                .offset(x = if (count == null) 0.dp else -feedbackPadding)
+                .layout { measurable, constraints ->
+                    val outset = feedbackPadding.roundToPx()
+                    val placeable = measurable.measure(constraints.offset(horizontal = 2 * outset))
+                    layout(placeable.width - 2 * outset, placeable.height) {
+                        placeable.placeRelative(-outset, 0)
+                    }
+                }
                 .clip(RoundedCornerShape(percent = 50))
                 .indication(interactionSource, ripple(bounded = false))
                 .padding(feedbackPadding),
